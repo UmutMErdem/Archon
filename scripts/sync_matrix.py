@@ -74,9 +74,7 @@ def main():
         if not match:
             continue
 
-        mappings.get(
-            pf, pf.replace(".md", "").replace("_", " ").title()
-        )
+        mappings.get(pf, pf.replace(".md", "").replace("_", " ").title())
         source_presentation = get_short_name(pf, mappings)
 
         lines = match.group(1).splitlines()

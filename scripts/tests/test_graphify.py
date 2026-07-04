@@ -27,7 +27,9 @@ def test_install_graphify_with_uv(mock_which, mock_run):
 
     success = graphify_helper.install_graphify()
     assert success is True
-    mock_run.assert_called_once_with(["uv", "tool", "install", "graphifyy", "--with", "matplotlib"], check=True)
+    mock_run.assert_called_once_with(
+        ["uv", "tool", "install", "graphifyy", "--with", "matplotlib"], check=True
+    )
 
 
 @patch("subprocess.run")
@@ -39,7 +41,9 @@ def test_install_graphify_pip_fallback(mock_which, mock_run):
 
     success = graphify_helper.install_graphify()
     assert success is True
-    mock_run.assert_called_once_with([sys.executable, "-m", "pip", "install", "graphifyy", "matplotlib"], check=True)
+    mock_run.assert_called_once_with(
+        [sys.executable, "-m", "pip", "install", "graphifyy", "matplotlib"], check=True
+    )
 
 
 @patch("subprocess.run")
@@ -47,7 +51,9 @@ def test_install_graphify_pip_fallback(mock_which, mock_run):
 @patch("sys.exit")
 def test_main_build_command(mock_exit, mock_which, mock_run):
     # Simulate graphify already installed
-    mock_which.side_effect = lambda cmd: "/usr/local/bin/graphify" if cmd == "graphify" else None
+    mock_which.side_effect = lambda cmd: (
+        "/usr/local/bin/graphify" if cmd == "graphify" else None
+    )
     mock_run.return_value = MagicMock(returncode=0)
 
     # Mock command line arguments
@@ -58,8 +64,19 @@ def test_main_build_command(mock_exit, mock_which, mock_run):
     abs_path = os.path.abspath("/dummy/project")
     # Check that subprocess.run was called with correct extract, cluster, and export commands
     mock_run.assert_any_call(["graphify", abs_path], check=True)
-    mock_run.assert_any_call(["graphify", "cluster-only", abs_path, "--no-label"], check=True)
-    mock_run.assert_any_call(["graphify", "export", "svg", "--graph", os.path.join(abs_path, "graphify-out", "graph.json")], check=True)
+    mock_run.assert_any_call(
+        ["graphify", "cluster-only", abs_path, "--no-label"], check=True
+    )
+    mock_run.assert_any_call(
+        [
+            "graphify",
+            "export",
+            "svg",
+            "--graph",
+            os.path.join(abs_path, "graphify-out", "graph.json"),
+        ],
+        check=True,
+    )
 
 
 @patch("subprocess.run")
@@ -67,10 +84,18 @@ def test_main_build_command(mock_exit, mock_which, mock_run):
 @patch("sys.exit")
 @patch("os.chdir")
 def test_main_query_command(mock_chdir, mock_exit, mock_which, mock_run):
-    mock_which.side_effect = lambda cmd: "/usr/local/bin/graphify" if cmd == "graphify" else None
+    mock_which.side_effect = lambda cmd: (
+        "/usr/local/bin/graphify" if cmd == "graphify" else None
+    )
     mock_run.return_value = MagicMock(returncode=0)
 
-    test_args = ["graphify_helper.py", "--path", "/dummy/project", "--query", "What are the dependencies?"]
+    test_args = [
+        "graphify_helper.py",
+        "--path",
+        "/dummy/project",
+        "--query",
+        "What are the dependencies?",
+    ]
     with patch("sys.argv", test_args):
         graphify_helper.main()
 

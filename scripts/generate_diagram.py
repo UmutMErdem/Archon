@@ -85,7 +85,9 @@ def count_compliance(content):
     )
     if not match:
         return 0
-    return len([line for line in match.group(1).splitlines() if line.strip().startswith("-")])
+    return len(
+        [line for line in match.group(1).splitlines() if line.strip().startswith("-")]
+    )
 
 
 def score_label(score):
@@ -163,6 +165,7 @@ def main():
 
     def node_id(f):
         return f.replace(".md", "").replace("_", "")
+
     def short(f):
         return SHORT_NAMES.get(f, f.replace(".md", ""))
 

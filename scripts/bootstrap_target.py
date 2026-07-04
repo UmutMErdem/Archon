@@ -93,7 +93,14 @@ def main():
         print("No personas selected. Scaffolding cancelled.")
         return
 
-    setup_graphify = prompt("\nDo you want to initialize and configure Graphify for the target project? (y/n): ").strip().lower() == "y"
+    setup_graphify = (
+        prompt(
+            "\nDo you want to initialize and configure Graphify for the target project? (y/n): "
+        )
+        .strip()
+        .lower()
+        == "y"
+    )
 
     personas_meta = []
     for pf in selected_personas:
@@ -230,7 +237,7 @@ Project initialized using Archon Manifesto with the `{primary.get("domain")}` pe
         # Create scripts directory if not exists
         scripts_dir = os.path.join(target_dir, "scripts")
         os.makedirs(scripts_dir, exist_ok=True)
-        
+
         # Copy helper script
         helper_src = os.path.join(REPO_ROOT, "scripts", "graphify_helper.py")
         helper_dst = os.path.join(scripts_dir, "graphify_helper.py")
@@ -239,14 +246,17 @@ Project initialized using Archon Manifesto with the `{primary.get("domain")}` pe
             print(f"   Copied graphify_helper.py to {helper_dst}")
         except Exception as e:
             print(f"   Failed to copy graphify_helper.py: {e}")
-            
+
         # Run graphify_helper.py to build the initial graph
         print("   Running Graphify initial build...")
         try:
-            subprocess.run([sys.executable, helper_dst, "--path", target_dir, "--build"], check=True)
+            subprocess.run(
+                [sys.executable, helper_dst, "--path", target_dir, "--build"],
+                check=True,
+            )
         except subprocess.CalledProcessError as e:
             print(f"   Graphify initial build failed or was interrupted: {e}")
-            
+
         # Update/Create .gitignore in target directory
         gitignore_path = os.path.join(target_dir, ".gitignore")
         ignore_line = "\n# Graphify Outputs\ngraphify-out/\n"
@@ -287,7 +297,5 @@ venv/
             print(f"   Failed to create .graphifyignore: {e}")
 
 
-
 if __name__ == "__main__":
     main()
-

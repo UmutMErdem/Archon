@@ -171,13 +171,13 @@ def main():
         print(f"Running Wiki export command: {' '.join(wiki_cmd)}")
         subprocess.run(wiki_cmd, capture_output=True)  # Run silently
 
-        print(f"\n✅ Graphify analysis and exports complete!")
+        print("\n✅ Graphify analysis and exports complete!")
         print(f"Output files generated in: {os.path.join(target_path, 'graphify-out')}")
-        print(f"  - Full Graph Data: graphify-out/graph.json")
-        print(f"  - Interactive View: graphify-out/graph.html")
-        print(f"  - SVG Diagram: graphify-out/graph.svg")
-        print(f"  - Obsidian Vault: graphify-out/obsidian/ (optional)")
-        print(f"  - Wiki: graphify-out/wiki/ (optional)")
+        print("  - Full Graph Data: graphify-out/graph.json")
+        print("  - Interactive View: graphify-out/graph.html")
+        print("  - SVG Diagram: graphify-out/graph.svg")
+        print("  - Obsidian Vault: graphify-out/obsidian/ (optional)")
+        print("  - Wiki: graphify-out/wiki/ (optional)")
 
 
 if __name__ == "__main__":

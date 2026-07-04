@@ -71,27 +71,33 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 
 ## How it Works (Integration Workflow)
 
-To integrate Archon into your development workflow with an AI agent (such as a senior architect or domain specialist), choose one of the two integration paths below:
+To integrate Archon into your development workflow, choose one of the two paths below depending on your project:
 
-### Path A: Static Scaffolding (Recommended for New Projects)
-This method pre-populates the target project with compliance files, allowing the AI to immediately align with the predefined structure.
-
-1. **Bootstrap the Target Workspace:** Run the scaffolder tool locally:
-   ```bash
-   python scripts/bootstrap_target.py
-   ```
-   Provide the target project path, select the primary/supporting personas to load, and opt to initialize **Graphify** for automated codebase mapping (generates interactive SVG/HTML and Obsidian files).
-2. **Commit Scaffolded Files:** Commit the generated files (e.g., `AGENTS.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`, `.graphifyignore`) to your target workspace.
-3. **Execute AI Agent:** Grant your AI agent access to both the target project and the `Archon` directory. Use the **System Prompt** below to kick off the session.
+> [!TIP]
+> **Static Scaffolding (Path A)** is recommended for new or clean projects where you want a script to pre-generate all templates.
+> **Dynamic Auto-Detection (Path B)** is recommended for existing codebases where you want the AI agent to analyze the project and build documentation on-the-fly.
 
 ---
 
-### Path B: Dynamic Auto-Detection (Recommended for Existing Projects)
-This method allows the AI agent to dynamically discover the tech stack, select the appropriate persona, and generate the compliance documents on-the-fly.
+### Path A: Static Scaffolding (For New/Clean Projects)
+This method pre-populates your target directory with the necessary compliance templates before the AI starts coding.
 
-1. **Provide Manifesto Context:** Grant your AI agent access to this `Archon` project directory (or share its core rules/personas).
-2. **Execute AI Agent:** Point the AI agent to your existing project workspace.
-3. **Initialize the Session:** Use the **System Prompt** below to align the AI's behavior. The AI will scan the project using `detection_signals.md`, select the persona, and prompt you with discovery questions.
+1. **Bootstrap the Workspace:** Run the scaffolder tool locally:
+   ```bash
+   python scripts/bootstrap_target.py
+   ```
+   Provide the target project path, select the primary/supporting personas, and choose to initialize **Graphify** to automatically build a codebase knowledge graph.
+2. **Commit Scaffolded Files:** Commit the generated templates (e.g., `AGENTS.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`, `.graphifyignore`) to your repository.
+3. **Initialize AI Session:** Copy the **System Prompt** below and paste it as the initial instruction in your AI editor (Cursor, Claude Code, VS Code, etc.) to start the session.
+
+---
+
+### Path B: Dynamic Auto-Detection (For Existing Projects)
+This method allows the AI agent to analyze your existing codebase, auto-detect the tech stack, and build compliance documents dynamically.
+
+1. **Provide Context:** Grant your AI agent access to both your target project workspace and this `Archon` manifesto directory.
+2. **Initialize AI Session:** Copy the **System Prompt** below and paste it as the initial instruction in your AI editor to kick off the analysis.
+3. **Discovery & Graphify Setup:** The AI will automatically scan the project using `detection_signals.md`, select the appropriate persona, and prompt you with discovery questions. During this step, the AI will also ask if you want to initialize and configure **Graphify** to build a visual knowledge graph of the codebase.
 
 ---
 

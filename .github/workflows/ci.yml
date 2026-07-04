@@ -1,0 +1,42 @@
+name: Archon CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Check Code Formatting (black)
+      run: |
+        black --check scripts
+
+    - name: Lint Code (ruff)
+      run: |
+        ruff check scripts
+
+    - name: Run Unit Tests (pytest)
+      run: |
+        pytest --cov=scripts --cov-report=term-missing
+
+    - name: Validate Manifesto Files
+      run: |
+        python scripts/validate_manifesto.py

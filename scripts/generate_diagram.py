@@ -1,11 +1,11 @@
 import os
 import re
 import sys
-from domain_utils import load_domain_mappings, resolve_domain_to_persona_file
+from domain_utils import resolve_domain_to_persona_file
 
 try:
-    sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
 except AttributeError:
     pass
 
@@ -62,23 +62,31 @@ REQUIRED_HEADINGS = [
     r"^## Common Pitfalls",
     r"^## Recommended Toolchain",
     r"^## Domain-Specific Testing",
-    r"^## Cross-Domain Interfaces"
+    r"^## Cross-Domain Interfaces",
 ]
+
 
 def count_sections(content):
     return sum(1 for p in REQUIRED_HEADINGS if re.search(p, content, re.MULTILINE))
 
+
 def count_interfaces(content):
-    match = re.search(r"## Cross-Domain Interfaces\s*(.*?)(?:\n## |\Z)", content, re.DOTALL)
+    match = re.search(
+        r"## Cross-Domain Interfaces\s*(.*?)(?:\n## |\Z)", content, re.DOTALL
+    )
     if not match:
         return 0
     return len(re.findall(r"^\s*-\s*\*\*→", match.group(1), re.MULTILINE))
 
+
 def count_compliance(content):
-    match = re.search(r"## Compliance & Standards\s*(.*?)(?:\n## |\Z)", content, re.DOTALL)
+    match = re.search(
+        r"## Compliance & Standards\s*(.*?)(?:\n## |\Z)", content, re.DOTALL
+    )
     if not match:
         return 0
-    return len([l for l in match.group(1).splitlines() if l.strip().startswith("-")])
+    return len([line for line in match.group(1).splitlines() if line.strip().startswith("-")])
+
 
 def score_label(score):
     if score <= 22:
@@ -89,9 +97,11 @@ def score_label(score):
         return "Thorough"
     return "Comprehensive"
 
+
 def resolve_target(target_domain, file_map):
     """Resolve target domain using shared domain_utils."""
     return resolve_domain_to_persona_file(target_domain, file_map)
+
 
 def parse_frontmatter_domain(content):
     if not content.strip().startswith("---"):
@@ -106,6 +116,7 @@ def parse_frontmatter_domain(content):
             return val
     return None
 
+
 def main():
     print("Generating Mermaid diagram from persona interfaces...\n")
 
@@ -119,17 +130,26 @@ def main():
         with open(os.path.join(PERSONAS_DIR, pf), "r", encoding="utf-8") as f:
             content = f.read()
 
-        domain = parse_frontmatter_domain(content) or pf.replace(".md", "").replace("_", " ").title()
+        domain = (
+            parse_frontmatter_domain(content)
+            or pf.replace(".md", "").replace("_", " ").title()
+        )
         file_map[pf] = domain
 
-        s = count_sections(content) + count_interfaces(content) + count_compliance(content)
+        s = (
+            count_sections(content)
+            + count_interfaces(content)
+            + count_compliance(content)
+        )
         scores[pf] = score_label(s)
 
     for pf in persona_files:
         with open(os.path.join(PERSONAS_DIR, pf), "r", encoding="utf-8") as f:
             content = f.read()
 
-        match = re.search(r"## Cross-Domain Interfaces\s*(.*?)(?:\n## |\Z)", content, re.DOTALL)
+        match = re.search(
+            r"## Cross-Domain Interfaces\s*(.*?)(?:\n## |\Z)", content, re.DOTALL
+        )
         if not match:
             continue
 
@@ -141,23 +161,29 @@ def main():
                 if target_file:
                     edges.add((pf, target_file))
 
-    node_id = lambda f: f.replace(".md", "").replace("_", "")
-    short = lambda f: SHORT_NAMES.get(f, f.replace(".md", ""))
+    def node_id(f):
+        return f.replace(".md", "").replace("_", "")
+    def short(f):
+        return SHORT_NAMES.get(f, f.replace(".md", ""))
 
     lines = ["```mermaid", "graph LR"]
 
     for pf in persona_files:
         nid = node_id(pf)
         label = short(pf)
-        tier = scores.get(pf, "Light")
-        lines.append(f"    {nid}[\"{label}\"]")
+        scores.get(pf, "Light")
+        lines.append(f'    {nid}["{label}"]')
 
     lines.append("")
 
     for tier_name, color in TIER_COLORS.items():
-        tier_nodes = [node_id(pf) for pf in persona_files if scores.get(pf) == tier_name]
+        tier_nodes = [
+            node_id(pf) for pf in persona_files if scores.get(pf) == tier_name
+        ]
         if tier_nodes:
-            lines.append(f"    style {','.join(tier_nodes)} fill:{color},stroke:#333,stroke-width:1px")
+            lines.append(
+                f"    style {','.join(tier_nodes)} fill:{color},stroke:#333,stroke-width:1px"
+            )
 
     lines.append("")
 
@@ -172,7 +198,9 @@ def main():
         matrix_content = f.read()
 
     if "```mermaid" in matrix_content:
-        matrix_content = re.sub(r"## Relationship Diagram.*?```\s*", "", matrix_content, flags=re.DOTALL)
+        matrix_content = re.sub(
+            r"## Relationship Diagram.*?```\s*", "", matrix_content, flags=re.DOTALL
+        )
 
     legend = """
 ## Relationship Diagram
@@ -184,18 +212,33 @@ def main():
 
     insert_pos = matrix_content.find("\n---\n\n## Missing")
     if insert_pos == -1:
-        matrix_content = matrix_content.rstrip() + "\n\n" + legend + mermaid_block + "\n"
+        matrix_content = (
+            matrix_content.rstrip() + "\n\n" + legend + mermaid_block + "\n"
+        )
     else:
-        matrix_content = matrix_content[:insert_pos] + "\n\n" + legend + mermaid_block + "\n" + matrix_content[insert_pos:]
+        matrix_content = (
+            matrix_content[:insert_pos]
+            + "\n\n"
+            + legend
+            + mermaid_block
+            + "\n"
+            + matrix_content[insert_pos:]
+        )
 
     with open(MATRIX_PATH, "w", encoding="utf-8") as f:
         f.write(matrix_content)
 
-    print(f"✅ Mermaid diagram with {len(edges)} edges inserted into CROSS_DOMAIN_MATRIX.md")
-    print(f"   Tier distribution: " + ", ".join(
-        f"{t}: {sum(1 for p in persona_files if scores.get(p)==t)}"
-        for t in ["Sparse", "Moderate", "Thorough", "Comprehensive"]
-    ))
+    print(
+        f"✅ Mermaid diagram with {len(edges)} edges inserted into CROSS_DOMAIN_MATRIX.md"
+    )
+    print(
+        "   Tier distribution: "
+        + ", ".join(
+            f"{t}: {sum(1 for p in persona_files if scores.get(p)==t)}"
+            for t in ["Sparse", "Moderate", "Thorough", "Comprehensive"]
+        )
+    )
+
 
 if __name__ == "__main__":
     main()

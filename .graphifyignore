@@ -1,0 +1,21 @@
+# Ignore all markdown files
+*.md
+**/*.md
+
+# Ignore configuration and metadata files
+.gitignore
+.gitattributes
+.graphifyignore
+LICENSE
+requirements.txt
+
+# Ignore directories
+.github/
+personas/
+architecture/
+test_workspace/
+.git/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+graphify-out/

@@ -22,6 +22,18 @@ If no persona file matches, adopt the closest senior architect role and apply th
   4. **Technology Stack:** Mandated languages, frameworks, databases, or protocols?
   5. **External Integrations:** Third-party APIs, peripherals, industrial networks, or services?
 
+### Step 4 — Graphify Setup
+- Check if Graphify is initialized in the target workspace (e.g., checking for `graphify-out/` or `scripts/graphify_helper.py`).
+- If not initialized, prompt the user:
+  > "Do you want to initialize and configure Graphify for this project? (y/n)"
+- If the user agrees:
+  1. Create a `scripts/` directory if it does not exist.
+  2. Copy `d:/github/Archon/scripts/graphify_helper.py` to the target's `scripts/` folder.
+  3. Execute `python scripts/graphify_helper.py --build` to run the initial scan.
+  4. Create or update `.gitignore` in the target to ignore `graphify-out/`.
+  5. Create a default `.graphifyignore` to exclude cache, env, and build directories.
+  6. Document Graphify setup in `ONBOARDING.md` and link the generated SVG graph in `ARCHITECTURE.md`.
+
 ### Persona Tier System
 When multiple personas are detected or loaded, classify them by tier to control loading priority and context usage:
 

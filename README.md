@@ -56,20 +56,43 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 **Process, Data & Quality:**
 [qa_testing.md](personas/qa_testing.md), [db_architect.md](personas/db_architect.md), [product_management.md](personas/product_management.md), [security_compliance.md](personas/security_compliance.md), [erp_enterprise.md](personas/erp_enterprise.md), [technical_writing.md](personas/technical_writing.md)
 
-### Validation
-| File | Description |
+### Helper Utilities & Validation
+| File / Folder | Description |
 |---|---|
-| [scripts/validate_manifesto.py](scripts/validate_manifesto.py) | Linter: template integrity, registration, compliance, cross-domain symmetry, broken links |
+| [scripts/validate_manifesto.py](scripts/validate_manifesto.py) | Linter: Validates template integrity, persona rules, compliance references, cross-domain matrix symmetry, and broken links |
+| [scripts/bootstrap_target.py](scripts/bootstrap_target.py) | Scaffolder: Initializes a target project workspace with the 12 required compliance markdown templates |
+| [scripts/create_persona.py](scripts/create_persona.py) | CLI Tool: Prompts and generates a new domain persona template with proper frontmatter |
+| [scripts/generate_diagram.py](scripts/generate_diagram.py) | Generator: Analyzes cross-domain interfaces and generates/updates the Mermaid.js diagram |
+| [scripts/sync_matrix.py](scripts/sync_matrix.py) | Sync Tool: Automatically synchronizes `CROSS_DOMAIN_MATRIX.md` with persona file definitions |
+| [scripts/tests/](scripts/tests/) | Unit Tests: Test suite validating the Python scripts and utilities |
 
 ---
 
 ## How it Works (Integration Workflow)
 
-To use Archon as the manifesto repository for an AI working on another project:
+To integrate Archon into your development workflow with an AI agent (such as a senior architect or domain specialist), choose one of the two integration paths below:
 
-1. **Provide Manifesto Context:** Grant your AI agent access to this `Archon` project directory or share its core files.
-2. **Execute on Target Project:** Point the AI agent to the workspace of the target project you want to build, audit, or document.
-3. **Initialize the Session:** Use the system prompt below to align the AI's behavior with the Archon Manifesto.
+### Path A: Static Scaffolding (Recommended for New Projects)
+This method pre-populates the target project with compliance files, allowing the AI to immediately align with the predefined structure.
+
+1. **Bootstrap the Target Workspace:** Run the scaffolder tool locally:
+   ```bash
+   python scripts/bootstrap_target.py
+   ```
+   Provide the target project path and select the primary/supporting personas to load.
+2. **Commit Scaffolded Files:** Commit the generated files (e.g., `AGENTS.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`) to your target workspace.
+3. **Execute AI Agent:** Grant your AI agent access to both the target project and the `Archon` directory. Use the **System Prompt** below to kick off the session.
+
+---
+
+### Path B: Dynamic Auto-Detection (Recommended for Existing Projects)
+This method allows the AI agent to dynamically discover the tech stack, select the appropriate persona, and generate the compliance documents on-the-fly.
+
+1. **Provide Manifesto Context:** Grant your AI agent access to this `Archon` project directory (or share its core rules/personas).
+2. **Execute AI Agent:** Point the AI agent to your existing project workspace.
+3. **Initialize the Session:** Use the **System Prompt** below to align the AI's behavior. The AI will scan the project using `detection_signals.md`, select the persona, and prompt you with discovery questions.
+
+---
 
 ### System Prompt
 
@@ -85,3 +108,4 @@ Bu surecte, calisma alaninda yer alan kurallari harfiyen uygulaman gerekiyor. Lu
 5. Standart uyumlulugu icin `compliance.md` referans tablosunu kullan.
 6. Ilk adim olarak projemizi analiz et ve `architecture/00_detection.md` icindeki Discovery Questions'i (ve secilen persona dosyasindaki ozel sorulari) bana yonelterek sureci baslat.
 ```
+

@@ -58,7 +58,9 @@ def load_domain_mappings(signals_path=None):
         if "|" in line:
             parts = [p.strip() for p in line.split("|")]
             if len(parts) >= 4 and parts[3].startswith("`personas/"):
-                persona_file = parts[3].replace("`personas/", "").replace("`", "").strip()
+                persona_file = (
+                    parts[3].replace("`personas/", "").replace("`", "").strip()
+                )
                 domain_name = parts[2].strip()
                 mappings[persona_file] = domain_name
     return mappings
@@ -66,7 +68,7 @@ def load_domain_mappings(signals_path=None):
 
 def resolve_domain_to_persona_file(domain_str, mappings):
     """Resolve a domain name string to its corresponding persona filename.
-    
+
     Uses a multi-pass strategy:
     1. Exact match against canonical overrides
     2. Exact match against detection_signals.md mappings
@@ -75,17 +77,17 @@ def resolve_domain_to_persona_file(domain_str, mappings):
     5. Substring match with safety checks
     6. Fallback filename substring match
     """
-    norm_str = re.sub(r'[\s/&:-]', '', domain_str).lower()
+    norm_str = re.sub(r"[\s/&:_-]", "", domain_str).lower()
 
     # Check overrides exact match first
     for key, val in DOMAIN_OVERRIDES.items():
-        norm_key = re.sub(r'[\s/&:-]', '', key).lower()
+        norm_key = re.sub(r"[\s/&:_-]", "", key).lower()
         if norm_str == norm_key:
             return val
 
     # Check mappings exact match next
     for fn, dom in mappings.items():
-        norm_dom = re.sub(r'[\s/&:-]', '', dom).lower()
+        norm_dom = re.sub(r"[\s/&:_-]", "", dom).lower()
         if norm_str == norm_dom:
             return fn
 
@@ -97,13 +99,13 @@ def resolve_domain_to_persona_file(domain_str, mappings):
 
     # Check exact word/part match in domain
     for fn, dom in mappings.items():
-        parts = [re.sub(r'[\s/&:-]', '', p).lower() for p in re.split(r'[/&|-]', dom)]
+        parts = [re.sub(r"[\s/&:_-]", "", p).lower() for p in re.split(r"[/&|-]", dom)]
         if norm_str in parts:
             return fn
 
     # Substring mappings match with safety checks for short generic terms
     for fn, dom in mappings.items():
-        norm_dom = re.sub(r'[\s/&:-]', '', dom).lower()
+        norm_dom = re.sub(r"[\s/&:_-]", "", dom).lower()
         if norm_str in norm_dom:
             if norm_str == "automation" and fn != "automation.md":
                 continue

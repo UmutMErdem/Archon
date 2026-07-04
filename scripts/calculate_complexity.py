@@ -3,8 +3,8 @@ import re
 import sys
 
 try:
-    sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
 except AttributeError:
     pass
 
@@ -24,8 +24,9 @@ REQUIRED_HEADINGS = [
     r"^## Common Pitfalls",
     r"^## Recommended Toolchain",
     r"^## Domain-Specific Testing",
-    r"^## Cross-Domain Interfaces"
+    r"^## Cross-Domain Interfaces",
 ]
+
 
 def count_sections(content):
     count = 0
@@ -34,19 +35,26 @@ def count_sections(content):
             count += 1
     return count
 
+
 def count_interfaces(content):
-    match = re.search(r"## Cross-Domain Interfaces\s*(.*?)(?:\n## |\Z)", content, re.DOTALL)
+    match = re.search(
+        r"## Cross-Domain Interfaces\s*(.*?)(?:\n## |\Z)", content, re.DOTALL
+    )
     if not match:
         return 0
     block = match.group(1)
     return len(re.findall(r"^\s*-\s*\*\*→", block, re.MULTILINE))
 
+
 def count_compliance(content):
-    match = re.search(r"## Compliance & Standards\s*(.*?)(?:\n## |\Z)", content, re.DOTALL)
+    match = re.search(
+        r"## Compliance & Standards\s*(.*?)(?:\n## |\Z)", content, re.DOTALL
+    )
     if not match:
         return 0
     block = match.group(1)
-    return len([l for l in block.splitlines() if l.strip().startswith("-")])
+    return len([line for line in block.splitlines() if line.strip().startswith("-")])
+
 
 def score_label(score):
     if score <= 22:
@@ -58,13 +66,16 @@ def score_label(score):
     else:
         return "Comprehensive"
 
+
 def main():
     print("Calculating persona completeness scores...\n")
 
     scores = {}
     persona_files = sorted([f for f in os.listdir(PERSONAS_DIR) if f.endswith(".md")])
 
-    print(f"{'Persona':<30} {'Sections':>8} {'Interfaces':>10} {'Compliance':>10} {'Score':>6} {'Label':>10}")
+    print(
+        f"{'Persona':<30} {'Sections':>8} {'Interfaces':>10} {'Compliance':>10} {'Score':>6} {'Label':>10}"
+    )
     print("-" * 84)
 
     for pf in persona_files:
@@ -81,10 +92,12 @@ def main():
             "interfaces": interfaces,
             "compliance": compliance,
             "score": score,
-            "label": score_label(score)
+            "label": score_label(score),
         }
 
-        print(f"{pf:<30} {sections:>8} {interfaces:>10} {compliance:>10} {score:>6} {score_label(score):>10}")
+        print(
+            f"{pf:<30} {sections:>8} {interfaces:>10} {compliance:>10} {score:>6} {score_label(score):>10}"
+        )
 
     with open(SIGNALS_PATH, "r", encoding="utf-8") as f:
         content = f.read()
@@ -131,7 +144,8 @@ def main():
     with open(SIGNALS_PATH, "w", encoding="utf-8") as f:
         f.write("\n".join(new_lines) + "\n")
 
-    print(f"\n✅ Completeness scores added to detection_signals.md")
+    print("\n✅ Completeness scores added to detection_signals.md")
+
 
 if __name__ == "__main__":
     main()

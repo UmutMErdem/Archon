@@ -1,10 +1,9 @@
 import os
-import re
 import sys
 
 try:
-    sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
 except AttributeError:
     pass
 
@@ -15,39 +14,40 @@ INHERITS_MAP = {
     "api_design.md": {
         "base": "web_mobile_apps.md",
         "base_reason": "HTTP standards, authentication patterns, web security practices",
-        "overrides": "API contract design, versioning policy, rate limiting rules"
+        "overrides": "API contract design, versioning policy, rate limiting rules",
     },
     "ui_ux_design.md": {
         "base": "web_mobile_apps.md",
         "base_reason": "frontend framework conventions, build tooling, testing patterns",
-        "overrides": "component API design, visual regression standards, accessibility requirements"
+        "overrides": "component API design, visual regression standards, accessibility requirements",
     },
     "mobile_native.md": {
         "base": "web_mobile_apps.md",
         "base_reason": "general application architecture patterns, API integration conventions",
-        "overrides": "platform-specific lifecycle, native UI toolkit patterns, app store guidelines"
+        "overrides": "platform-specific lifecycle, native UI toolkit patterns, app store guidelines",
     },
     "cloud_architecture.md": {
         "base": "devops.md",
         "base_reason": "CI/CD pipeline patterns, containerization standards, IaC conventions",
-        "overrides": "cloud-native service selection, multi-region topology, cost optimization"
+        "overrides": "cloud-native service selection, multi-region topology, cost optimization",
     },
     "security_compliance.md": {
         "base": "cybersecurity.md",
         "base_reason": "threat modeling methodology, vulnerability assessment patterns",
-        "overrides": "compliance audit frameworks, governance policies, regulatory controls"
+        "overrides": "compliance audit frameworks, governance policies, regulatory controls",
     },
     "qa_testing.md": {
         "base": "web_mobile_apps.md",
         "base_reason": "packaging, logging, linting standards from primary dev persona",
-        "overrides": "test strategy, coverage targets, flakiness rules, CI test stages"
+        "overrides": "test strategy, coverage targets, flakiness rules, CI test stages",
     },
     "data_engineering.md": {
         "base": "db_architect.md",
         "base_reason": "database fundamentals, query optimization, schema design",
-        "overrides": "pipeline orchestration, warehouse modeling, streaming architecture"
+        "overrides": "pipeline orchestration, warehouse modeling, streaming architecture",
     },
 }
+
 
 def add_inherits_to_frontmatter(filename, inherits_info):
     filepath = os.path.join(PERSONAS_DIR, filename)
@@ -85,6 +85,7 @@ def add_inherits_to_frontmatter(filename, inherits_info):
     else:
         print(f"  OK {filename}: standalone (no inheritance)")
 
+
 def main():
     print("Adding inherits to persona frontmatter...")
     persona_files = sorted([f for f in os.listdir(PERSONAS_DIR) if f.endswith(".md")])
@@ -94,6 +95,7 @@ def main():
         add_inherits_to_frontmatter(pf, inherits_info)
 
     print(f"\nDone. {len(persona_files)} personas processed.")
+
 
 if __name__ == "__main__":
     main()

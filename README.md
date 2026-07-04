@@ -61,6 +61,7 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 |---|---|
 | [scripts/validate_manifesto.py](scripts/validate_manifesto.py) | Linter: Validates template integrity, persona rules, compliance references, cross-domain matrix symmetry, and broken links |
 | [scripts/bootstrap_target.py](scripts/bootstrap_target.py) | Scaffolder: Initializes a target project workspace with the 12 required compliance markdown templates |
+| [scripts/graphify_helper.py](scripts/graphify_helper.py) | Graphify: Automates installation, graph generation, and exports (SVG, HTML, Obsidian, Wiki) to build queryable codebase graphs |
 | [scripts/create_persona.py](scripts/create_persona.py) | CLI Tool: Prompts and generates a new domain persona template with proper frontmatter |
 | [scripts/generate_diagram.py](scripts/generate_diagram.py) | Generator: Analyzes cross-domain interfaces and generates/updates the Mermaid.js diagram |
 | [scripts/sync_matrix.py](scripts/sync_matrix.py) | Sync Tool: Automatically synchronizes `CROSS_DOMAIN_MATRIX.md` with persona file definitions |
@@ -79,8 +80,8 @@ This method pre-populates the target project with compliance files, allowing the
    ```bash
    python scripts/bootstrap_target.py
    ```
-   Provide the target project path and select the primary/supporting personas to load.
-2. **Commit Scaffolded Files:** Commit the generated files (e.g., `AGENTS.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`) to your target workspace.
+   Provide the target project path, select the primary/supporting personas to load, and opt to initialize **Graphify** for automated codebase mapping (generates interactive SVG/HTML and Obsidian files).
+2. **Commit Scaffolded Files:** Commit the generated files (e.g., `AGENTS.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`, `.graphifyignore`) to your target workspace.
 3. **Execute AI Agent:** Grant your AI agent access to both the target project and the `Archon` directory. Use the **System Prompt** below to kick off the session.
 
 ---

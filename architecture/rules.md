@@ -1,0 +1,26 @@
+# Rules
+
+- Read every source file and design document before writing any output.
+- Tables over prose; be specific (file:line references, exact values).
+- No placeholders — if something is unknown, say "not found in source".
+- Flag any security or physical safety issue as CRITICAL in KNOWN_ISSUES.md immediately.
+- Do not invent features or components not present in the files.
+- **Clickable Links:** Create clickable markdown links for every referenced file, class, function, or symbol.
+- **Exclusions:** Do not analyze build outputs or external dependencies. Focus on first-party source code and design files.
+- **Verbatim Extraction:** Extract signatures, variables, and constants verbatim. Never guess or paraphrase.
+- **DRY:** Do not duplicate information across files. Use hyperlinks to cross-reference.
+- **No Assumptions:** If code is empty, stubbed, or unclear, report it as "incomplete/undefined".
+- **Persona Adherence:** Follow all additional rules and focus areas defined in the loaded persona file.
+- **Multi-Persona Collaboration:** If the project is cross-domain, apply Phase 0.5 rules to resolve conflicts and merge output sections.
+- **Reference Validation (Quality Gate):** Verify that all file paths, folders, class/struct/function names, or symbols referenced in markdown links actually exist in the codebase. Never generate dead links.
+- **Incremental Sync Rule:** Never overwrite a complete documentation file unless performing a clean setup. Always modify existing content incrementally using targeted edits to preserve manual annotations.
+- **Output Priority Order:** When generating documentation, always produce findings in this order: (1) CRITICAL security/safety issues → KNOWN_ISSUES.md, (2) ARCHITECTURE.md core sections, (3) PROJECT_STATE.md, (4) remaining files. The most important information must be written first to survive context limits.
+- **Version Snapshot Tagging:** Every documentation generation or update must record the analysis date, Git commit hash (or `N/A`), and branch name in `PROJECT_STATE.md`. This ensures traceability between documentation and codebase state.
+- **Diagram Consistency:** All diagrams must use Mermaid.js with the standardized diagram type mappings defined in ARCHITECTURE.md Section 9. Use descriptive node labels, never raw IDs or abbreviations.
+- **Sensitive Data Handling:** Never reproduce hardcoded secrets (API keys, passwords, tokens, private keys, PII) verbatim in documentation. Replace them with `[REDACTED]` and immediately log a CRITICAL entry in KNOWN_ISSUES.md with the file:line location, secret type, and remediation recommendation (e.g., move to environment variables or a secrets manager).
+- **Unparseable Content:** For binary files, minified/obfuscated code, or auto-generated files that cannot be meaningfully analyzed, do not skip silently or guess contents. Tag them in the ARCHITECTURE.md file tree as `[BINARY]`, `[MINIFIED]`, `[AUTO-GENERATED]`, or `[UNPARSEABLE]` with a one-line description of what the file likely is (based on name, extension, or context). Never fabricate analysis for unreadable content.
+- **Architectural Design Guidelines:**
+  - **Clean Architecture:** Enforce clear separation of concerns (Domain/Entities, Application/Use Cases, Infrastructure/Adapters, and Presentation/UI layers). Ensure dependencies point inwards (towards the Domain).
+  - **Modular Monoliths:** Organize modules by business domain boundaries. Maintain high cohesion within modules and low coupling between modules.
+  - **Event-Driven Architectures:** For highly decoupled systems, document event payloads, producers, consumers, and message broker configurations (e.g. RabbitMQ, Kafka, Redis Pub/Sub).
+- All file content in English; communicate with me in Turkish.

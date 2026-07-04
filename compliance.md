@@ -2,6 +2,8 @@
 
 This document serves as a cross-domain reference for compliance standards, certifications, and regulatory frameworks. The AI should check this table when populating the **Compliance & Regulatory** section of ARCHITECTURE.md and SECURITY.md.
 
+> **Last Reviewed:** 2026-07-04 — Standards in rapidly evolving domains (e.g., EU AI Act, MiCA) should be re-verified periodically. Check official sources before citing version numbers.
+
 ---
 
 ## General / Cross-Domain
@@ -153,6 +155,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | ISO/IEC C & C++ | C and C++ Programming Language Standards (e.g. C11, C++20) |
 | MISRA C / CERT C | Guidelines and standards for safety-critical and secure systems |
 | AUTOSAR C++14 | Guidelines for the use of C++14 in critical systems |
+| Linux Kernel Coding Style | Coding style guidelines for Linux kernel contributors |
 
 ## Mechanical Engineering / CAD
 
@@ -181,3 +184,118 @@ This document serves as a cross-domain reference for compliance standards, certi
 | IEEE 802.11ax/be | Wi-Fi 6 / Wi-Fi 7 |
 | ITU-T | Telecom standards |
 | TIA-942 | Data center infrastructure |
+
+---
+
+## QA / Test Automation
+
+| Standard | Scope |
+|---|---|
+| ISO/IEC 29119 | International standard for software testing |
+| IEEE 829 | Standard for software and system test documentation |
+| ISTQB Guidelines | Worldwide standard for software testing certification and terminology |
+| WCAG 2.1 Level AA | Web content accessibility rules for testing accessibility gates |
+
+---
+
+## Database Architect / DBA
+
+| Standard | Scope |
+|---|---|
+| ACID | Standards for transactional reliability (Atomicity, Consistency, Isolation, Durability) |
+| CAP Theorem | Trade-offs between Consistency, Availability, and Partition tolerance |
+| TPC-C / TPC-H | Transaction processing and decision support benchmarks |
+| GDPR Art 17 / Art 32 | Right to erasure (scrubbing/deletion) and security of data processing |
+
+---
+
+## Product Management / Business Analysis
+
+| Standard | Scope |
+|---|---|
+| Scrum Guide | Standard framework for Scrum rules, roles, and events |
+| IIBA BABOK | Business Analysis Body of Knowledge standard |
+| Agile Alliance Principles | Core principles for agile software development |
+| Gherkin BDD | Standardized natural language syntax for behavior-driven development requirements |
+
+---
+
+## Security Compliance / DevSecOps
+
+| Standard | Scope |
+|---|---|
+| ISO/IEC 27017 / 27018 | Cloud security controls and protection of PII in public clouds |
+| SOC 2 Type II | Audit report for operational security, availability, and privacy controls |
+| OWASP ASVS | Application Security Verification Standard |
+| CIS Controls | Critical security controls checklist for securing systems |
+
+---
+
+## Cloud Architecture
+
+| Standard | Scope |
+|---|---|
+| AWS Well-Architected Framework | 6-pillar cloud architecture review (Security, Reliability, Cost, etc.) |
+| Azure Well-Architected Framework | Microsoft cloud architecture assessment framework |
+| GCP Architecture Framework | Google Cloud design and operational best practices |
+| SOC 2 Type II | Cloud service security and availability audit |
+| ISO 27017 | Cloud-specific information security controls |
+| CSA STAR | Cloud Security Alliance trust certification |
+| NIST 800-53 | Federal security controls applicable to cloud environments |
+
+---
+
+## API Design & Integration
+
+| Standard | Scope |
+|---|---|
+| OpenAPI Specification 3.1 | API contract definition standard (formerly Swagger) |
+| JSON:API | JSON response format convention for REST APIs |
+| RFC 7807 (Problem Details) | Standard error response format for HTTP APIs |
+| OAuth 2.0 / OpenID Connect | Authentication and authorization protocol standards |
+| gRPC / Protocol Buffers | High-performance RPC service definition standard |
+
+---
+
+## UI/UX Design Engineering
+
+| Standard | Scope |
+|---|---|
+| WCAG 2.1 Level AA | Web content accessibility guidelines |
+| EN 301 549 | European ICT accessibility standard |
+| Section 508 | US federal accessibility requirements |
+| WAI-ARIA 1.2 | Accessible Rich Internet Applications specification |
+
+---
+
+## Mobile Native Development
+
+| Standard | Scope |
+|---|---|
+| Apple App Store Review Guidelines | iOS app distribution and compliance requirements |
+| Google Play Developer Policy | Android app distribution requirements |
+| Apple Human Interface Guidelines | iOS/macOS design and interaction standards |
+| Material Design 3 | Android/cross-platform UI design system guidelines |
+| App Tracking Transparency (ATT) | iOS user privacy and tracking consent framework |
+
+---
+
+## ERP & Enterprise Systems
+
+| Standard | Scope |
+|---|---|
+| SOX (Sarbanes-Oxley) | Financial system internal controls and audit compliance |
+| GxP (Good Practice) | Pharmaceutical/life sciences ERP validation |
+| EDIFACT / X12 | Electronic Data Interchange standards for supply chain |
+| GDPR / KVKK | Personal data protection in HR and CRM modules |
+
+---
+
+## Technical Writing & Documentation
+
+| Standard | Scope |
+|---|---|
+| Diataxis Framework | Documentation content taxonomy (tutorials, how-to, reference, explanation) |
+| Google Developer Documentation Style Guide | Technical writing style and formatting standard |
+| Microsoft Writing Style Guide | Technical content voice, tone, and formatting rules |
+| ASD-STE100 | Simplified Technical English for regulated industries |

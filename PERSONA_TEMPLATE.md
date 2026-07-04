@@ -6,11 +6,24 @@ HOW TO USE THIS TEMPLATE
 2. Replace every <ANGLE_BRACKET> placeholder; delete guidance comments.
 3. Keep ALL section headings below — Archon relies on this fixed structure.
    Heading names must match the other persona files verbatim.
-4. Register the new persona in THREE places inside `architecture.md`:
-     - Phase 0 → Step 1 domain list (the user-facing question)
-     - Phase 0 → Step 1 "Detection Signals" table (file/config heuristics)
-     - Phase 0 → Step 2 "Load the Matching Persona File" routing table
-5. Add the domain's standards to `compliance.md` and list it in `README.md`.
+4. Add YAML frontmatter at the top (before the # heading) with the following fields:
+     ---
+     domain: "<Domain Name>"
+     expert_role: "You are a <Senior Title> with expertise in ..."
+     recommended_tools: ["<Tool 1>", "<Tool 2>"]
+     compliance: ["<Standard 1>", "<Standard 2>"]
+     inherits:
+       base: "<parent_persona_file.md>"
+       base_reason: "<what is inherited and why>"
+       overrides: "<what this persona overrides from the base>"
+     ---
+   For standalone personas (no inheritance), use: inherits: "none"
+5. Register the new persona in FOUR places:
+     - `architecture/00_detection.md` → Step 1 domain list (the user-facing question)
+     - `detection_signals.md` → Add a row with file/config heuristics and persona file path
+     - `CROSS_DOMAIN_MATRIX.md` → Add cross-domain interface entries
+     - `README.md` → Add to the persona listing
+6. Add the domain's standards to `compliance.md`.
 -->
 
 ## Expert Role

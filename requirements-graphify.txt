@@ -1,0 +1,4 @@
+# Optional: knowledge-graph tooling used by scripts/graphify_helper.py.
+# Keep the graphifyy pin in sync with GRAPHIFY_REQUIREMENT in that script.
+graphifyy==0.9.90
+matplotlib>=3.5,<4

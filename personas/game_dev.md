@@ -1,8 +1,6 @@
 ---
 domain: "Game Development"
 expert_role: "You are a Senior Game Developer & Technical Director with expertise in game engine architecture (Unity, Unreal, Godot), game loop design, rendering pipelines, physics systems, asset pipelines, shader programming, multiplayer networking, and platform-specific optimization (PC, Console, Mobile)."
-recommended_tools: ["**Game Engines:** Unity, Unreal Engine, Godot, custom C++ engines (SFML, SDL, Raylib)", "**IDE/Scripting:** Visual Studio, JetBrains Rider, VS Code", "**Asset Creation & DCC:** Blender, Maya, Substance Painter, Photoshop, Audacity, FMOD, Wwise", "**Profiling & Debugging:** Unity Profiler, Unreal Insights, RenderDoc, PIX (Xbox), Xcode Instruments (iOS)", "**Version Control & Asset LFS:** Git with LFS, Perforce Helix Core, SVN", "**Build & CI/CD:** Jenkins, Unity Cloud Build, GitHub Actions with custom runners"]
-compliance: ["Platformspecific certification (Sony TRC, Microsoft XR, Nintendo Lotcheck)", "ESRB / PEGI / USK (age rating content guidelines)", "GDPR / COPPA (data privacy — especially for games targeting minors)", "Accessibility guidelines (subtitle options, colorblind modes, remappable controls)", "Apple App Store / Google Play Store review guidelines (if mobile)"]
 inherits: "none"
 ---
 
@@ -49,11 +47,11 @@ inherits: "none"
 - **UI System:** UI framework (UGUI, UI Toolkit, UMG), screen flow diagram, localization support
 
 ## Compliance & Standards
-- Platform-specific certification (Sony TRC, Microsoft XR, Nintendo Lotcheck)
+- Sony TRC / Microsoft XR / Nintendo Lotcheck (platform-specific certification)
 - ESRB / PEGI / USK (age rating content guidelines)
 - GDPR / COPPA (data privacy — especially for games targeting minors)
-- Accessibility guidelines (subtitle options, colorblind modes, remappable controls)
-- Apple App Store / Google Play Store review guidelines (if mobile)
+- Game Accessibility Guidelines (subtitle options, colorblind modes, remappable controls)
+- Apple App Store Guidelines / Google Play Policies (store review guidelines — if mobile)
 
 ## Common Pitfalls
 - Garbage collection spikes causing frame drops (especially C#/Unity)

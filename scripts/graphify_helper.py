@@ -1,10 +1,17 @@
-import os
-import sys
-import subprocess
-import argparse
-import shutil
+"""Build, update, and query a Graphify knowledge graph for a project.
 
-# Set system output to UTF-8
+Standalone on purpose: bootstrap_target.py copies this file into target projects.
+"""
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+
+# Keep in sync with requirements-graphify.txt.
+GRAPHIFY_REQUIREMENT = "graphifyy==0.9.90"
+
 try:
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
@@ -13,172 +20,139 @@ except AttributeError:
 
 
 def is_graphify_installed():
-    """Check if graphify CLI is available in the environment."""
     return shutil.which("graphify") is not None
 
 
 def install_graphify():
-    """Attempt to install graphifyy package using uv or pip."""
-    print("Graphify CLI not found. Attempting automatic installation...")
-
-    # Check if uv is installed
-    has_uv = shutil.which("uv") is not None
-
-    if has_uv:
-        print(
-            "Detected 'uv'. Installing 'graphifyy' tool via uv with matplotlib support..."
-        )
+    """Install the pinned graphifyy package with uv (preferred) or pip."""
+    if shutil.which("uv"):
+        print(f"Installing {GRAPHIFY_REQUIREMENT} with uv...")
         try:
             subprocess.run(
-                ["uv", "tool", "install", "graphifyy", "--with", "matplotlib"],
+                ["uv", "tool", "install", GRAPHIFY_REQUIREMENT, "--with", "matplotlib"],
                 check=True,
             )
-            print("Successfully installed graphifyy using uv!")
-            return True
         except subprocess.CalledProcessError as e:
             print(f"uv installation failed: {e}. Trying pip...")
+        else:
+            return True
 
-    # Fallback to pip
-    print("Installing 'graphifyy' and 'matplotlib' via pip...")
+    print(f"Installing {GRAPHIFY_REQUIREMENT} and matplotlib with pip...")
     try:
         subprocess.run(
-            [sys.executable, "-m", "pip", "install", "graphifyy", "matplotlib"],
+            [sys.executable, "-m", "pip", "install", GRAPHIFY_REQUIREMENT, "matplotlib"],
             check=True,
         )
-        print("Successfully installed graphifyy using pip!")
-        return True
     except subprocess.CalledProcessError as e:
-        print(f"Error: Installation via pip failed: {e}")
-        print("Please manually run: pip install graphifyy matplotlib")
+        print(f"Error: pip installation failed: {e}")
         return False
+    return True
 
 
-def run_command(cmd):
-    """Run a system command and return status."""
+def run_command(cmd, quiet=False):
     try:
-        result = subprocess.run(cmd, check=True)
-        return result.returncode == 0
+        subprocess.run(cmd, check=True, capture_output=quiet)
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
         print(f"Error running command {' '.join(cmd)}: {e}")
         return False
+    return True
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Graphify Automation and Helper Script"
-    )
-    parser.add_argument(
-        "--path",
-        default=".",
-        help="Target path to analyze (default: current directory)",
-    )
-    parser.add_argument(
-        "--build", action="store_true", help="Build/rebuild the knowledge graph"
-    )
-    parser.add_argument(
-        "--update", action="store_true", help="Perform incremental update of the graph"
-    )
-    parser.add_argument(
-        "--query", type=str, help="Query/Ask a question to the knowledge graph"
-    )
-    parser.add_argument(
-        "--hooks", action="store_true", help="Install Git hooks for automatic updates"
-    )
-    parser.add_argument(
-        "--install-only", action="store_true", help="Only install graphifyy and exit"
-    )
-
-    args = parser.parse_args()
-
-    # Ensure graphify is installed
+def ensure_graphify(allow_install):
+    if is_graphify_installed():
+        return True
+    if not allow_install:
+        print(
+            "Error: the 'graphify' CLI is not on PATH. Install it with\n"
+            f"  pip install {GRAPHIFY_REQUIREMENT} matplotlib\n"
+            "or re-run this script with --install."
+        )
+        return False
+    if not install_graphify():
+        return False
     if not is_graphify_installed():
-        success = install_graphify()
-        if not success:
-            sys.exit(1)
+        print(
+            "Error: graphifyy was installed but 'graphify' is still not on PATH. "
+            "Add the install location (e.g. `uv tool dir --bin`) to PATH."
+        )
+        return False
+    return True
 
+
+def build(target_path, update):
+    print(f"{'Updating' if update else 'Building'} knowledge graph for: {target_path}")
+    cmd = ["graphify", target_path] + (["--update"] if update else [])
+    if not run_command(cmd):
+        return 1
+
+    graph_json = os.path.join(target_path, "graphify-out", "graph.json")
+    steps = [
+        (["graphify", "cluster-only", target_path, "--no-label"], False),
+        (["graphify", "export", "svg", "--graph", graph_json], False),
+        (
+            [
+                "graphify",
+                "export",
+                "obsidian",
+                "--graph",
+                graph_json,
+                "--dir",
+                os.path.join(target_path, "graphify-out", "obsidian"),
+            ],
+            True,
+        ),
+        (["graphify", "export", "wiki", "--graph", graph_json], True),
+    ]
+    failed = [" ".join(cmd[:3]) for cmd, quiet in steps if not run_command(cmd, quiet)]
+
+    out_dir = os.path.join(target_path, "graphify-out")
+    if failed:
+        print(f"\n❌ Graph built in {out_dir}, but these steps failed: {', '.join(failed)}")
+        return 1
+    print(f"\n✅ Graphify analysis and exports complete: {out_dir}")
+    print("  - graph.json, graph.html, graph.svg, obsidian/, wiki/")
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--path", default=".", help="Project to analyze (default: .)")
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument("--build", action="store_true", help="Build the graph (default)")
+    action.add_argument("--update", action="store_true", help="Incremental update")
+    action.add_argument("--query", type=str, help="Ask the graph a question")
+    action.add_argument("--hooks", action="store_true", help="Install git hooks")
+    action.add_argument(
+        "--install-only", action="store_true", help=f"Install {GRAPHIFY_REQUIREMENT} and exit"
+    )
+    parser.add_argument(
+        "--install",
+        action="store_true",
+        help=f"Install {GRAPHIFY_REQUIREMENT} if the graphify CLI is missing",
+    )
+    args = parser.parse_args(argv)
+
+    if not ensure_graphify(args.install or args.install_only):
+        return 1
     if args.install_only:
         print("Graphify is ready.")
-        sys.exit(0)
+        return 0
 
     target_path = os.path.abspath(args.path)
-
-    # Handle hooks installation
     if args.hooks:
-        print(f"Installing Git hooks in {target_path}...")
-        cmd = ["graphify", target_path, "--install-hooks"]
-        if run_command(cmd):
-            print("Git hooks installed successfully.")
-        else:
-            print("Failed to install Git hooks.")
-        sys.exit(0)
-
-    # Handle querying
+        ok = run_command(["graphify", target_path, "--install-hooks"])
+        print("Git hooks installed." if ok else "Failed to install git hooks.")
+        return 0 if ok else 1
     if args.query:
-        print(f"Querying graph in {target_path}: '{args.query}'...")
-        cmd = ["graphify", "query", args.query]
-        # Query typically runs in the workspace where graphify-out exists
-        original_cwd = os.getcwd()
+        print(f"Querying graph in {target_path}: '{args.query}'")
         try:
-            os.chdir(target_path)
-            run_command(cmd)
-        finally:
-            os.chdir(original_cwd)
-        sys.exit(0)
-
-    # Handle build or update
-    if args.build or args.update or len(sys.argv) == 1:
-        action_name = "Updating" if args.update else "Building"
-        print(f"{action_name} knowledge graph for: {target_path}")
-
-        # 1. Run main extract/build command
-        cmd = ["graphify", target_path]
-        if args.update:
-            cmd.append("--update")
-
-        print(f"Running extract command: {' '.join(cmd)}")
-        if not run_command(cmd):
-            print("Failed to run Graphify extraction.")
-            sys.exit(1)
-
-        # 2. Run cluster-only to generate HTML visualizer and report
-        cluster_cmd = ["graphify", "cluster-only", target_path, "--no-label"]
-        print(f"Running cluster command: {' '.join(cluster_cmd)}")
-        run_command(cluster_cmd)
-
-        # 3. Export SVG diagram
-        graph_json_path = os.path.join(target_path, "graphify-out", "graph.json")
-        svg_cmd = ["graphify", "export", "svg", "--graph", graph_json_path]
-        print(f"Running SVG export command: {' '.join(svg_cmd)}")
-        run_command(svg_cmd)
-
-        # 4. Optional Exports (Obsidian and Wiki)
-        obsidian_dir = os.path.join(target_path, "graphify-out", "obsidian")
-        obsidian_cmd = [
-            "graphify",
-            "export",
-            "obsidian",
-            "--graph",
-            graph_json_path,
-            "--dir",
-            obsidian_dir,
-        ]
-        print(f"Running Obsidian export command: {' '.join(obsidian_cmd)}")
-        subprocess.run(
-            obsidian_cmd, capture_output=True
-        )  # Run silently to avoid cluttering logs on expected minor errors
-
-        wiki_cmd = ["graphify", "export", "wiki", "--graph", graph_json_path]
-        print(f"Running Wiki export command: {' '.join(wiki_cmd)}")
-        subprocess.run(wiki_cmd, capture_output=True)  # Run silently
-
-        print("\n✅ Graphify analysis and exports complete!")
-        print(f"Output files generated in: {os.path.join(target_path, 'graphify-out')}")
-        print("  - Full Graph Data: graphify-out/graph.json")
-        print("  - Interactive View: graphify-out/graph.html")
-        print("  - SVG Diagram: graphify-out/graph.svg")
-        print("  - Obsidian Vault: graphify-out/obsidian/ (optional)")
-        print("  - Wiki: graphify-out/wiki/ (optional)")
+            subprocess.run(["graphify", "query", args.query], check=True, cwd=target_path)
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            print(f"Query failed: {e}")
+            return 1
+        return 0
+    return build(target_path, args.update)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -1,8 +1,8 @@
 # Cross-Domain Interface Matrix
 
-> Single source of truth for all persona-to-persona interface contracts.
-> Each row = a directional interface. Both directions should exist for bidirectional relationships.
-> Updated whenever a persona's `## Cross-Domain Interfaces` section changes.
+> Generated from `personas/*.md` by `scripts/sync_matrix.py`. Do not edit by hand:
+> change the persona's `## Cross-Domain Interfaces` section and re-run the script.
+> Each row is a directional interface; `scripts/validate_manifesto.py` enforces that both directions exist.
 
 ---
 
@@ -31,7 +31,7 @@
 | Automation | Cybersecurity | Industrial network segmentation (IEC 62443), remote access hardening |
 | Automation | Embedded/IoT | Edge gateway integration, sensor/actuator firmware coordination |
 | Automation | Hardware Design | Panel layout, wiring diagrams, terminal block assignments |
-| Automation | Mechanical CAD | Sensor placement mounts, pneumatic routing, actuator strokes |
+| Automation | Mechanical/CAD | Sensor placement mounts, pneumatic routing, actuator strokes |
 | Automation | Network/Telecom | Industrial Ethernet configuration, VLAN isolation for OT networks |
 | Automation | Web/Mobile Apps | Dashboard/reporting integration via OPC-UA or MQTT broker |
 | Blockchain | Cybersecurity | Smart contract audit procedures, multi-sig setups, timelock configurations, bug bounty programs, front-run monitoring |
@@ -110,7 +110,7 @@
 | Embedded/IoT | DevOps | CI/CD pipeline for firmware builds, binary artifact management |
 | Embedded/IoT | FPGA | SPI/I2C bridge to FPGA fabric, shared memory interfaces, interrupt coordination |
 | Embedded/IoT | Hardware Design | Pin assignments, power rails, schematic review, BOM validation |
-| Embedded/IoT | Mechanical CAD | Button/actuator clearances, LED pipe locations, connector cutout dimensions |
+| Embedded/IoT | Mechanical/CAD | Button/actuator clearances, LED pipe locations, connector cutout dimensions |
 | Embedded/IoT | Network/Telecom | Static IP allocation, IoT VLAN configuration, cellular modem management |
 | Embedded/IoT | Robotics | Motor controller firmware APIs, sensor driver integration, real-time comm |
 | Embedded/IoT | Signal Processing | ADC/DAC configuration, filter coefficient loading, DMA buffer management |
@@ -129,14 +129,13 @@
 | Hardware Design | Automation | Panel layout coordination, wiring diagram review, terminal block assignments |
 | Hardware Design | Embedded/IoT | Pin mapping coordination, peripheral voltage levels, crystal/oscillator selection |
 | Hardware Design | FPGA | I/O bank voltage compatibility, high-speed differential pair routing, power sequencing |
-| Hardware Design | Mechanical CAD | Board outline and mounting hole coordination, enclosure clearances, connector placement |
+| Hardware Design | Mechanical/CAD | Board outline and mounting hole coordination, enclosure clearances, connector placement |
 | Hardware Design | Robotics | Custom PCB for motor drivers, sensor boards, power distribution |
-| Hardware Design | Security Compliance | EMC pre-compliance testing, antenna design for radio modules |
 | Hardware Design | Signal Processing | ADC/DAC analog front-end design, anti-aliasing filter component selection |
-| Mechanical CAD | Automation | Sensor placement mounts, pneumatic routing pathing, actuator strokes and clearances, cable chain layouts |
-| Mechanical CAD | Embedded/IoT | Button/actuator travels, LED status pipe locations, display panel tolerances, connector cutouts |
-| Mechanical CAD | Hardware Design | PCB outline files (DXF/STEP), enclosure mounting hole alignments, thermal interface materials (TIM), keep-out zones |
-| Mechanical CAD | Robotics | Kinematic chain lengths, gear ratio setups, motor mount alignments, structural payload calculations |
+| Mechanical/CAD | Automation | Sensor placement mounts, pneumatic routing pathing, actuator strokes and clearances, cable chain layouts |
+| Mechanical/CAD | Embedded/IoT | Button/actuator travels, LED status pipe locations, display panel tolerances, connector cutouts |
+| Mechanical/CAD | Hardware Design | PCB outline files (DXF/STEP), enclosure mounting hole alignments, thermal interface materials (TIM), keep-out zones |
+| Mechanical/CAD | Robotics | Kinematic chain lengths, gear ratio setups, motor mount alignments, structural payload calculations |
 | Mobile Native | API Design | API client consumption, mobile SDK integration, push notification payloads |
 | Mobile Native | Database Architect | SQLite/Room schema definition, offline database migrations, conflict resolution strategies |
 | Mobile Native | DevOps | Fastlane build runners configuration, provisioning profiles signing certificates, App Store/Play Store upload pipelines |
@@ -169,7 +168,7 @@
 | Robotics | AI/ML | Perception models (object detection, SLAM), reinforcement learning policies |
 | Robotics | Embedded/IoT | Motor controller firmware, sensor driver integration, real-time communication |
 | Robotics | Hardware Design | Custom PCB for motor drivers, sensor boards, power distribution |
-| Robotics | Mechanical CAD | URDF/Xacro model accuracy, joint specifications, enclosure design |
+| Robotics | Mechanical/CAD | URDF/Xacro model accuracy, joint specifications, enclosure design |
 | Robotics | Signal Processing | Sensor data filtering, IMU fusion, audio-based localization |
 | Security Compliance | API Design | OAuth scope definitions, API key rotation policies, API access audit logging |
 | Security Compliance | Cybersecurity | Threat modeling alignment (STRIDE), compliance audit logging, CVE patch reviews |
@@ -177,7 +176,6 @@
 | Security Compliance | Database Architect | Encrypting data at rest/in transit, DB user permissions auditing, data deletion/anonymization scripts |
 | Security Compliance | DevOps | Security policy-as-code, Docker image hardening, secret injection in runner pipelines |
 | Security Compliance | ERP/Enterprise | Segregation of duties (SoD), audit trail logging, SOX controls |
-| Security Compliance | Hardware Design | Securing physical PCB designs, firmware validation audits |
 | Security Compliance | QA/Testing | Injecting security test cases into E2E suites, automated vulnerability report triaging |
 | Security Compliance | Web/Mobile Apps | User input sanitization specifications, CORS configuration, CSRF/XSS mitigations, GDPR cookie consent models |
 | Signal Processing | AI/ML | Feature extraction (MFCCs, spectrograms, wavelets) as input pipelines for neural networks |
@@ -225,10 +223,13 @@
 
 ---
 
-## Interface Graph
+## Relationship Diagram
+
+> One undirected edge per persona pair. Node color = persona completeness level (sections + interfaces + compliance bullets, see `scripts/calculate_complexity.py`):
+> Sparse (0–22) · Moderate (23–26) · Thorough (27–32) · Comprehensive (33+).
 
 ```mermaid
-flowchart TD
+graph LR
     aiml["AI/ML"]
     apidesign["API Design"]
     arvrxr["AR/VR/XR"]
@@ -244,7 +245,7 @@ flowchart TD
     fpgadigital["FPGA"]
     gamedev["Game Dev"]
     hardwaredesign["Hardware Design"]
-    mechanicalcad["Mechanical CAD"]
+    mechanicalcad["Mechanical/CAD"]
     mobilenative["Mobile Native"]
     networktelecom["Network/Telecom"]
     productmanagement["Product Management"]
@@ -256,479 +257,115 @@ flowchart TD
     technicalwriting["Technical Writing"]
     uiuxdesign["UI/UX Design"]
     webmobileapps["Web/Mobile Apps"]
-    aiml --> dataengineering
-    aiml --> devops
-    aiml --> embeddediot
-    aiml --> robotics
-    aiml --> signalprocessing
-    aiml --> webmobileapps
-    apidesign --> dbarchitect
-    apidesign --> devops
-    apidesign --> mobilenative
-    apidesign --> qatesting
-    apidesign --> securitycompliance
-    apidesign --> technicalwriting
-    apidesign --> uiuxdesign
-    apidesign --> webmobileapps
-    arvrxr --> cybersecurity
-    arvrxr --> devops
-    arvrxr --> gamedev
-    arvrxr --> webmobileapps
-    automation --> cybersecurity
-    automation --> embeddediot
-    automation --> hardwaredesign
-    automation --> mechanicalcad
-    automation --> networktelecom
-    automation --> webmobileapps
-    blockchain --> cybersecurity
-    blockchain --> dataengineering
-    blockchain --> devops
-    blockchain --> webmobileapps
-    cloudarchitecture --> cybersecurity
-    cloudarchitecture --> dataengineering
-    cloudarchitecture --> dbarchitect
-    cloudarchitecture --> devops
-    cloudarchitecture --> webmobileapps
-    cybersecurity --> arvrxr
-    cybersecurity --> automation
-    cybersecurity --> blockchain
-    cybersecurity --> cloudarchitecture
-    cybersecurity --> dataengineering
-    cybersecurity --> dbarchitect
-    cybersecurity --> devops
-    cybersecurity --> embeddediot
-    cybersecurity --> erpenterprise
-    cybersecurity --> gamedev
-    cybersecurity --> networktelecom
-    cybersecurity --> qatesting
-    cybersecurity --> securitycompliance
-    cybersecurity --> systemsprogramming
-    cybersecurity --> webmobileapps
-    dataengineering --> aiml
-    dataengineering --> blockchain
-    dataengineering --> cloudarchitecture
-    dataengineering --> cybersecurity
-    dataengineering --> dbarchitect
-    dataengineering --> devops
-    dataengineering --> erpenterprise
-    dataengineering --> securitycompliance
-    dataengineering --> webmobileapps
-    dbarchitect --> apidesign
-    dbarchitect --> cloudarchitecture
-    dbarchitect --> cybersecurity
-    dbarchitect --> dataengineering
-    dbarchitect --> devops
-    dbarchitect --> erpenterprise
-    dbarchitect --> mobilenative
-    dbarchitect --> productmanagement
-    dbarchitect --> qatesting
-    dbarchitect --> securitycompliance
-    dbarchitect --> webmobileapps
-    devops --> aiml
-    devops --> apidesign
-    devops --> arvrxr
-    devops --> blockchain
-    devops --> cloudarchitecture
-    devops --> cybersecurity
-    devops --> dataengineering
-    devops --> dbarchitect
-    devops --> embeddediot
-    devops --> erpenterprise
-    devops --> gamedev
-    devops --> mobilenative
-    devops --> networktelecom
-    devops --> productmanagement
-    devops --> qatesting
-    devops --> securitycompliance
-    devops --> systemsprogramming
-    devops --> technicalwriting
-    devops --> webmobileapps
-    embeddediot --> aiml
-    embeddediot --> automation
-    embeddediot --> cybersecurity
-    embeddediot --> devops
-    embeddediot --> fpgadigital
-    embeddediot --> hardwaredesign
-    embeddediot --> mechanicalcad
-    embeddediot --> networktelecom
-    embeddediot --> robotics
-    embeddediot --> signalprocessing
-    embeddediot --> systemsprogramming
-    embeddediot --> webmobileapps
-    erpenterprise --> cybersecurity
-    erpenterprise --> dataengineering
-    erpenterprise --> dbarchitect
-    erpenterprise --> devops
-    erpenterprise --> productmanagement
-    erpenterprise --> securitycompliance
-    erpenterprise --> webmobileapps
-    fpgadigital --> embeddediot
-    fpgadigital --> hardwaredesign
-    fpgadigital --> networktelecom
-    fpgadigital --> signalprocessing
-    fpgadigital --> systemsprogramming
-    gamedev --> arvrxr
-    gamedev --> cybersecurity
-    gamedev --> devops
-    gamedev --> signalprocessing
-    gamedev --> webmobileapps
-    hardwaredesign --> automation
-    hardwaredesign --> embeddediot
-    hardwaredesign --> fpgadigital
-    hardwaredesign --> mechanicalcad
-    hardwaredesign --> robotics
-    hardwaredesign --> securitycompliance
-    hardwaredesign --> signalprocessing
-    mechanicalcad --> automation
-    mechanicalcad --> embeddediot
-    mechanicalcad --> hardwaredesign
-    mechanicalcad --> robotics
-    mobilenative --> apidesign
-    mobilenative --> dbarchitect
-    mobilenative --> devops
-    mobilenative --> qatesting
-    mobilenative --> uiuxdesign
-    mobilenative --> webmobileapps
-    networktelecom --> automation
-    networktelecom --> cybersecurity
-    networktelecom --> devops
-    networktelecom --> embeddediot
-    networktelecom --> fpgadigital
-    networktelecom --> webmobileapps
-    productmanagement --> dbarchitect
-    productmanagement --> devops
-    productmanagement --> erpenterprise
-    productmanagement --> qatesting
-    productmanagement --> technicalwriting
-    productmanagement --> uiuxdesign
-    productmanagement --> webmobileapps
-    qatesting --> apidesign
-    qatesting --> cybersecurity
-    qatesting --> dbarchitect
-    qatesting --> devops
-    qatesting --> mobilenative
-    qatesting --> productmanagement
-    qatesting --> securitycompliance
-    qatesting --> technicalwriting
-    qatesting --> uiuxdesign
-    qatesting --> webmobileapps
-    robotics --> aiml
-    robotics --> embeddediot
-    robotics --> hardwaredesign
-    robotics --> mechanicalcad
-    robotics --> signalprocessing
-    securitycompliance --> apidesign
-    securitycompliance --> cybersecurity
-    securitycompliance --> dataengineering
-    securitycompliance --> dbarchitect
-    securitycompliance --> devops
-    securitycompliance --> erpenterprise
-    securitycompliance --> hardwaredesign
-    securitycompliance --> qatesting
-    securitycompliance --> webmobileapps
-    signalprocessing --> aiml
-    signalprocessing --> embeddediot
-    signalprocessing --> fpgadigital
-    signalprocessing --> gamedev
-    signalprocessing --> hardwaredesign
-    signalprocessing --> robotics
-    systemsprogramming --> cybersecurity
-    systemsprogramming --> devops
-    systemsprogramming --> embeddediot
-    systemsprogramming --> fpgadigital
-    systemsprogramming --> webmobileapps
-    technicalwriting --> apidesign
-    technicalwriting --> devops
-    technicalwriting --> productmanagement
-    technicalwriting --> qatesting
-    technicalwriting --> webmobileapps
-    uiuxdesign --> apidesign
-    uiuxdesign --> mobilenative
-    uiuxdesign --> productmanagement
-    uiuxdesign --> qatesting
-    uiuxdesign --> webmobileapps
-    webmobileapps --> aiml
-    webmobileapps --> apidesign
-    webmobileapps --> arvrxr
-    webmobileapps --> automation
-    webmobileapps --> blockchain
-    webmobileapps --> cloudarchitecture
-    webmobileapps --> cybersecurity
-    webmobileapps --> dataengineering
-    webmobileapps --> dbarchitect
-    webmobileapps --> devops
-    webmobileapps --> embeddediot
-    webmobileapps --> erpenterprise
-    webmobileapps --> gamedev
-    webmobileapps --> mobilenative
-    webmobileapps --> networktelecom
-    webmobileapps --> productmanagement
-    webmobileapps --> qatesting
-    webmobileapps --> securitycompliance
-    webmobileapps --> systemsprogramming
-    webmobileapps --> technicalwriting
-    webmobileapps --> uiuxdesign
-```
-
----
-
-## Relationship Diagram
-
-> Auto-generated by `scripts/generate_diagram.py`. Color indicates completeness tier:
-> - 🔴 Comprehensive (33+) — 🟠 Thorough (27-32) — 🟢 Moderate (23-26) — 🔵 Sparse (≤22)
-
-```mermaid
-graph LR
-    aiml["AI/ML"]
-    apidesign["API"]
-    arvrxr["AR/VR/XR"]
-    automation["Automation"]
-    blockchain["Blockchain"]
-    cloudarchitecture["CloudArch"]
-    cybersecurity["CyberSec"]
-    dataengineering["DataEng"]
-    dbarchitect["Database"]
-    devops["DevOps"]
-    embeddediot["Embedded"]
-    erpenterprise["ERP"]
-    fpgadigital["FPGA"]
-    gamedev["GameDev"]
-    hardwaredesign["Hardware"]
-    mechanicalcad["MechCAD"]
-    mobilenative["MobileNat"]
-    networktelecom["NetTelecom"]
-    productmanagement["ProdMgmt"]
-    qatesting["QA"]
-    robotics["Robotics"]
-    securitycompliance["SecCompl"]
-    signalprocessing["DSP"]
-    systemsprogramming["SysProg"]
-    technicalwriting["TechWrite"]
-    uiuxdesign["UI/UX"]
-    webmobileapps["Web/Mobile"]
 
     style cybersecurity,devops,webmobileapps fill:#FF6B6B,stroke:#333,stroke-width:1px
     style dbarchitect,embeddediot fill:#FFA94D,stroke:#333,stroke-width:1px
     style aiml,apidesign,automation,dataengineering,erpenterprise,hardwaredesign,mechanicalcad,networktelecom,productmanagement,qatesting,securitycompliance,signalprocessing fill:#69DB7C,stroke:#333,stroke-width:1px
     style arvrxr,blockchain,cloudarchitecture,fpgadigital,gamedev,mobilenative,robotics,systemsprogramming,technicalwriting,uiuxdesign fill:#74C0FC,stroke:#333,stroke-width:1px
 
-    aiml --> dataengineering
-    aiml --> devops
-    aiml --> embeddediot
-    aiml --> robotics
-    aiml --> signalprocessing
-    aiml --> webmobileapps
-    apidesign --> dbarchitect
-    apidesign --> devops
-    apidesign --> mobilenative
-    apidesign --> qatesting
-    apidesign --> securitycompliance
-    apidesign --> technicalwriting
-    apidesign --> uiuxdesign
-    apidesign --> webmobileapps
-    arvrxr --> cybersecurity
-    arvrxr --> devops
-    arvrxr --> gamedev
-    arvrxr --> webmobileapps
-    automation --> cybersecurity
-    automation --> embeddediot
-    automation --> hardwaredesign
-    automation --> mechanicalcad
-    automation --> networktelecom
-    automation --> webmobileapps
-    blockchain --> cybersecurity
-    blockchain --> dataengineering
-    blockchain --> devops
-    blockchain --> webmobileapps
-    cloudarchitecture --> cybersecurity
-    cloudarchitecture --> dataengineering
-    cloudarchitecture --> dbarchitect
-    cloudarchitecture --> devops
-    cloudarchitecture --> webmobileapps
-    cybersecurity --> arvrxr
-    cybersecurity --> automation
-    cybersecurity --> blockchain
-    cybersecurity --> cloudarchitecture
-    cybersecurity --> dataengineering
-    cybersecurity --> dbarchitect
-    cybersecurity --> devops
-    cybersecurity --> embeddediot
-    cybersecurity --> erpenterprise
-    cybersecurity --> gamedev
-    cybersecurity --> networktelecom
-    cybersecurity --> qatesting
-    cybersecurity --> securitycompliance
-    cybersecurity --> systemsprogramming
-    cybersecurity --> webmobileapps
-    dataengineering --> aiml
-    dataengineering --> blockchain
-    dataengineering --> cloudarchitecture
-    dataengineering --> cybersecurity
-    dataengineering --> dbarchitect
-    dataengineering --> devops
-    dataengineering --> erpenterprise
-    dataengineering --> securitycompliance
-    dataengineering --> webmobileapps
-    dbarchitect --> apidesign
-    dbarchitect --> cloudarchitecture
-    dbarchitect --> cybersecurity
-    dbarchitect --> dataengineering
-    dbarchitect --> devops
-    dbarchitect --> erpenterprise
-    dbarchitect --> mobilenative
-    dbarchitect --> productmanagement
-    dbarchitect --> qatesting
-    dbarchitect --> securitycompliance
-    dbarchitect --> webmobileapps
-    devops --> aiml
-    devops --> apidesign
-    devops --> arvrxr
-    devops --> blockchain
-    devops --> cloudarchitecture
-    devops --> cybersecurity
-    devops --> dataengineering
-    devops --> dbarchitect
-    devops --> embeddediot
-    devops --> erpenterprise
-    devops --> gamedev
-    devops --> mobilenative
-    devops --> networktelecom
-    devops --> productmanagement
-    devops --> qatesting
-    devops --> securitycompliance
-    devops --> systemsprogramming
-    devops --> technicalwriting
-    devops --> webmobileapps
-    embeddediot --> aiml
-    embeddediot --> automation
-    embeddediot --> cybersecurity
-    embeddediot --> devops
-    embeddediot --> fpgadigital
-    embeddediot --> hardwaredesign
-    embeddediot --> mechanicalcad
-    embeddediot --> networktelecom
-    embeddediot --> robotics
-    embeddediot --> signalprocessing
-    embeddediot --> systemsprogramming
-    embeddediot --> webmobileapps
-    erpenterprise --> cybersecurity
-    erpenterprise --> dataengineering
-    erpenterprise --> dbarchitect
-    erpenterprise --> devops
-    erpenterprise --> productmanagement
-    erpenterprise --> securitycompliance
-    erpenterprise --> webmobileapps
-    fpgadigital --> embeddediot
-    fpgadigital --> hardwaredesign
-    fpgadigital --> networktelecom
-    fpgadigital --> signalprocessing
-    fpgadigital --> systemsprogramming
-    gamedev --> arvrxr
-    gamedev --> cybersecurity
-    gamedev --> devops
-    gamedev --> signalprocessing
-    gamedev --> webmobileapps
-    hardwaredesign --> automation
-    hardwaredesign --> embeddediot
-    hardwaredesign --> fpgadigital
-    hardwaredesign --> mechanicalcad
-    hardwaredesign --> robotics
-    hardwaredesign --> securitycompliance
-    hardwaredesign --> signalprocessing
-    mechanicalcad --> automation
-    mechanicalcad --> embeddediot
-    mechanicalcad --> hardwaredesign
-    mechanicalcad --> robotics
-    mobilenative --> apidesign
-    mobilenative --> dbarchitect
-    mobilenative --> devops
-    mobilenative --> qatesting
-    mobilenative --> uiuxdesign
-    mobilenative --> webmobileapps
-    networktelecom --> automation
-    networktelecom --> cybersecurity
-    networktelecom --> devops
-    networktelecom --> embeddediot
-    networktelecom --> fpgadigital
-    networktelecom --> webmobileapps
-    productmanagement --> dbarchitect
-    productmanagement --> devops
-    productmanagement --> erpenterprise
-    productmanagement --> qatesting
-    productmanagement --> technicalwriting
-    productmanagement --> uiuxdesign
-    productmanagement --> webmobileapps
-    qatesting --> apidesign
-    qatesting --> cybersecurity
-    qatesting --> dbarchitect
-    qatesting --> devops
-    qatesting --> mobilenative
-    qatesting --> productmanagement
-    qatesting --> securitycompliance
-    qatesting --> technicalwriting
-    qatesting --> uiuxdesign
-    qatesting --> webmobileapps
-    robotics --> aiml
-    robotics --> embeddediot
-    robotics --> hardwaredesign
-    robotics --> mechanicalcad
-    robotics --> signalprocessing
-    securitycompliance --> apidesign
-    securitycompliance --> cybersecurity
-    securitycompliance --> dataengineering
-    securitycompliance --> dbarchitect
-    securitycompliance --> devops
-    securitycompliance --> erpenterprise
-    securitycompliance --> hardwaredesign
-    securitycompliance --> qatesting
-    securitycompliance --> webmobileapps
-    signalprocessing --> aiml
-    signalprocessing --> embeddediot
-    signalprocessing --> fpgadigital
-    signalprocessing --> gamedev
-    signalprocessing --> hardwaredesign
-    signalprocessing --> robotics
-    systemsprogramming --> cybersecurity
-    systemsprogramming --> devops
-    systemsprogramming --> embeddediot
-    systemsprogramming --> fpgadigital
-    systemsprogramming --> webmobileapps
-    technicalwriting --> apidesign
-    technicalwriting --> devops
-    technicalwriting --> productmanagement
-    technicalwriting --> qatesting
-    technicalwriting --> webmobileapps
-    uiuxdesign --> apidesign
-    uiuxdesign --> mobilenative
-    uiuxdesign --> productmanagement
-    uiuxdesign --> qatesting
-    uiuxdesign --> webmobileapps
-    webmobileapps --> aiml
-    webmobileapps --> apidesign
-    webmobileapps --> arvrxr
-    webmobileapps --> automation
-    webmobileapps --> blockchain
-    webmobileapps --> cloudarchitecture
-    webmobileapps --> cybersecurity
-    webmobileapps --> dataengineering
-    webmobileapps --> dbarchitect
-    webmobileapps --> devops
-    webmobileapps --> embeddediot
-    webmobileapps --> erpenterprise
-    webmobileapps --> gamedev
-    webmobileapps --> mobilenative
-    webmobileapps --> networktelecom
-    webmobileapps --> productmanagement
-    webmobileapps --> qatesting
-    webmobileapps --> securitycompliance
-    webmobileapps --> systemsprogramming
-    webmobileapps --> technicalwriting
-    webmobileapps --> uiuxdesign
+    aiml --- dataengineering
+    aiml --- devops
+    aiml --- embeddediot
+    aiml --- robotics
+    aiml --- signalprocessing
+    aiml --- webmobileapps
+    apidesign --- dbarchitect
+    apidesign --- devops
+    apidesign --- mobilenative
+    apidesign --- qatesting
+    apidesign --- securitycompliance
+    apidesign --- technicalwriting
+    apidesign --- uiuxdesign
+    apidesign --- webmobileapps
+    arvrxr --- cybersecurity
+    arvrxr --- devops
+    arvrxr --- gamedev
+    arvrxr --- webmobileapps
+    automation --- cybersecurity
+    automation --- embeddediot
+    automation --- hardwaredesign
+    automation --- mechanicalcad
+    automation --- networktelecom
+    automation --- webmobileapps
+    blockchain --- cybersecurity
+    blockchain --- dataengineering
+    blockchain --- devops
+    blockchain --- webmobileapps
+    cloudarchitecture --- cybersecurity
+    cloudarchitecture --- dataengineering
+    cloudarchitecture --- dbarchitect
+    cloudarchitecture --- devops
+    cloudarchitecture --- webmobileapps
+    cybersecurity --- dataengineering
+    cybersecurity --- dbarchitect
+    cybersecurity --- devops
+    cybersecurity --- embeddediot
+    cybersecurity --- erpenterprise
+    cybersecurity --- gamedev
+    cybersecurity --- networktelecom
+    cybersecurity --- qatesting
+    cybersecurity --- securitycompliance
+    cybersecurity --- systemsprogramming
+    cybersecurity --- webmobileapps
+    dataengineering --- dbarchitect
+    dataengineering --- devops
+    dataengineering --- erpenterprise
+    dataengineering --- securitycompliance
+    dataengineering --- webmobileapps
+    dbarchitect --- devops
+    dbarchitect --- erpenterprise
+    dbarchitect --- mobilenative
+    dbarchitect --- productmanagement
+    dbarchitect --- qatesting
+    dbarchitect --- securitycompliance
+    dbarchitect --- webmobileapps
+    devops --- embeddediot
+    devops --- erpenterprise
+    devops --- gamedev
+    devops --- mobilenative
+    devops --- networktelecom
+    devops --- productmanagement
+    devops --- qatesting
+    devops --- securitycompliance
+    devops --- systemsprogramming
+    devops --- technicalwriting
+    devops --- webmobileapps
+    embeddediot --- fpgadigital
+    embeddediot --- hardwaredesign
+    embeddediot --- mechanicalcad
+    embeddediot --- networktelecom
+    embeddediot --- robotics
+    embeddediot --- signalprocessing
+    embeddediot --- systemsprogramming
+    embeddediot --- webmobileapps
+    erpenterprise --- productmanagement
+    erpenterprise --- securitycompliance
+    erpenterprise --- webmobileapps
+    fpgadigital --- hardwaredesign
+    fpgadigital --- networktelecom
+    fpgadigital --- signalprocessing
+    fpgadigital --- systemsprogramming
+    gamedev --- signalprocessing
+    gamedev --- webmobileapps
+    hardwaredesign --- mechanicalcad
+    hardwaredesign --- robotics
+    hardwaredesign --- signalprocessing
+    mechanicalcad --- robotics
+    mobilenative --- qatesting
+    mobilenative --- uiuxdesign
+    mobilenative --- webmobileapps
+    networktelecom --- webmobileapps
+    productmanagement --- qatesting
+    productmanagement --- technicalwriting
+    productmanagement --- uiuxdesign
+    productmanagement --- webmobileapps
+    qatesting --- securitycompliance
+    qatesting --- technicalwriting
+    qatesting --- uiuxdesign
+    qatesting --- webmobileapps
+    robotics --- signalprocessing
+    securitycompliance --- webmobileapps
+    systemsprogramming --- webmobileapps
+    technicalwriting --- webmobileapps
+    uiuxdesign --- webmobileapps
 ```
-
-
----
-
-## Missing Bidirectional Interfaces
-
-Run `python scripts/validate_manifesto.py` to verify bidirectional symmetry.

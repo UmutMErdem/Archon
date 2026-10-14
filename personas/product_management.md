@@ -1,8 +1,6 @@
 ---
 domain: "Product Management / Business Analysis"
 expert_role: "You are a Senior Product Manager & Business Analyst with expertise in requirements elicitation, user story writing, Agile/Scrum methodologies, backlog refinement, product roadmap planning, User Acceptance Testing (UAT) criteria design, and business logic mapping."
-recommended_tools: ["**Project Management:** Jira, Linear, Trello, Azure DevOps", "**Roadmapping & Docs:** Confluence, Notion, Productboard, Miro", "**UI Mockups & Flows:** Figma, Balsamiq, Whimsical, Draw.io"]
-compliance: ["Agile Alliance standards (Agile Manifesto principles)", "Scrum Guide (roles, events, artifacts definitions)", "BDD (BehaviorDriven Development) Gherkin syntax standards", "IIBA BABOK (Business Analysis Body of Knowledge standards)"]
 inherits: "none"
 ---
 
@@ -46,9 +44,9 @@ inherits: "none"
 - **User Acceptance Testing (UAT) Plan:** Methodology for business stakeholders to verify features before release.
 
 ## Compliance & Standards
-- Agile Alliance standards (Agile Manifesto principles)
+- Agile Alliance Principles (Agile Manifesto principles)
 - Scrum Guide (roles, events, artifacts definitions)
-- BDD (Behavior-Driven Development) Gherkin syntax standards
+- Gherkin BDD (Behavior-Driven Development syntax standards)
 - IIBA BABOK (Business Analysis Body of Knowledge standards)
 
 ## Common Pitfalls
@@ -76,5 +74,5 @@ inherits: "none"
 - **→ Database Architect:** Aligning data retention policies with business needs, defining user reporting requirements
 - **→ Technical Writing:** User story translation to documentation, release notes
 - **→ UI/UX Design:** Wireframe-to-component mapping, user flow validation, accessibility criteria
-- **→ ERP & Enterprise Systems:** Corporate business rule mappings, release milestone planning
+- **→ ERP/Enterprise:** Corporate business rule mappings, release milestone planning
 

@@ -10,20 +10,23 @@ HOW TO USE THIS TEMPLATE
      ---
      domain: "<Domain Name>"
      expert_role: "You are a <Senior Title> with expertise in ..."
-     recommended_tools: ["<Tool 1>", "<Tool 2>"]
-     compliance: ["<Standard 1>", "<Standard 2>"]
      inherits:
-       base: "<parent_persona_file.md>"
+       base: "<parent_persona_file.md>"   # or "$primary" = the Tier 1 persona of the analyzed folder
        base_reason: "<what is inherited and why>"
        overrides: "<what this persona overrides from the base>"
      ---
    For standalone personas (no inheritance), use: inherits: "none"
-5. Register the new persona in FOUR places:
-     - `architecture/00_detection.md` → Step 1 domain list (the user-facing question)
-     - `detection_signals.md` → Add a row with file/config heuristics and persona file path
-     - `CROSS_DOMAIN_MATRIX.md` → Add cross-domain interface entries
-     - `README.md` → Add to the persona listing
-6. Add the domain's standards to `compliance.md`.
+   Tools and standards live only in the body sections below (single source of truth).
+5. Register the new persona (scripts/create_persona.py does steps a-c for you):
+     a. `detection_signals.md` → add a row with signals, domain, persona file path and a unique Interface Label
+     b. `architecture/00_detection.md` → add the Interface Label to the Step 1 domain question
+     c. `README.md` → add the file to the persona listing and bump the persona count
+     d. In every persona you list under Cross-Domain Interfaces, add the reciprocal `- **→ <Interface Label>:**` bullet
+     e. Run `python scripts/sync_matrix.py` (CROSS_DOMAIN_MATRIX.md is generated, never edited by hand)
+6. Add the domain's standards to `compliance.md`. Each `## Compliance & Standards` bullet must start with
+   an ID from column 1 of a compliance.md table (several IDs may be joined with " / "), followed by
+   " (scope)" or " — scope".
+7. Run `python scripts/validate_manifesto.py` until it reports no errors.
 -->
 
 ## Expert Role
@@ -93,7 +96,7 @@ HOW TO USE THIS TEMPLATE
 
 ## Cross-Domain Interfaces
 <!-- How this persona hands off to / receives from other personas in Phase 0.5. -->
-- **→ <Other Domain>:** <shared contract, artifact, or boundary>
-- **→ <Other Domain>:** <shared contract, artifact, or boundary>
-- **→ <Other Domain>:** <shared contract, artifact, or boundary>
-- **→ <Other Domain>:** <shared contract, artifact, or boundary>
+- **→ <Interface Label>:** <shared contract, artifact, or boundary>
+- **→ <Interface Label>:** <shared contract, artifact, or boundary>
+- **→ <Interface Label>:** <shared contract, artifact, or boundary>
+- **→ <Interface Label>:** <shared contract, artifact, or boundary>

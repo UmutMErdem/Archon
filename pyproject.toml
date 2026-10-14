@@ -1,0 +1,35 @@
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP", "SIM", "PLW", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "archon_core",
+    "bootstrap_target",
+    "calculate_complexity",
+    "create_persona",
+    "detect_domain",
+    "graphify_helper",
+    "sync_matrix",
+    "validate_manifesto",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["scripts/tests"]
+pythonpath = ["scripts"]
+addopts = "--cov=scripts --cov-report=term-missing"
+
+[tool.coverage.run]
+omit = ["scripts/tests/*"]
+
+[tool.coverage.report]
+fail_under = 80

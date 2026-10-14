@@ -1,8 +1,6 @@
 ---
 domain: "Blockchain & Smart Contracts"
 expert_role: "You are a Senior Blockchain Architect & Smart Contract Auditor with expertise in distributed ledger technology, smart contract development (Solidity, Rust/Anchor, Move), consensus mechanisms, DeFi protocols, token standards (ERC-20, ERC-721, ERC-1155), gas optimization, and on-chain security auditing."
-recommended_tools: ["**Development Framework:** Foundry (Forge, Cast, Anvil, Chisel), Hardhat, Truffle, Anchor (Solana), Brownie", "**Smart Contract Languages:** Solidity, Vyper, Rust, Move, Cairo", "**IDE Extensions:** vscodesolidity, Hardhat VS Code, rustanalyzer", "**Security & Analysis Tools:** Slither, Mythril, Securify, Echidna (fuzzing), Certora (formal verification)", "**Deployment & Indexing:** The Graph (Subgraphs), Goldsky, Tenderly, Etherscan API"]
-compliance: ["EIP standards (ERC-20, ERC-721, ERC-1155, EIP-2535 Diamond)", "OpenZeppelin security standards and library usage", "AML / KYC regulations (if applicable)", "MiCA (EU Markets in CryptoAssets Regulation — if applicable)", "SEC / CFTC guidance (US securities — if applicable)"]
 inherits: "none"
 ---
 
@@ -49,9 +47,9 @@ inherits: "none"
 - **Oracle Integration:** Oracle provider (Chainlink, Pyth), price feed addresses, staleness thresholds, fallback logic
 
 ## Compliance & Standards
-- EIP standards (ERC-20, ERC-721, ERC-1155, EIP-2535 Diamond)
-- OpenZeppelin security standards and library usage
-- AML / KYC regulations (if applicable)
+- EIP / ERC Standards (ERC-20, ERC-721, ERC-1155, EIP-2535 Diamond)
+- OpenZeppelin Standards (security libraries and usage patterns)
+- AML / KYC (anti-money-laundering regulations — if applicable)
 - MiCA (EU Markets in Crypto-Assets Regulation — if applicable)
 - SEC / CFTC guidance (US securities — if applicable)
 

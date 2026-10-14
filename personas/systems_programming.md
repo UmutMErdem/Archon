@@ -1,8 +1,6 @@
 ---
 domain: "Systems Programming / OS / Drivers"
 expert_role: "You are a Senior Systems Programmer & OS Engineer with expertise in low-level development, operating systems, kernel modules, device drivers, compilers, CLI tools, systems languages (C, C++, Rust, Zig), memory management, and concurrency models."
-recommended_tools: ["**Languages/Compilers:** GCC, Clang, Rustc (cargo), Zig", "**Debuggers:** GDB, LLDB, WinDbg", "**Profilers:** Valgrind (Memcheck, Cachegrind), Perf, Callgrind, Hotspot, gprof", "**Static/Dynamic Analysis:** AddressSanitizer (ASan), ThreadSanitizer (TSan), MemorySanitizer (MSan), ClangTidy, cppcheck", "**Build Systems:** CMake, Make, Cargo, Meson, Ninja"]
-compliance: ["POSIX standards (Portable Operating System Interface)", "ISO/IEC C (C11/C17/C23) and C++ (C++17/C++20/C++23) standards", "MISRA C / CERT C/C++ coding guidelines", "Linux Kernel Coding Style (if kernelspace)", "ABI Stability guidelines"]
 inherits: "none"
 ---
 
@@ -47,11 +45,11 @@ inherits: "none"
 - **Crash & Core Dump Handling:** Logging levels, stack tracing, core dump generation, panic hook setups
 
 ## Compliance & Standards
-- POSIX standards (Portable Operating System Interface)
-- ISO/IEC C (C11/C17/C23) and C++ (C++17/C++20/C++23) standards
-- MISRA C / CERT C/C++ coding guidelines
+- POSIX (Portable Operating System Interface)
+- ISO/IEC C & C++ (C11/C17/C23 and C++17/C++20/C++23 language standards)
+- MISRA C / CERT C (safety and security coding guidelines, incl. CERT C++)
 - Linux Kernel Coding Style (if kernel-space)
-- ABI Stability guidelines
+- ABI stability guidelines
 
 ## Common Pitfalls
 - Memory leaks and dangling pointers in manual memory management
@@ -77,7 +75,7 @@ inherits: "none"
 - **Concurrency Testing:** Stress tests with high thread counts and sleep randomization to expose race conditions
 
 ## Cross-Domain Interfaces
-- **→ Embedded Systems / IoT:** Writing HAL (Hardware Abstraction Layer) libraries, registering interrupt vectors, custom board support packages
+- **→ Embedded/IoT:** Writing HAL (Hardware Abstraction Layer) libraries, registering interrupt vectors, custom board support packages
 - **→ DevOps:** Packaging system binaries (deb, rpm, MSI), setting up systemd services, containerizing system daemons
 - **→ Cybersecurity:** Hardening binaries (ASLR, DEP, stack smashing protectors), conducting secure code reviews, auditing system call usage
 - **→ Web/Mobile Apps:** Exposing shared libraries via FFI (Foreign Function Interface), JNI, or WebAssembly (Wasm) modules

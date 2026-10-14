@@ -2,7 +2,7 @@
 
 This document serves as a cross-domain reference for compliance standards, certifications, and regulatory frameworks. The AI should check this table when populating the **Compliance & Regulatory** section of ARCHITECTURE.md and SECURITY.md.
 
-> **Last Reviewed:** 2026-07-04 — Standards in rapidly evolving domains (e.g., EU AI Act, MiCA) should be re-verified periodically. Check official sources before citing version numbers.
+> **Last Reviewed:** 2026-10-14 — Standards in rapidly evolving domains (e.g., EU AI Act, MiCA) should be re-verified periodically. Check official sources before citing version numbers.
 
 ---
 
@@ -12,7 +12,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 |---|---|---|---|
 | GDPR | General Data Protection Regulation | Personal data privacy (EU) | Any system processing EU citizen data |
 | KVKK | Kişisel Verilerin Korunması Kanunu | Personal data privacy (Turkey) | Any system processing Turkish citizen data |
-| ISO 27001 | Information Security Management | Information security governance | All domains handling sensitive data |
+| ISO/IEC 27001 | Information Security Management | Information security governance | All domains handling sensitive data |
 | ISO 9001 | Quality Management Systems | Quality processes | Manufacturing, services, software |
 | RoHS | Restriction of Hazardous Substances | Material restrictions | All physical/electronic products sold in EU |
 | REACH | Registration, Evaluation of Chemicals | Chemical safety | Products containing chemicals (EU) |
@@ -28,6 +28,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | UL / IEC 62368-1 | Audio/video and IT equipment safety |
 | IEC 60730 | Automatic electrical controls (household) |
 | ETSI EN 303 645 | IoT cybersecurity baseline (EU) |
+| ISED RSS | Radio equipment certification (Canada, formerly Industry Canada / IC) |
 
 ## Hardware Design (PCB)
 
@@ -57,7 +58,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 |---|---|
 | OWASP Top 10 | Web application security risks |
 | OWASP ASVS | Application security verification |
-| WCAG 2.1 (Level AA) | Web content accessibility |
+| WCAG 2.2 Level AA | Web content accessibility (W3C Recommendation since Oct 2023) |
 | PCI-DSS | Payment card data security |
 | SOC 2 Type II | Service organization controls |
 | HIPAA | Health data protection (USA) |
@@ -88,8 +89,8 @@ This document serves as a cross-domain reference for compliance standards, certi
 |---|---|
 | SOC 2 Type II | Cloud service security/availability |
 | CIS Benchmarks | Cloud/OS/container hardening |
-| NIST 800-53 | Federal security controls |
-| ISO 27017 | Cloud-specific security controls |
+| NIST SP 800-53 | Federal security controls |
+| ISO/IEC 27017 | Cloud-specific security controls |
 | CSA STAR | Cloud security certification |
 
 ## Robotics
@@ -98,7 +99,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 |---|---|
 | ISO 10218-1/2 | Industrial robot safety |
 | ISO 15066 | Collaborative robot safety |
-| CE Machinery Directive 2006/42/EC | Machine safety (EU) |
+| EU Machinery Regulation 2023/1230 | Machine safety (EU); replaces Directive 2006/42/EC from 2027-01-20 |
 | ASTM F3218 | Small UAS (drone) standards |
 | ROS REP Standards | ROS coordinate frames and conventions |
 
@@ -127,7 +128,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | OpenXR | Cross-platform portability standard for XR devices |
 | WebXR Device API | Browser accessibility standard for XR hardware |
 | W3C XAUR | Accessibility user requirements for XR applications |
-| Oculus VRCs / VisionOS HIG | Platform-specific submission guidelines and standards |
+| Meta Quest VRCs / Apple visionOS HIG | Platform-specific submission guidelines and standards |
 
 ## Cybersecurity
 
@@ -137,6 +138,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | MITRE ATT&CK | Threat intelligence framework |
 | CIS Controls | Prioritized security actions |
 | CVSS | Vulnerability severity scoring |
+| ISO/IEC 27002 | Information security controls catalogue |
 
 ## Signal Processing / DSP
 
@@ -146,6 +148,8 @@ This document serves as a cross-domain reference for compliance standards, certi
 | ITU-T / ITU-R | Audio/video codec standards |
 | AES Standards | Professional audio engineering |
 | IEC 61672 | Sound level measurement |
+| ARINC 653 | Avionics partitioned RTOS application interface |
+| DO-178C | Airborne software assurance |
 
 ## Systems Programming
 
@@ -175,6 +179,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | OpenZeppelin Standards | Smart contract security libraries |
 | MiCA | EU crypto-assets regulation |
 | AML / KYC | Anti-money laundering regulations |
+| SEC / CFTC guidance | US securities and commodities regulation of digital assets |
 
 ## Network / Telecom
 
@@ -194,7 +199,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | ISO/IEC 29119 | International standard for software testing |
 | IEEE 829 | Standard for software and system test documentation |
 | ISTQB Guidelines | Worldwide standard for software testing certification and terminology |
-| WCAG 2.1 Level AA | Web content accessibility rules for testing accessibility gates |
+| WCAG 2.2 Level AA | Web content accessibility rules for testing accessibility gates |
 
 ---
 
@@ -239,9 +244,9 @@ This document serves as a cross-domain reference for compliance standards, certi
 | Azure Well-Architected Framework | Microsoft cloud architecture assessment framework |
 | GCP Architecture Framework | Google Cloud design and operational best practices |
 | SOC 2 Type II | Cloud service security and availability audit |
-| ISO 27017 | Cloud-specific information security controls |
+| ISO/IEC 27017 | Cloud-specific information security controls |
 | CSA STAR | Cloud Security Alliance trust certification |
-| NIST 800-53 | Federal security controls applicable to cloud environments |
+| NIST SP 800-53 | Federal security controls applicable to cloud environments |
 
 ---
 
@@ -254,6 +259,9 @@ This document serves as a cross-domain reference for compliance standards, certi
 | RFC 7807 (Problem Details) | Standard error response format for HTTP APIs |
 | OAuth 2.0 / OpenID Connect | Authentication and authorization protocol standards |
 | gRPC / Protocol Buffers | High-performance RPC service definition standard |
+| RFC 9110 | HTTP semantics (obsoletes RFC 7231) |
+| RFC 7519 | JSON Web Token (JWT) |
+| WHATWG Fetch Standard | CORS and fetch semantics (supersedes W3C CORS) |
 
 ---
 
@@ -261,7 +269,8 @@ This document serves as a cross-domain reference for compliance standards, certi
 
 | Standard | Scope |
 |---|---|
-| WCAG 2.1 Level AA | Web content accessibility guidelines |
+| WCAG 2.2 Level AA | Web content accessibility guidelines |
+| ISO 9241 | Ergonomics of human-system interaction |
 | EN 301 549 | European ICT accessibility standard |
 | Section 508 | US federal accessibility requirements |
 | WAI-ARIA 1.2 | Accessible Rich Internet Applications specification |
@@ -277,6 +286,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | Apple Human Interface Guidelines | iOS/macOS design and interaction standards |
 | Material Design 3 | Android/cross-platform UI design system guidelines |
 | App Tracking Transparency (ATT) | iOS user privacy and tracking consent framework |
+| OWASP Mobile Top 10 | Mobile application security risks |
 
 ---
 
@@ -299,3 +309,21 @@ This document serves as a cross-domain reference for compliance standards, certi
 | Google Developer Documentation Style Guide | Technical writing style and formatting standard |
 | Microsoft Writing Style Guide | Technical content voice, tone, and formatting rules |
 | ASD-STE100 | Simplified Technical English for regulated industries |
+
+---
+
+## Practices & Guidelines (non-normative)
+
+Vendor methodologies and community guidelines that personas cite. They are not certifiable standards, so they never appear in the Compliance & Regulatory section of ARCHITECTURE.md as obligations.
+
+| Practice | Domain | Source |
+|---|---|---|
+| XR Health & Safety guidelines | AR / VR / XR | Platform comfort guidance (Meta, Apple) |
+| Data Quality SLA | Data Engineering | Team-defined completeness, accuracy, and timeliness targets |
+| Medallion Architecture guidelines | Data Engineering | Databricks lakehouse layering (Bronze, Silver, Gold) |
+| SAP / Microsoft Dynamics implementation best practices | ERP & Enterprise Systems | Vendor implementation methodologies (SAP Activate, Success by Design) |
+| AMD UltraFast Design Methodology / Intel FPGA design guidelines | FPGA & Digital Design | Vendor timing-closure and design methodology guides |
+| Game Accessibility Guidelines | Game Development | gameaccessibilityguidelines.com |
+| ABI stability guidelines | Systems Programming | Library and kernel ABI versioning practices |
+| Keep a Changelog | Technical Writing & Documentation | keepachangelog.com |
+| W3C Design Tokens Format Specification | UI/UX Design Engineering | W3C Design Tokens Community Group draft |

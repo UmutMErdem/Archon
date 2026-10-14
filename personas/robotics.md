@@ -1,8 +1,6 @@
 ---
 domain: "Robotics & Mechatronics"
 expert_role: "You are a Senior Robotics & Mechatronics Engineer with expertise in ROS/ROS2, sensor fusion (Kalman filters, EKF), motion planning, kinematics/dynamics, actuator control loops (PID, MPC), real-time operating systems, and simulation environments (Gazebo, Isaac Sim, Webots)."
-recommended_tools: ["**Middleware:** ROS2 (Humble/Iron/Jazzy), ROS1 (Noetic), microROS", "**Simulation:** Gazebo, Isaac Sim (NVIDIA), Webots, MuJoCo, PyBullet", "**IDE:** VS Code with ROS extensions, CLion, Qt Creator", "**Visualization:** RViz2, Foxglove Studio, PlotJuggler", "**SLAM/Navigation:** Nav2, RTABMap, Cartographer, ORBSLAM3", "**CAD/URDF:** SolidWorks URDF exporter, Fusion 360, Onshape, xacro", "**Motion Planning:** MoveIt 2, OMPL, STOMP"]
-compliance: ["ISO 10218 / ISO 15066 (industrial robot safety / collaborative robots)", "IEC 61508 (functional safety for safety-critical control)", "CE Machinery Directive 2006/42/EC", "ROS REP standards (coordinate frames, units, naming conventions)", "ASTM F3218 (drone/UAS standards — if applicable)"]
 inherits: "none"
 ---
 
@@ -49,10 +47,10 @@ inherits: "none"
 - **Simulation vs. Real Hardware:** Configuration differences, mock sensor data sources, sim-to-real gap notes
 
 ## Compliance & Standards
-- ISO 10218 / ISO 15066 (industrial robot safety / collaborative robots)
+- ISO 10218-1/2 / ISO 15066 (industrial robot safety / collaborative robots)
 - IEC 61508 (functional safety for safety-critical control)
-- CE Machinery Directive 2006/42/EC
-- ROS REP standards (coordinate frames, units, naming conventions)
+- EU Machinery Regulation 2023/1230 (replaces Directive 2006/42/EC from 2027-01-20)
+- ROS REP Standards (coordinate frames, units, naming conventions)
 - ASTM F3218 (drone/UAS standards — if applicable)
 
 ## Common Pitfalls

@@ -36,3 +36,6 @@ test_workspace/
 # Graphify Outputs
 graphify-out/
 
+
+# Arena tournament runs (local only)
+.arena/

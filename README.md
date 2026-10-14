@@ -59,13 +59,15 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 ### Helper Utilities & Validation
 | File / Folder | Description |
 |---|---|
-| [scripts/validate_manifesto.py](scripts/validate_manifesto.py) | Linter: Validates template integrity, persona rules, compliance references, cross-domain matrix symmetry, and broken links |
-| [scripts/bootstrap_target.py](scripts/bootstrap_target.py) | Scaffolder: Initializes a target project workspace with the 12 required compliance markdown templates |
-| [scripts/graphify_helper.py](scripts/graphify_helper.py) | Graphify: Automates installation, graph generation, and exports (SVG, HTML, Obsidian, Wiki) to build queryable codebase graphs |
-| [scripts/create_persona.py](scripts/create_persona.py) | CLI Tool: Prompts and generates a new domain persona template with proper frontmatter |
-| [scripts/generate_diagram.py](scripts/generate_diagram.py) | Generator: Analyzes cross-domain interfaces and generates/updates the Mermaid.js diagram |
-| [scripts/sync_matrix.py](scripts/sync_matrix.py) | Sync Tool: Automatically synchronizes `CROSS_DOMAIN_MATRIX.md` with persona file definitions |
-| [scripts/tests/](scripts/tests/) | Unit Tests: Test suite validating the Python scripts and utilities |
+| [scripts/validate_manifesto.py](scripts/validate_manifesto.py) | Linter: template integrity, inheritance, placeholders, compliance IDs, registry (signals / README / Phase 0 question), canonical and symmetric interfaces, signal overlaps, matrix freshness, and links with anchors. Any error exits 1 |
+| [scripts/sync_matrix.py](scripts/sync_matrix.py) | Generator: the only writer of `CROSS_DOMAIN_MATRIX.md` (table + relationship diagram). `--check` exits 1 if the file is stale |
+| [scripts/calculate_complexity.py](scripts/calculate_complexity.py) | Report: per-persona completeness score (sections + interfaces + compliance bullets). `--min-score N` turns it into a gate |
+| [scripts/detect_domain.py](scripts/detect_domain.py) | Detector: scores a target workspace against `detection_signals.md` and proposes Tier 1 / Tier 2 personas |
+| [scripts/bootstrap_target.py](scripts/bootstrap_target.py) | Scaffolder: creates the 12 documentation skeletons from `architecture/files_spec.md` in a target project. Never overwrites existing files unless `--force` |
+| [scripts/create_persona.py](scripts/create_persona.py) | Generator: creates a persona draft from `PERSONA_TEMPLATE.md` and registers it in `detection_signals.md`, `README.md`, and `architecture/00_detection.md` |
+| [scripts/graphify_helper.py](scripts/graphify_helper.py) | Graphify: builds, updates, and queries a codebase knowledge graph. Installs `graphifyy` only with `--install` / `--install-only` |
+| [scripts/archon_core.py](scripts/archon_core.py) | Shared parsing, canonical persona labels, and paths used by every script |
+| [scripts/tests/](scripts/tests/) | Unit tests (`pytest`) |
 
 ---
 
@@ -77,42 +79,87 @@ To integrate Archon into your development workflow, choose one of the two paths 
 > **Static Scaffolding (Path A)** is recommended for new or clean projects where you want a script to pre-generate all templates.
 > **Dynamic Auto-Detection (Path B)** is recommended for existing codebases where you want the AI agent to analyze the project and build documentation on-the-fly.
 
+Both paths end in the same Phase 0 flow. Which questions the AI asks is decided by Step 3 of [00_detection.md](architecture/00_detection.md#step-3--discovery-questions).
+
 ---
 
 ### Path A: Static Scaffolding (For New/Clean Projects)
-This method pre-populates your target directory with the necessary compliance templates before the AI starts coding.
+This method pre-populates your target directory with the necessary documentation skeletons before the AI starts coding.
 
-1. **Bootstrap the Workspace:** Run the scaffolder tool locally:
+1. **Detect the domain (optional):**
    ```bash
-   python scripts/bootstrap_target.py
+   python scripts/detect_domain.py ../my-project
    ```
-   Provide the target project path, select the primary/supporting personas, and choose to initialize **Graphify** to automatically build a codebase knowledge graph.
-2. **Commit Scaffolded Files:** Commit the generated templates (e.g., `AGENTS.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`, `.graphifyignore`) to your repository.
-3. **Initialize AI Session:** Copy the **System Prompt** below and paste it as the initial instruction in your AI editor (Cursor, Claude Code, VS Code, etc.) to start the session.
+2. **Bootstrap the workspace:**
+   ```bash
+   python scripts/bootstrap_target.py --target ../my-project --primary embedded_iot.md --supporting hardware_design.md
+   ```
+   Run it without arguments for interactive mode. Add `--graphify` to set up Graphify (add `--install-graphify` if the `graphify` CLI is not installed yet). Existing files are skipped and listed; `--force` overwrites them.
+3. **Commit the scaffolded files** (`AGENTS.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`, …). `PROJECT_STATE.md` starts with `Status: SCAFFOLDED`, which tells the AI to run a full analysis instead of treating the skeletons as existing documentation.
+4. **Initialize the AI session** with the System Prompt below.
 
 ---
 
 ### Path B: Dynamic Auto-Detection (For Existing Projects)
-This method allows the AI agent to analyze your existing codebase, auto-detect the tech stack, and build compliance documents dynamically.
+This method allows the AI agent to analyze your existing codebase, auto-detect the tech stack, and build documentation dynamically.
 
 1. **Provide Context:** Grant your AI agent access to both your target project workspace and this `Archon` manifesto directory.
-2. **Initialize AI Session:** Copy the **System Prompt** below and paste it as the initial instruction in your AI editor to kick off the analysis.
-3. **Discovery & Graphify Setup:** The AI will automatically scan the project using `detection_signals.md`, select the appropriate persona, and prompt you with discovery questions. During this step, the AI will also ask if you want to initialize and configure **Graphify** to build a visual knowledge graph of the codebase.
+2. **Initialize AI Session:** Paste the **System Prompt** below as the initial instruction in your AI editor.
+3. **Discovery & Graphify Setup:** The AI scans the project using `detection_signals.md`, selects the persona(s), analyzes the code, and asks only the discovery questions the code cannot answer. It also asks whether to set up **Graphify**.
 
 ---
 
 ### System Prompt
 
+English:
+
 ```markdown
-Sen bir Kidemli Sistem Mimari ve Denetcisisin (Archon). Benim icin bir proje olusturacaksin veya mevcut bir projeyi optimize edeceksin.
+You are a Senior Systems Architect and Auditor (Archon). You will either create a new project for me or optimize an existing one.
 
-Bu surecte, calisma alaninda yer alan kurallari harfiyen uygulaman gerekiyor. Lutfen sirasiyla su adimlari islet:
+Follow the rules in this workspace exactly. Run these steps in order:
 
-1. `architecture.md` dosyasini oku ve oradaki index'i takip ederek `architecture/00_detection.md` icindeki Phase 0 yonergelerini uygula.
-2. Projenin domain'ini belirleyip `detection_signals.md` ve `personas/` klasorunden ilgili personayi yukle.
-3. Eger proje birden fazla uzmanlik alani iceriyorsa, `architecture/05_orchestration.md` kurallarini devreye al.
-4. Mevcut bir projeyi guncelliyorsak, `architecture/06_maintenance.md` yonergelerine sadik kal.
-5. Standart uyumlulugu icin `compliance.md` referans tablosunu kullan.
-6. Ilk adim olarak projemizi analiz et ve `architecture/00_detection.md` icindeki Discovery Questions'i (ve secilen persona dosyasindaki ozel sorulari) bana yonelterek sureci baslat.
+1. Read `architecture.md` and follow its index; apply the Phase 0 instructions in `architecture/00_detection.md`.
+2. Determine the project's domain and load the matching persona from `detection_signals.md` and the `personas/` folder.
+3. If the project spans several domains, apply `architecture/05_orchestration.md`.
+4. If we are updating an existing project, follow `architecture/06_maintenance.md`.
+5. Use the `compliance.md` reference tables for standards compliance.
+6. Start by analyzing the project, then ask me the Discovery Questions selected by Step 3 of `architecture/00_detection.md` (plus the persona-specific ones).
 ```
 
+Türkçe:
+
+```markdown
+Sen bir Kıdemli Sistem Mimarı ve Denetçisisin (Archon). Benim için bir proje oluşturacaksın veya mevcut bir projeyi optimize edeceksin.
+
+Bu süreçte, çalışma alanında yer alan kuralları harfiyen uygulaman gerekiyor. Lütfen sırasıyla şu adımları işlet:
+
+1. `architecture.md` dosyasını oku ve oradaki index'i takip ederek `architecture/00_detection.md` içindeki Phase 0 yönergelerini uygula.
+2. Projenin domain'ini belirleyip `detection_signals.md` ve `personas/` klasöründen ilgili personayı yükle.
+3. Eğer proje birden fazla uzmanlık alanı içeriyorsa, `architecture/05_orchestration.md` kurallarını devreye al.
+4. Mevcut bir projeyi güncelliyorsak, `architecture/06_maintenance.md` yönergelerine sadık kal.
+5. Standart uyumluluğu için `compliance.md` referans tablosunu kullan.
+6. İlk adım olarak projemizi analiz et, ardından `architecture/00_detection.md` Step 3'ün seçtiği Discovery Questions'ı (ve seçilen persona dosyasındaki özel soruları) bana yönelt.
+```
+
+---
+
+## Development
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+ruff check scripts
+black --check scripts
+python scripts/sync_matrix.py --check
+python scripts/validate_manifesto.py
+```
+
+CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs the same commands on Python 3.10 and 3.14. After editing a persona's `## Cross-Domain Interfaces`, run `python scripts/sync_matrix.py` and commit the regenerated matrix.
+
+Graphify is optional (`pip install -r requirements-graphify.txt`). `.graphifyignore` excludes all Markdown, so the Archon graph covers `scripts/` only; `graphify-out/` is git-ignored and must be rebuilt locally with `python scripts/graphify_helper.py --update`.
+
+Project planning documents (known issues, decisions, roadmap) live in [planning/](planning/PROJECT_STATE.md); release history is in [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+Apache License 2.0, see [LICENSE](LICENSE).

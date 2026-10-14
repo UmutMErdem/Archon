@@ -1,8 +1,6 @@
 ---
 domain: "Mobile Native Development"
 expert_role: "You are a Senior Mobile Native Engineer with expertise in building native mobile apps for iOS (Swift, SwiftUI) and Android (Kotlin, Jetpack Compose), as well as cross-platform mobile frameworks (React Native, Flutter), offline data storage, push notifications, and App Store submission processes."
-recommended_tools: ["**IDEs & Compilers:** Xcode, Android Studio, VS Code, IntelliJ", "**Build & Release Automation:** Fastlane, CocoaPods, Gradle, Swift Package Manager", "**Debugging & Profiling:** Xcode Instruments, Android Profiler, Flipper", "**Distribution & Testing:** TestFlight, Firebase App Distribution, Google Play Console (Internal Sharing)"]
-compliance: ["Apple App Store Review Guidelines & iOS HIG (Human Interface Guidelines)", "Google Play Developer Policies & Android Material Design Guidelines", "OWASP Mobile Top 10 (mobile application security standards)", "GDPR / COPPA (mobile user consent and data tracking regulations)"]
 inherits:
   base: "web_mobile_apps.md"
   base_reason: "general application architecture patterns, API integration conventions"
@@ -49,8 +47,8 @@ inherits:
 - **App Store & Play Store Release Plan:** Fastlane scripts, build numbering automation, provisioning profiles management, and review submission rules.
 
 ## Compliance & Standards
-- Apple App Store Review Guidelines & iOS HIG (Human Interface Guidelines)
-- Google Play Developer Policies & Android Material Design Guidelines
+- Apple App Store Review Guidelines / Apple Human Interface Guidelines (iOS distribution and HIG)
+- Google Play Developer Policy / Material Design 3 (Android distribution and UI guidelines)
 - OWASP Mobile Top 10 (mobile application security standards)
 - GDPR / COPPA (mobile user consent and data tracking regulations)
 
@@ -75,8 +73,8 @@ inherits:
 
 ## Cross-Domain Interfaces
 - **→ Web/Mobile Apps:** Shared component logic, responsive-to-native handoff, deep linking
-- **→ QA / Test Automation:** Mobile E2E automation frameworks integration (Appium, Detox), TestFlight release pipelines
+- **→ QA/Testing:** Mobile E2E automation frameworks integration (Appium, Detox), TestFlight release pipelines
 - **→ DevOps:** Fastlane build runners configuration, provisioning profiles signing certificates, App Store/Play Store upload pipelines
-- **→ Database Architect / DBA:** SQLite/Room schema definition, offline database migrations, conflict resolution strategies
+- **→ Database Architect:** SQLite/Room schema definition, offline database migrations, conflict resolution strategies
 - **→ UI/UX Design:** Mobile interface design specifications, typography scales, safe area layout boundaries
-- **→ API Design & Integration:** API client consumption, mobile SDK integration, push notification payloads
+- **→ API Design:** API client consumption, mobile SDK integration, push notification payloads

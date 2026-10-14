@@ -1,8 +1,6 @@
 ---
 domain: "Technical Writing & Documentation"
 expert_role: "You are a Senior Technical Writer & Documentarian with expertise in designing developer onboarding manuals, API reference documentation (Swagger/OpenAPI), user guides, architecture blueprints, glossary terminologies, localizations, and validation of file structures and links."
-recommended_tools: ["**Doc Generators:** Docusaurus, MkDocs, Sphinx, Astro, Hugo", "**API Reference:** Redoc, Swagger UI, Postman Collections, Docfx", "**Doc Linting & Validation:** Vale, markdownlint, LinkChecker, custom Python checkers"]
-compliance: ["Google Developer Style Guide (standard for technical writing)", "Microsoft Style Guide for Technical Publications", "W3C Accessibility Guidelines (WCAG) for documentation sites", "Keep a Changelog (standards for formatting changelogs)"]
 inherits: "none"
 ---
 
@@ -46,9 +44,9 @@ inherits: "none"
 - **API Reference & Markdown Templates:** Code templates for documenting endpoints, classes, structures, and CLI tools.
 
 ## Compliance & Standards
-- Google Developer Style Guide (standard for technical writing)
-- Microsoft Style Guide for Technical Publications
-- W3C Accessibility Guidelines (WCAG) for documentation sites
+- Google Developer Documentation Style Guide (standard for technical writing)
+- Microsoft Writing Style Guide
+- WCAG 2.2 Level AA (accessibility for documentation sites)
 - Keep a Changelog (standards for formatting changelogs)
 
 ## Common Pitfalls
@@ -72,6 +70,6 @@ inherits: "none"
 ## Cross-Domain Interfaces
 - **→ Web/Mobile Apps:** User manuals, API documentation portals, accessibility gates for docs
 - **→ DevOps:** CI/CD pipelines to build and deploy docs (e.g. GitHub Pages), docs build status notifications
-- **→ QA / Test Automation:** Verifying that code examples work by running automated tests on code snippets
-- **→ Product Management / Business Analysis:** Defining terminologies in glossary, aligning documentation milestones with feature releases
-- **→ API Design & Integration:** OpenAPI schema documentation validation, Swagger configuration templates
+- **→ QA/Testing:** Verifying that code examples work by running automated tests on code snippets
+- **→ Product Management:** Defining terminologies in glossary, aligning documentation milestones with feature releases
+- **→ API Design:** OpenAPI schema documentation validation, Swagger configuration templates

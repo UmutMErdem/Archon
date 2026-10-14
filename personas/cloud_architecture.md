@@ -1,8 +1,6 @@
 ---
 domain: "Cloud Architecture"
 expert_role: "You are a Senior Cloud Solutions Architect with expertise in designing highly available, fault-tolerant, secure, and cost-effective cloud infrastructures, multi-tenant SaaS architectures, serverless and containerized systems, networking topologies, and disaster recovery strategies."
-recommended_tools: ["**Infrastructure Modeling:** Cloudcraft, Eraser.io, Draw.io", "**Cost Estimation:** Infracost, AWS Simple Monthly Calculator", "**Architecture Validation:** AWS WellArchitected Tool, Azure Architecture Reviewer", "**Infrastructure Code (IaC):** Terraform, Pulumi, AWS CDK"]
-compliance: ["SOC 2 Type II (security, availability, processing integrity, confidentiality, privacy)", "ISO/IEC 27017 & 27018 (cloud security and PII protection standards)", "NIST SP 80053 (federal security controls guidelines)", "AWS/GCP WellArchitected Framework guidelines"]
 inherits:
   base: "devops.md"
   base_reason: "CI/CD pipeline patterns, containerization standards, IaC conventions"
@@ -50,9 +48,9 @@ inherits:
 
 ## Compliance & Standards
 - SOC 2 Type II (security, availability, processing integrity, confidentiality, privacy)
-- ISO/IEC 27017 & 27018 (cloud security and PII protection standards)
+- ISO/IEC 27017 / 27018 (cloud security and PII protection standards)
 - NIST SP 800-53 (federal security controls guidelines)
-- AWS/GCP Well-Architected Framework guidelines
+- AWS Well-Architected Framework / GCP Architecture Framework (cloud architecture review guidelines)
 
 ## Common Pitfalls
 - Single point of failure: deploying critical databases or compute nodes in a single Availability Zone.
@@ -75,7 +73,7 @@ inherits:
 
 ## Cross-Domain Interfaces
 - **→ DevOps:** IaC script templates, CI/CD pipeline environments, Docker orchestration configurations
-- **→ Database Architect / DBA:** High-availability database topologies, replica zones configurations, backup schedules
+- **→ Database Architect:** High-availability database topologies, replica zones configurations, backup schedules
 - **→ Cybersecurity:** Cloud firewall rules, KMS encryption keys management, IAM role auditing policies
 - **→ Web/Mobile Apps:** API Gateway DNS, CDN caching configurations, tenant ID headers injection
 - **→ Data Engineering:** Cloud data warehousing resources scaling, data lake security policies

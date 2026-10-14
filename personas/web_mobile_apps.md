@@ -1,8 +1,6 @@
 ---
 domain: "Web / Mobile / Desktop Applications"
 expert_role: "You are a Senior Software & Cloud Architect with expertise in full-stack development, RESTful/GraphQL API design, database architecture, state management, responsive UI/UX, and cloud-native deployments."
-recommended_tools: ["**IDE:** VS Code, WebStorm, Android Studio, Xcode", "**Package Manager:** npm, yarn, pnpm, Bun", "**Linting/Formatting:** ESLint, Prettier, Stylelint, Biome", "**Bundler:** Vite, Webpack, esbuild, Turbopack", "**API Testing:** Postman, Insomnia, HTTPie, Bruno", "**Browser DevTools:** Chrome DevTools, Lighthouse, React/Vue DevTools", "**Database Tools:** pgAdmin, MongoDB Compass, Redis Insight, Prisma Studio"]
-compliance: ["GDPR / KVKK (data privacy and consent)", "WCAG 2.1 (web accessibility — Level AA)", "OWASP Top 10 (web security)", "PCI-DSS (if handling payment data)", "SOC 2 (if SaaS with enterprise clients)"]
 inherits: "none"
 ---
 
@@ -35,7 +33,7 @@ inherits: "none"
 
 ### Performance Budget
 - Largest Contentful Paint (LCP): target < 2.5s
-- First Input Delay (FID): target < 100ms
+- Interaction to Next Paint (INP): target ≤ 200ms (replaced FID in Core Web Vitals, March 2024)
 - Cumulative Layout Shift (CLS): target < 0.1
 - API response time: p50/p95/p99 targets (ms)
 - Database query time limits (ms)
@@ -49,10 +47,10 @@ inherits: "none"
 
 ## Compliance & Standards
 - GDPR / KVKK (data privacy and consent)
-- WCAG 2.1 (web accessibility — Level AA)
+- WCAG 2.2 Level AA (web accessibility)
 - OWASP Top 10 (web security)
 - PCI-DSS (if handling payment data)
-- SOC 2 (if SaaS with enterprise clients)
+- SOC 2 Type II (if SaaS with enterprise clients)
 
 ## Common Pitfalls
 - N+1 query problems in ORM-based database access
@@ -87,10 +85,10 @@ inherits: "none"
 - **→ DevOps:** Containerization, CI/CD integration, environment configuration
 - **→ Cybersecurity:** Auth flow implementation, OWASP compliance, CSP headers
 - **→ Data Engineering:** Data visualization dashboards, real-time streaming displays
-- **→ QA / Test Automation:** UI selectors consistency (recommending `data-testid` attributes), API mock contracts, component test boundaries
-- **→ Database Architect / DBA:** ORM configurations, API paging query requirements, database transaction scopes
-- **→ Product Management / Business Analysis:** Translating wireframes to functional user stories, defining user interaction logic; wireframe-to-implementation alignment, user flow validation
-- **→ Security Compliance / DevSecOps:** User input sanitization specifications, CORS configuration, CSRF/XSS mitigations, GDPR cookie consent models
+- **→ QA/Testing:** UI selectors consistency (recommending `data-testid` attributes), API mock contracts, component test boundaries
+- **→ Database Architect:** ORM configurations, API paging query requirements, database transaction scopes
+- **→ Product Management:** Translating wireframes to functional user stories, defining user interaction logic; wireframe-to-implementation alignment, user flow validation
+- **→ Security Compliance:** User input sanitization specifications, CORS configuration, CSRF/XSS mitigations, GDPR cookie consent models
 - **→ API Design:** API client consumption, endpoint discovery, SDK integration
 - **→ AR/VR/XR:** Companion app interfaces, cloud state sync APIs, dynamic 3D asset delivery
 - **→ Automation:** Dashboard/reporting integration via OPC-UA or MQTT broker
@@ -101,7 +99,7 @@ inherits: "none"
 - **→ Systems Programming:** FFI/WASM module integration, native extension bindings
 - **→ UI/UX Design:** Component library consumption, theme provider, layout coordination
 - **→ Cloud Architecture:** API Gateway DNS integration, CDN caching configurations
-- **→ ERP & Enterprise Systems:** Corporate sales portals integration, client dashboard reporting pipelines
+- **→ ERP/Enterprise:** Corporate sales portals integration, client dashboard reporting pipelines
 - **→ Technical Writing:** Developer onboarding manuals integration, API docs portal mapping
 
 

@@ -1,21 +1,39 @@
+"""Create a persona draft from PERSONA_TEMPLATE.md and register it.
+
+Registers the persona in detection_signals.md, README.md and architecture/00_detection.md,
+then runs sync_matrix.py and validate_manifesto.py. The draft keeps the template's
+<placeholders> for the sections only a domain expert can write, so the validator fails
+until they are filled in.
+"""
+
+import argparse
+import json
 import os
 import re
+import subprocess
 import sys
 
-# Set system output to UTF-8
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stderr.reconfigure(encoding="utf-8")
-except AttributeError:
-    pass
+from archon_core import (
+    DETECTION_PATH,
+    PERSONAS_DIR,
+    README_PATH,
+    REPO_ROOT,
+    SIGNALS_PATH,
+    TEMPLATE_PATH,
+    load_registry,
+    read_text,
+    setup_utf8,
+    write_text,
+)
 
-# Paths
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-PERSONAS_DIR = os.path.join(REPO_ROOT, "personas")
-TEMPLATE_PATH = os.path.join(REPO_ROOT, "PERSONA_TEMPLATE.md")
-SIGNALS_PATH = os.path.join(REPO_ROOT, "detection_signals.md")
-README_PATH = os.path.join(REPO_ROOT, "README.md")
-DETECTION_PATH = os.path.join(REPO_ROOT, "architecture/00_detection.md")
+FILENAME_RE = re.compile(r"[a-z0-9_]+\.md")
+DETECTION_QUESTION_RE = re.compile(
+    r'^(> "What is the technical domain of this project\? \(e\.g\., .*?)\)"$', re.M
+)
+README_COUNT_RE = re.compile(r"Domain Expert Personas \((\d+) personas\)")
+README_LAST_PERSONA_RE = re.compile(
+    r"^(\[\w+\.md\]\(personas/\w+\.md\)(?:, \[\w+\.md\]\(personas/\w+\.md\))*)$", re.M
+)
 
 
 def prompt(text):
@@ -24,140 +42,163 @@ def prompt(text):
     return sys.stdin.readline().strip()
 
 
-def main():
-    print("==================================================")
-    print("✨  Archon Persona Generator CLI  ✨")
-    print("==================================================")
+def yaml_str(value):
+    # A JSON string literal is a valid YAML double-quoted scalar.
+    return json.dumps(value, ensure_ascii=False)
 
-    domain = prompt("Enter Domain Name (e.g., Cloud Architecture): ")
-    if not domain:
-        print("Domain Name cannot be empty.")
-        return
 
-    filename = prompt("Enter Persona filename (e.g., cloud_architecture.md): ")
-    if not filename:
-        print("Filename cannot be empty.")
-        return
-    if not filename.endswith(".md"):
-        filename += ".md"
-
-    expert_role = prompt(
-        "Enter Expert Role Title (e.g., Senior Cloud Solutions Architect): "
-    )
-    tools_str = prompt("Enter recommended tools (comma-separated): ")
-    compliance_str = prompt("Enter compliance standards (comma-separated): ")
-
-    tools = [t.strip() for t in tools_str.split(",") if t.strip()]
-    compliance = [c.strip() for c in compliance_str.split(",") if c.strip()]
-
-    target_path = os.path.join(PERSONAS_DIR, filename)
-    if os.path.exists(target_path):
-        overwrite = prompt("File already exists. Overwrite? (y/n): ")
-        if overwrite.lower() != "y":
-            return
-
-    # Read template
-    if not os.path.exists(TEMPLATE_PATH):
-        print(f"Error: {TEMPLATE_PATH} not found.")
-        return
-
-    with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
-        template = f.read()
-
-    # Replace placeholders
-    filled = template.replace("<Domain Name>", domain)
-    filled = filled.replace("<Senior Title>", expert_role)
-    filled = filled.replace(
+def render_persona(template, domain, role, expertise, interfaces):
+    body = re.sub(r"<!--\nHOW TO USE THIS TEMPLATE.*?-->\n+", "", template, flags=re.S)
+    body = body.replace("<Domain Name>", domain).replace("<Senior Title>", role)
+    body = body.replace(
         "<core skills, technologies, protocols, and sub-disciplines that define this domain>",
-        expert_role,
+        expertise,
     )
+    lines = [f"- **→ {label}:** <shared contract, artifact, or boundary>" for label in interfaces]
+    body = re.sub(
+        r"(## Cross-Domain Interfaces\n(?:<!--[^\n]*-->\n)?)(?:- \*\*→ [^\n]*\n?)+",
+        lambda m: m.group(1) + "\n".join(lines) + "\n",
+        body,
+    )
+    frontmatter = (
+        "---\n"
+        f"domain: {yaml_str(domain)}\n"
+        f"expert_role: {yaml_str(f'You are a {role} with expertise in {expertise}.')}\n"
+        'inherits: "none"\n'
+        "---\n\n"
+    )
+    return frontmatter + body
 
-    # Format lists for YAML frontmatter
-    tools_yaml = ", ".join([f'"{t}"' for t in tools])
-    comp_yaml = ", ".join([f'"{c}"' for c in compliance])
 
-    frontmatter = f"""---
-domain: "{domain}"
-expert_role: "You are a {expert_role}."
-recommended_tools: [{tools_yaml}]
-compliance: [{comp_yaml}]
-inherits: "none"
----
+def register_signals(signals_md, filename, domain, label, signals):
+    if f"`personas/{filename}`" in signals_md:
+        return signals_md, False
+    row = f"| {signals} | {domain} | `personas/{filename}` | {label} | — |"
+    return signals_md.rstrip("\n") + "\n" + row + "\n", True
 
-"""
-    new_content = frontmatter + filled
 
-    # Write new persona file
-    with open(target_path, "w", encoding="utf-8") as f:
-        f.write(new_content)
-    print(f"✅ Created persona file at personas/{filename}")
+def register_detection(detection_md, label):
+    m = DETECTION_QUESTION_RE.search(detection_md)
+    if not m:
+        return detection_md, None
+    if label in [s.strip() for s in m.group(1).split("(e.g., ", 1)[1].split(",")]:
+        return detection_md, False
+    return detection_md[: m.end(1)] + f", {label}" + detection_md[m.end(1) :], True
 
-    # Register in detection_signals.md
-    if os.path.exists(SIGNALS_PATH):
-        with open(SIGNALS_PATH, "a", encoding="utf-8") as f:
-            f.write(
-                f"| `*.{filename.split('.')[0]}_config`, config files | {domain} | `personas/{filename}` | — |\n"
-            )
-        print("✅ Registered in detection_signals.md")
 
-    # Register in README.md
-    if os.path.exists(README_PATH):
-        with open(README_PATH, "r", encoding="utf-8") as f:
-            readme = f.read()
-        # Find personas count and update
-        count_match = re.search(r"Domain Expert Personas \((\d+) personas\)", readme)
-        if count_match:
-            current_count = int(count_match.group(1))
-            readme = readme.replace(
-                f"Domain Expert Personas ({current_count} personas)",
-                f"Domain Expert Personas ({current_count + 1} personas)",
-            )
-        # Append to the end of the lists
-        if f"({filename})" not in readme:
-            new_readme = readme.replace(
-                "erp_enterprise.md](personas/erp_enterprise.md), [technical_writing.md](personas/technical_writing.md)",
-                f"erp_enterprise.md](personas/erp_enterprise.md), [technical_writing.md](personas/technical_writing.md), [{filename}](personas/{filename})",
-            )
-            if new_readme != readme:
-                with open(README_PATH, "w", encoding="utf-8") as f:
-                    f.write(new_readme)
-                print("✅ Registered in README.md")
-            else:
-                print(
-                    "⚠️  Could NOT register in README.md — anchor text not found, please add manually"
-                )
-        else:
-            print("ℹ️  Already registered in README.md")
+def register_readme(readme_md, filename):
+    if f"(personas/{filename})" in readme_md:
+        return readme_md, False
+    count = README_COUNT_RE.search(readme_md)
+    lists = list(README_LAST_PERSONA_RE.finditer(readme_md))
+    if not count or not lists:
+        return readme_md, None
+    last = lists[-1]
+    readme_md = (
+        readme_md[: last.end(1)] + f", [{filename}](personas/{filename})" + readme_md[last.end(1) :]
+    )
+    n = int(count.group(1))
+    return readme_md.replace(count.group(0), f"Domain Expert Personas ({n + 1} personas)"), True
 
-    # Register in architecture/00_detection.md
-    if os.path.exists(DETECTION_PATH):
-        with open(DETECTION_PATH, "r", encoding="utf-8") as f:
-            det = f.read()
-        new_det = det.replace("Technical Writing)", f"Technical Writing, {domain})")
-        if new_det == det:
-            # Try a more general pattern: insert before the last closing parenthesis in the domain list
-            new_det = re.sub(
-                r"(\([^()]*)\)(\s*$)",
-                rf"\1, {domain})",
-                det,
-                count=1,
-                flags=re.MULTILINE,
-            )
-        if new_det != det:
-            with open(DETECTION_PATH, "w", encoding="utf-8") as f:
-                f.write(new_det)
-            print("✅ Registered in architecture/00_detection.md")
-        else:
-            print(
-                "⚠️  Could NOT register in architecture/00_detection.md — anchor text not found, please add manually"
-            )
 
-    print("\nRunning complexity calculator and linter to verify compliance...")
-    import subprocess
+def apply(path, transform, *args):
+    new, changed = transform(read_text(path), *args)
+    name = os.path.relpath(path, REPO_ROOT).replace(os.sep, "/")
+    if changed is None:
+        print(f"❌ Could not register in {name}: anchor not found, add it manually")
+        return False
+    if changed:
+        write_text(path, new)
+        print(f"✅ Registered in {name}")
+    else:
+        print(f"ℹ️  Already registered in {name}")
+    return True
 
-    subprocess.run(["python", "scripts/calculate_complexity.py"], cwd=REPO_ROOT)
-    subprocess.run(["python", "scripts/validate_manifesto.py"], cwd=REPO_ROOT)
+
+def gather(args):
+    fields = [
+        ("domain", "Domain name (e.g., Quantum Computing): "),
+        ("filename", "Persona filename (e.g., quantum_computing.md): "),
+        ("label", "Canonical interface label (e.g., Quantum): "),
+        ("role", "Expert role title (e.g., Senior Quantum Software Engineer): "),
+        ("expertise", "Expertise summary (e.g., circuit design, error mitigation, Qiskit): "),
+        ("signals", "Detection signals, markdown (e.g., `*.qasm`, `qiskit` imports): "),
+        (
+            "interfaces",
+            "Interface targets, comma-separated canonical labels (e.g., AI/ML, DevOps): ",
+        ),
+    ]
+    for name, text in fields:
+        if getattr(args, name) is None:
+            setattr(args, name, prompt(text))
+    return args
+
+
+def validate_args(args, labels):
+    errors = []
+    for name in ("domain", "label", "role", "expertise", "signals", "interfaces"):
+        if not getattr(args, name):
+            errors.append(f"--{name} must not be empty")
+    if args.filename and not args.filename.endswith(".md"):
+        args.filename += ".md"
+    if not FILENAME_RE.fullmatch(args.filename or ""):
+        errors.append("--filename must match [a-z0-9_]+.md (no paths)")
+    if args.label in labels:
+        errors.append(f"--label '{args.label}' is already used by another persona")
+    if "`" not in (args.signals or ""):
+        errors.append("--signals must contain at least one `backticked` file pattern")
+    targets = [t.strip() for t in (args.interfaces or "").split(",") if t.strip()]
+    unknown = [t for t in targets if t not in labels]
+    if unknown:
+        errors.append(f"unknown interface labels {unknown}; use: {sorted(labels)}")
+    args.interfaces = targets
+    return errors
+
+
+def main(argv=None):
+    setup_utf8()
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    for name in ("domain", "filename", "label", "role", "expertise", "signals", "interfaces"):
+        parser.add_argument(f"--{name}")
+    parser.add_argument("--force", action="store_true", help="Overwrite an existing persona file")
+    args = gather(parser.parse_args(argv))
+
+    errors = validate_args(args, {row["label"] for row in load_registry(SIGNALS_PATH).values()})
+    if errors:
+        for e in errors:
+            print(f"❌ {e}")
+        return 2
+
+    target = os.path.join(PERSONAS_DIR, args.filename)
+    if os.path.exists(target) and not args.force:
+        print(f"❌ personas/{args.filename} already exists (use --force to overwrite)")
+        return 2
+
+    write_text(
+        target,
+        render_persona(
+            read_text(TEMPLATE_PATH), args.domain, args.role, args.expertise, args.interfaces
+        ),
+    )
+    print(f"✅ Created personas/{args.filename}")
+
+    ok = apply(SIGNALS_PATH, register_signals, args.filename, args.domain, args.label, args.signals)
+    ok &= apply(README_PATH, register_readme, args.filename)
+    ok &= apply(DETECTION_PATH, register_detection, args.label)
+
+    print(
+        "\nNext steps:\n"
+        "  1. Fill in every <placeholder> in the new persona\n"
+        f"  2. Add a reciprocal '- **→ {args.label}:**' bullet in each interface target persona\n"
+        "  3. Add the persona's standards to compliance.md\n"
+        "  4. Run python scripts/sync_matrix.py && python scripts/validate_manifesto.py\n"
+    )
+    result = subprocess.run(
+        [sys.executable, os.path.join(REPO_ROOT, "scripts", "validate_manifesto.py")],
+        check=False,
+    )
+    return 1 if (not ok or result.returncode) else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

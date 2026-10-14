@@ -1,283 +1,32 @@
+"""Scaffold Archon documentation skeletons into a target project.
+
+Skeletons are derived from architecture/files_spec.md. Existing files are never
+overwritten unless --force is given.
+"""
+
+import argparse
+import datetime
 import os
 import re
-import sys
-import datetime
 import shutil
 import subprocess
+import sys
 
-# Set system output to UTF-8
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stderr.reconfigure(encoding="utf-8")
-except AttributeError:
-    pass
+from archon_core import (
+    FILES_SPEC_PATH,
+    PERSONAS_DIR,
+    REPO_ROOT,
+    list_persona_files,
+    parse_frontmatter,
+    read_text,
+    setup_utf8,
+    write_text,
+)
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-PERSONAS_DIR = os.path.join(REPO_ROOT, "personas")
+NOT_FOUND = "_Not found in source yet: fill in during the first Archon analysis._"
+SCAFFOLD_STATUS = "Status: SCAFFOLDED"
 
-
-def prompt(text):
-    sys.stdout.write(text)
-    sys.stdout.flush()
-    return sys.stdin.readline().strip()
-
-
-def parse_frontmatter(content):
-    if not content.strip().startswith("---"):
-        return None
-    parts = content.split("---")
-    if len(parts) < 3:
-        return None
-
-    yaml_text = parts[1]
-    metadata = {}
-    for line in yaml_text.splitlines():
-        line = line.strip()
-        if not line or ":" not in line:
-            continue
-        key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip()
-        if value.startswith("[") and value.endswith("]"):
-            items = []
-            val_clean = value[1:-1].strip()
-            quoted_items = re.findall(r'"([^"]*)"|\'([^\']*)\'', val_clean)
-            for q in quoted_items:
-                items.append(q[0] or q[1])
-            metadata[key] = items
-        else:
-            if value.startswith(('"', "'")) and value.endswith(('"', "'")):
-                value = value[1:-1]
-            metadata[key] = value
-    return metadata
-
-
-def select_personas():
-    files = sorted([f for f in os.listdir(PERSONAS_DIR) if f.endswith(".md")])
-    print("\nAvailable Personas:")
-    for idx, f in enumerate(files):
-        print(f"  [{idx + 1}] {f}")
-
-    choices = prompt("\nEnter persona numbers to load (comma-separated, e.g. 7,10): ")
-    selected = []
-    for c in choices.split(","):
-        try:
-            val = int(c.strip()) - 1
-            if 0 <= val < len(files):
-                selected.append(files[val])
-        except ValueError:
-            pass
-    return selected
-
-
-def main():
-    print("==================================================")
-    print("🚀  Archon Target Project Scaffolder  🚀")
-    print("==================================================")
-
-    target_dir = prompt("Enter target project workspace path: ")
-    if not target_dir:
-        print("Target path cannot be empty.")
-        return
-
-    target_dir = os.path.abspath(target_dir)
-    if not os.path.exists(target_dir):
-        create = prompt(f"Directory {target_dir} does not exist. Create it? (y/n): ")
-        if create.lower() == "y":
-            os.makedirs(target_dir, exist_ok=True)
-        else:
-            return
-
-    selected_personas = select_personas()
-    if not selected_personas:
-        print("No personas selected. Scaffolding cancelled.")
-        return
-
-    setup_graphify = (
-        prompt(
-            "\nDo you want to initialize and configure Graphify for the target project? (y/n): "
-        )
-        .strip()
-        .lower()
-        == "y"
-    )
-
-    personas_meta = []
-    for pf in selected_personas:
-        pf_path = os.path.join(PERSONAS_DIR, pf)
-        with open(pf_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        meta = parse_frontmatter(content)
-        if meta:
-            meta["file"] = pf
-            personas_meta.append(meta)
-
-    if not personas_meta:
-        print("Failed to read metadata for selected personas.")
-        return
-
-    primary = personas_meta[0]
-    supporting = personas_meta[1:]
-
-    date_str = datetime.date.today().strftime("%Y-%m-%d")
-
-    # 1. Write AGENTS.md
-    agents_content = f"""# AGENTS.md - Persona Configuration
-
-This file defines the expert roles, behaviors, and verification checklists active in this workspace.
-
-## Active Personas
-
-### Primary Lead Architect
-- **Domain:** {primary.get("domain")}
-- **Role:** {primary.get("expert_role")}
-- **Persona Reference:** [personas/{primary.get("file")}](file:///{os.path.join(PERSONAS_DIR, primary.get("file")).replace(os.sep, '/')})
-
-"""
-    if supporting:
-        agents_content += "### Supporting Specialists\n"
-        for idx, sup in enumerate(supporting):
-            agents_content += f"""- **Domain {idx + 1}:** {sup.get("domain")}
-- **Role:** {sup.get("expert_role")}
-- **Persona Reference:** [personas/{sup.get("file")}](file:///{os.path.join(PERSONAS_DIR, sup.get("file")).replace(os.sep, '/')})
-
-"""
-    agents_content += """## Coding Conventions & Quality Gates
-1. **Zero Dead Links:** All file and symbol references must be clickable links that exist on disk.
-2. **Explicit Verification:** Every modification must pass linter and test validation steps before completion.
-"""
-    with open(os.path.join(target_dir, "AGENTS.md"), "w", encoding="utf-8") as f:
-        f.write(agents_content)
-
-    # 2. Write PROJECT_STATE.md
-    state_content = f"""# PROJECT_STATE.md
-
-## Snapshot Details
-- **Analysis Date:** {date_str}
-- **Git Branch:** N/A (initialized)
-- **Commit Hash:** N/A
-
-## Version Table
-| Component | Platform / Version | Status |
-|---|---|---|
-| Core | Initialized | Under Construction |
-
-## Open Issues Summary
-- Links to [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
-- Links to [OPTIMIZATIONS.md](OPTIMIZATIONS.md)
-- Links to [ROADMAP.md](ROADMAP.md)
-- Link to [CHANGELOG.md](CHANGELOG.md)
-"""
-    with open(os.path.join(target_dir, "PROJECT_STATE.md"), "w", encoding="utf-8") as f:
-        f.write(state_content)
-
-    onboarding_content = "# ONBOARDING.md\n\n## Environment Setup\nInstructions for setting up the local development workspace.\n"
-    architecture_content = f"""# ARCHITECTURE.md - System Architecture
-
-## 1. Main Idea & Project Recap
-Project initialized using Archon Manifesto with the `{primary.get("domain")}` persona.
-
-## 2. System Mapping
-- Domain Specific Map: [Document pin layout, API endpoints, schema relations here]
-
-## 3. Build, Deploy & Run
-- Build commands:
-- Deploy commands:
-- Run/execute:
-"""
-
-    if setup_graphify:
-        onboarding_content += """
-## Graphify Knowledge Graph
-This project integrates **Graphify** for codebase knowledge representation.
-To build, update, or query the graph, use the helper script:
-- **Build/Rebuild Graph:** `python scripts/graphify_helper.py --build`
-- **Incremental Update:** `python scripts/graphify_helper.py --update`
-- **Query Graph:** `python scripts/graphify_helper.py --query "your question"`
-- **Visualizations:** After building, open `graphify-out/graph.html` in your browser, or import the `graphify-out/obsidian/` folder into Obsidian.
-"""
-        architecture_content = f"""# ARCHITECTURE.md - System Architecture
-
-## 1. Main Idea & Project Recap
-Project initialized using Archon Manifesto with the `{primary.get("domain")}` persona.
-
-## 2. System Mapping
-- Domain Specific Map: [Document pin layout, API endpoints, schema relations here]
-- **Interactive Codebase Graph:** Refer to [graphify-out/graph.svg](file:///{os.path.join(target_dir, 'graphify-out', 'graph.svg').replace(os.sep, '/')}) for the auto-generated visual relationship diagram of modules.
-
-## 3. Build, Deploy & Run
-- Build commands:
-- Deploy commands:
-- Run/execute:
-"""
-
-    # 3. Write other files boilerplate
-    boilerplates = {
-        "DECISIONS.md": "# DECISIONS.md\n\n| Decision ID | Date | Decision | Rationale | Impact |\n|---|---|---|---|---|\n",
-        "KNOWN_ISSUES.md": "# KNOWN_ISSUES.md\n\n| Issue ID | Severity | Status | Symptom | Root Cause | Fix |\n|---|---|---|---|---|---|\n",
-        "OPTIMIZATIONS.md": "# OPTIMIZATIONS.md\n\n| Opt ID | Category | Severity | Status | Recommendation |\n|---|---|---|---|---|\n",
-        "ROADMAP.md": "# ROADMAP.md\n\n| Milestone | Priority | Status | Goal | Task List |\n|---|---|---|---|---|\n",
-        "TESTING.md": "# TESTING.md\n\n## Test Strategy\nConfigure your testing commands and frameworks here.\n",
-        "SECURITY.md": "# SECURITY.md\n\n## Threat Modeling\nEndpoints, trust boundaries, and encryption models.\n",
-        "DEPENDENCIES.md": "# DEPENDENCIES.md\n\n## Third-Party Libraries\n| Dependency | Version | License | Status |\n|---|---|---|---|\n",
-        "ONBOARDING.md": onboarding_content,
-        "CHANGELOG.md": "# CHANGELOG.md\n\n## [Unreleased]\n- Initialized target project using Archon Scaffolder.\n",
-        "ARCHITECTURE.md": architecture_content,
-    }
-
-    for filename, content in boilerplates.items():
-        with open(os.path.join(target_dir, filename), "w", encoding="utf-8") as f:
-            f.write(content)
-
-    print("\n✅ Scaffolding complete! Generated 12 compliance files in:")
-    print(f"   {target_dir}")
-
-    if setup_graphify:
-        print("\n🔧 Setting up Graphify for the target project...")
-        # Create scripts directory if not exists
-        scripts_dir = os.path.join(target_dir, "scripts")
-        os.makedirs(scripts_dir, exist_ok=True)
-
-        # Copy helper script
-        helper_src = os.path.join(REPO_ROOT, "scripts", "graphify_helper.py")
-        helper_dst = os.path.join(scripts_dir, "graphify_helper.py")
-        try:
-            shutil.copy2(helper_src, helper_dst)
-            print(f"   Copied graphify_helper.py to {helper_dst}")
-        except Exception as e:
-            print(f"   Failed to copy graphify_helper.py: {e}")
-
-        # Run graphify_helper.py to build the initial graph
-        print("   Running Graphify initial build...")
-        try:
-            subprocess.run(
-                [sys.executable, helper_dst, "--path", target_dir, "--build"],
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            print(f"   Graphify initial build failed or was interrupted: {e}")
-
-        # Update/Create .gitignore in target directory
-        gitignore_path = os.path.join(target_dir, ".gitignore")
-        ignore_line = "\n# Graphify Outputs\ngraphify-out/\n"
-        try:
-            if os.path.exists(gitignore_path):
-                with open(gitignore_path, "r", encoding="utf-8") as f:
-                    git_content = f.read()
-                if "graphify-out/" not in git_content:
-                    with open(gitignore_path, "a", encoding="utf-8") as f:
-                        f.write(ignore_line)
-                    print("   Updated target's .gitignore")
-            else:
-                with open(gitignore_path, "w", encoding="utf-8") as f:
-                    f.write(ignore_line)
-                print("   Created target's .gitignore")
-        except Exception as e:
-            print(f"   Failed to update .gitignore: {e}")
-
-        # Create default .graphifyignore in target directory
-        graphifyignore_path = os.path.join(target_dir, ".graphifyignore")
-        graphifyignore_content = """# Default Graphify Ignore File
+GRAPHIFYIGNORE = """# Default Graphify Ignore File
 graphify-out/
 .git/
 __pycache__/
@@ -289,13 +38,244 @@ build/
 .venv/
 venv/
 """
-        try:
-            with open(graphifyignore_path, "w", encoding="utf-8") as f:
-                f.write(graphifyignore_content)
-            print("   Created target's .graphifyignore")
-        except Exception as e:
-            print(f"   Failed to create .graphifyignore: {e}")
+
+
+def prompt(text):
+    sys.stdout.write(text)
+    sys.stdout.flush()
+    return sys.stdin.readline().strip()
+
+
+def archon_version():
+    try:
+        return subprocess.run(
+            ["git", "describe", "--tags", "--always", "--dirty"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
+def parse_files_spec(spec_md):
+    """{filename: [spec bullet, ...]} plus the numbered ARCHITECTURE.md section titles."""
+    files, current = {}, None
+    for line in spec_md.splitlines():
+        m = re.match(r"^### (\S+\.md)", line)
+        if m:
+            current = m.group(1)
+            files[current] = []
+        elif current and line.startswith("- "):
+            files[current].append(line[2:].strip())
+    arch_sections = re.findall(r"^\d+\.\s+\*\*(.+?)\*\*", spec_md, re.MULTILINE)
+    return files, arch_sections
+
+
+def spec_block(bullets):
+    if not bullets:
+        return "> Archon scaffold. Required sections: see `architecture/files_spec.md`."
+    lines = ["> Archon scaffold. Required content (see `architecture/files_spec.md`):"]
+    lines += [f"> - {b}" for b in bullets]
+    return "\n".join(lines)
+
+
+def persona_line(meta, version):
+    return (
+        f"- **Domain:** {meta.get('domain')}\n"
+        f"- **Role:** {meta.get('expert_role')}\n"
+        f"- **Persona:** Archon `personas/{meta['file']}` @ `{version}`"
+    )
+
+
+def render_files(primary, supporting, spec, arch_sections, graphify, version, today):
+    files = {}
+    for name, bullets in spec.items():
+        files[name] = f"# {name}\n\n{spec_block(bullets)}\n"
+
+    agents = files["AGENTS.md"] + "\n## Active Personas\n\n### Tier 1 (Primary)\n"
+    agents += persona_line(primary, version) + "\n"
+    if supporting:
+        agents += "\n### Tier 2 (Supporting)\n"
+        agents += "\n\n".join(persona_line(s, version) for s in supporting) + "\n"
+    for heading in (
+        "Must-follow constraints",
+        "Architecture quick-reference",
+        "Validation checklist",
+        "Repo conventions",
+    ):
+        agents += f"\n## {heading}\n\n{NOT_FOUND}\n"
+    files["AGENTS.md"] = agents
+
+    files["PROJECT_STATE.md"] += (
+        f"\n{SCAFFOLD_STATUS}\n\n## Version Snapshot\n\n"
+        "| Field | Value |\n|---|---|\n"
+        f"| Scaffold date | {today} |\n"
+        "| Git commit | N/A |\n| Branch | N/A |\n"
+        f"| Archon version | `{version}` |\n"
+    )
+
+    arch = files["ARCHITECTURE.md"] + "\n"
+    for i, title in enumerate(arch_sections, 1):
+        arch += f"\n## {i}. {title}\n\n"
+        if title == "System Mapping" and graphify:
+            arch += (
+                f"{NOT_FOUND}\n\nCodebase graph: run `python scripts/graphify_helper.py --build`, "
+                "then open `graphify-out/graph.html`.\n"
+            )
+        else:
+            arch += f"{NOT_FOUND}\n"
+    files["ARCHITECTURE.md"] = arch
+
+    if graphify:
+        files["ONBOARDING.md"] += (
+            "\n## Graphify Knowledge Graph\n\n"
+            "- Build: `python scripts/graphify_helper.py --build`\n"
+            "- Incremental update: `python scripts/graphify_helper.py --update`\n"
+            '- Query: `python scripts/graphify_helper.py --query "your question"`\n'
+            "- View: open `graphify-out/graph.html` (git-ignored, rebuild locally)\n"
+        )
+    return files
+
+
+def write_new(path, content, force, report):
+    if os.path.exists(path) and not force:
+        report["skipped"].append(os.path.basename(path))
+        return
+    write_text(path, content)
+    report["written"].append(os.path.basename(path))
+
+
+def setup_graphify(target_dir, install, force, report):
+    scripts_dir = os.path.join(target_dir, "scripts")
+    os.makedirs(scripts_dir, exist_ok=True)
+    helper_dst = os.path.join(scripts_dir, "graphify_helper.py")
+    if os.path.exists(helper_dst) and not force:
+        report["skipped"].append("scripts/graphify_helper.py")
+    else:
+        shutil.copy2(os.path.join(REPO_ROOT, "scripts", "graphify_helper.py"), helper_dst)
+        report["written"].append("scripts/graphify_helper.py")
+
+    gitignore = os.path.join(target_dir, ".gitignore")
+    existing = read_text(gitignore) if os.path.exists(gitignore) else ""
+    if "graphify-out/" not in existing:
+        sep = "" if not existing or existing.endswith("\n") else "\n"
+        write_text(gitignore, existing + sep + "\n# Graphify Outputs\ngraphify-out/\n")
+        report["written"].append(".gitignore (graphify-out/ added)")
+
+    write_new(os.path.join(target_dir, ".graphifyignore"), GRAPHIFYIGNORE, force, report)
+
+    cmd = [sys.executable, helper_dst, "--path", target_dir, "--build"]
+    if install:
+        cmd.append("--install")
+    print("Running Graphify initial build...")
+    if subprocess.run(cmd, check=False).returncode != 0:
+        report["failed"].append("graphify build")
+
+
+def load_persona(filename):
+    meta, err = parse_frontmatter(read_text(os.path.join(PERSONAS_DIR, filename)))
+    if err:
+        raise SystemExit(f"personas/{filename}: {err}")
+    meta["file"] = filename
+    return meta
+
+
+def interactive_args(files):
+    target = prompt("Target project workspace path: ")
+    print("\nAvailable personas:")
+    for i, f in enumerate(files, 1):
+        print(f"  [{i}] {f}")
+
+    def pick(text):
+        out = []
+        for c in prompt(text).split(","):
+            if c.strip().isdigit() and 1 <= int(c) <= len(files):
+                out.append(files[int(c) - 1])
+        return out
+
+    primary = pick("\nPrimary (Tier 1) persona number: ")[:1]
+    supporting = pick("Supporting (Tier 2) persona numbers, comma-separated (blank for none): ")
+    graphify = prompt("Set up Graphify? (y/n): ").lower() == "y"
+    install = graphify and prompt("Install graphifyy if missing? (y/n): ").lower() == "y"
+    argv = ["--target", target]
+    if primary:
+        argv += ["--primary", primary[0]]
+    for s in supporting:
+        argv += ["--supporting", s]
+    if graphify:
+        argv.append("--graphify")
+    if install:
+        argv.append("--install-graphify")
+    return argv
+
+
+def build_parser(files):
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--target", help="Target project directory (prompted if omitted)")
+    parser.add_argument("--primary", choices=files, help="Tier 1 persona file")
+    parser.add_argument(
+        "--supporting",
+        action="append",
+        default=[],
+        choices=files,
+        help="Tier 2 persona file (repeatable)",
+    )
+    parser.add_argument("--graphify", action="store_true", help="Set up Graphify")
+    parser.add_argument(
+        "--install-graphify", action="store_true", help="Allow installing graphifyy if missing"
+    )
+    parser.add_argument("--force", action="store_true", help="Overwrite existing files")
+    return parser
+
+
+def main(argv=None):
+    setup_utf8()
+    files = list_persona_files()
+    parser = build_parser(files)
+    if argv is None:
+        argv = sys.argv[1:]
+    if "--target" not in argv and not any(a.startswith("--target=") for a in argv):
+        argv = interactive_args(files) + list(argv)
+    args = parser.parse_args(argv)
+    if not args.target or not args.primary:
+        parser.error("--target and --primary are required")
+
+    target_dir = os.path.abspath(args.target)
+    os.makedirs(target_dir, exist_ok=True)
+    primary = load_persona(args.primary)
+    supporting = [load_persona(f) for f in args.supporting if f != args.primary]
+
+    spec, arch_sections = parse_files_spec(read_text(FILES_SPEC_PATH))
+    rendered = render_files(
+        primary,
+        supporting,
+        spec,
+        arch_sections,
+        args.graphify,
+        archon_version(),
+        datetime.date.today().isoformat(),
+    )
+
+    report = {"written": [], "skipped": [], "failed": []}
+    for name, content in rendered.items():
+        write_new(os.path.join(target_dir, name), content, args.force, report)
+    if args.graphify:
+        setup_graphify(target_dir, args.install_graphify, args.force, report)
+
+    print(f"\nTarget: {target_dir}")
+    print(f"✅ Written ({len(report['written'])}): {', '.join(report['written']) or '-'}")
+    if report["skipped"]:
+        print(
+            f"⏭️  Skipped, already exist ({len(report['skipped'])}): {', '.join(report['skipped'])}"
+            " (use --force to overwrite)"
+        )
+    if report["failed"]:
+        print(f"❌ Failed: {', '.join(report['failed'])}")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

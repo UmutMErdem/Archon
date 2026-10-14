@@ -16,20 +16,20 @@ The AI must generate ALL of the following markdown files. Domain-specific conten
 
 ### KNOWN_ISSUES.md
 - Every bug, misconfig, errata, or dangerous pattern found
-- Format: `I-NNN` | Severity (critical/high/medium/low) | Status (OPEN/FIXED)
+- Format: `KI-NNN` | Severity (critical/high/medium/low) | Status (OPEN/FIXED)
 - Each entry: Symptom, Root cause (file:line or module), Fix/Workaround
 - Security & safety issues → CRITICAL severity, logged immediately
 
 ### OPTIMIZATIONS.md
 - Performance, memory, resource, cost, and dead code/component findings
-- Format: `O-NN` | Category | Severity | Status
+- Format: `F-NN` | Category | Severity | Status
 - Each entry: Evidence (file:line), Why suboptimal, Recommendation, Removal safety, Impact
 
 ### PROJECT_STATE.md
-- **Version Snapshot:** Record the analysis timestamp, Git commit hash (if available), and branch name at the top of the file. Update this on every incremental sync.
+- **Version Snapshot:** Record the analysis timestamp, Git commit hash (if available), branch name, and the Archon version/commit used at the top of the file. Update this on every incremental sync.
 - Version, platform, build/revision status table
 - Architecture summary (3-5 bullets or component table)
-- Links to all open `I-NNN` and `O-NN` items
+- Links to all open `KI-NNN` and `F-NN` items
 - Link to CHANGELOG.md
 
 ### ROADMAP.md

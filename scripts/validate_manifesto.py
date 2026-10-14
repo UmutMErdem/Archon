@@ -1,537 +1,415 @@
+"""Archon manifesto linter. Every finding except persona size is an error (exit 1)."""
+
+import argparse
+import fnmatch
 import os
 import re
+import subprocess
 import sys
 import urllib.parse
-from domain_utils import (
-    load_domain_mappings as _load_mappings,
+from collections import Counter
+
+import sync_matrix
+from archon_core import (
+    COMPLIANCE_PATH,
+    DETECTION_PATH,
+    INHERIT_PRIMARY,
+    MATRIX_PATH,
+    PERSONAS_DIR,
+    README_PATH,
+    REPO_ROOT,
+    REQUIRED_HEADINGS,
+    SIGNALS_PATH,
+    iter_interfaces,
+    list_persona_files,
+    load_registry,
+    parse_frontmatter,
+    read_text,
     resolve_domain_to_persona_file,
+    section_bullets,
+    setup_utf8,
 )
-
-# Set system output to UTF-8 to handle Unicode on Windows
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stderr.reconfigure(encoding="utf-8")
-except AttributeError:
-    pass
-
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-PERSONAS_DIR = os.path.join(REPO_ROOT, "personas")
-SIGNALS_PATH = os.path.join(REPO_ROOT, "detection_signals.md")
-COMPLIANCE_PATH = os.path.join(REPO_ROOT, "compliance.md")
-MATRIX_PATH = os.path.join(REPO_ROOT, "CROSS_DOMAIN_MATRIX.md")
 
 MIN_PERSONA_LINES = 30
 MAX_PERSONA_LINES = 200
 
-REQUIRED_HEADINGS = [
-    r"^## Expert Role",
-    r"^## Domain-Specific Discovery Questions",
-    r"^## Key Focus Areas for ARCHITECTURE\.md",
-    r"^### System Mapping → ",
-    r"^### Detailed Specifications",
-    r"^### Performance Budget",
-    r"^### Domain-Specific Sections",
-    r"^## Compliance & Standards",
-    r"^## Common Pitfalls",
-    r"^## Recommended Toolchain",
-    r"^## Domain-Specific Testing",
-    r"^## Cross-Domain Interfaces",
-]
+REQUIRED_FRONTMATTER_KEYS = ["domain", "expert_role", "inherits"]
+PLACEHOLDER_RE = re.compile(r"<[A-Za-z][^<>\n]{2,}>")
+EXTENSION_GLOB_RE = re.compile(r"\*\.[\w.]+")
+SKIP_DIRS = {
+    ".git",
+    ".arena",
+    ".venv",
+    "venv",
+    "node_modules",
+    "graphify-out",
+    ".pytest_cache",
+    ".ruff_cache",
+    "__pycache__",
+}
 
 
-def load_domain_mappings():
-    mappings = _load_mappings(SIGNALS_PATH)
-    if not mappings:
-        print(f"❌ Error: {SIGNALS_PATH} not found or empty.")
-        sys.exit(1)
-    return mappings
+def compliance_key(text):
+    """Identifier part of a standard: the text before the first ` (` or ` —`."""
+    return re.split(r"\s+\(|\s+—", text.strip(), maxsplit=1)[0].strip()
 
 
-def parse_frontmatter(content):
-    if not content.strip().startswith("---"):
-        return None, "Missing frontmatter start marker '---'"
+def split_ids(key):
+    # Only a spaced slash separates IDs, so `ISO/IEC 27001` and `TCP/IP` stay whole.
+    return [p.strip() for p in re.split(r"\s+/\s+", key) if p.strip()]
 
-    parts = content.split("---")
-    if len(parts) < 3:
-        return None, "Missing frontmatter end marker '---'"
 
-    yaml_text = parts[1]
-    metadata = {}
-
-    for line in yaml_text.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
+def canonical_compliance_ids(compliance_md):
+    ids = set()
+    for line in compliance_md.splitlines():
+        if not line.startswith("|") or line.startswith("|---"):
             continue
-        if ":" not in line:
+        cell = line.split("|")[1].strip()
+        if not cell or cell in ("Standard", "Practice"):
             continue
-
-        key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip()
-
-        # Parse arrays: [item1, item2, ...]
-        if value.startswith("[") and value.endswith("]"):
-            items = []
-            val_clean = value[1:-1].strip()
-            quoted_items = re.findall(r'"([^"]*)"|\'([^\']*)\'', val_clean)
-            for q in quoted_items:
-                items.append(q[0] or q[1])
-            metadata[key] = items
-        else:
-            if value.startswith(('"', "'")) and value.endswith(('"', "'")):
-                value = value[1:-1]
-            metadata[key] = value
-
-    return metadata, None
+        key = compliance_key(cell)
+        ids.add(key)
+        ids.update(split_ids(key))
+    return ids
 
 
-def check_template_integrity(persona_path):
-    with open(persona_path, "r", encoding="utf-8") as f:
-        content = f.read()
-
+def check_compliance_ids(content, ids):
     errors = []
+    for bullet in section_bullets(content, "## Compliance & Standards"):
+        key = compliance_key(bullet)
+        if key not in ids and not all(p in ids for p in split_ids(key)):
+            errors.append(f"Compliance ID '{key}' not found in compliance.md column 1")
+    return errors
 
-    # 1. Verify and parse frontmatter
+
+def check_template_integrity(content):
+    errors = []
     meta, fm_err = parse_frontmatter(content)
     if fm_err:
-        errors.append(f"Frontmatter error: {fm_err}")
-    else:
-        required_keys = ["domain", "expert_role", "recommended_tools", "compliance"]
-        for rk in required_keys:
-            if rk not in meta:
-                errors.append(f"Frontmatter missing required key: '{rk}'")
-            elif not meta[rk]:
-                errors.append(f"Frontmatter key '{rk}' is empty")
-
-    # 2. Check headings
-    lines = content.splitlines()
-    for heading_pattern in REQUIRED_HEADINGS:
-        found = False
-        for line in lines:
-            if re.match(heading_pattern, line):
-                found = True
-                break
-        if not found:
-            clean_heading = heading_pattern.replace("^", "").replace("\\", "")
-            errors.append(f"Missing required heading: '{clean_heading}'")
-
+        return [f"Frontmatter error: {fm_err}"]
+    for key in REQUIRED_FRONTMATTER_KEYS:
+        if key not in meta:
+            errors.append(f"Frontmatter missing required key: '{key}'")
+        elif meta[key] in ("", [], {}):
+            errors.append(f"Frontmatter key '{key}' is empty")
+    for heading in REQUIRED_HEADINGS:
+        if not re.search(r"^" + re.escape(heading), content, re.MULTILINE):
+            errors.append(f"Missing required heading: '{heading.strip()}'")
     return errors
 
 
-def check_bidirectional_interfaces(mappings):
+def check_inherits(content, persona_files):
+    meta, fm_err = parse_frontmatter(content)
+    if fm_err or "inherits" not in meta:
+        return []
+    inherits = meta["inherits"]
+    if inherits == "none":
+        return []
+    if not isinstance(inherits, dict) or "base" not in inherits:
+        return ["'inherits' must be \"none\" or a block with a 'base' key"]
     errors = []
-    links = {}
-    raw_targets = {}  # Track all targets per persona for duplicate detection
-
-    # First pass: parse all interfaces declared in each persona
-    for pf in mappings.keys():
-        links[pf] = set()
-        raw_targets[pf] = []
-        pf_path = os.path.join(PERSONAS_DIR, pf)
-        if not os.path.exists(pf_path):
-            continue
-
-        with open(pf_path, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        match = re.search(
-            r"## Cross-Domain Interfaces\s*(.*?)\s*(?:##|$)", content, re.DOTALL
-        )
-        if match:
-            lines = match.group(1).splitlines()
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
-                # Parse: - **→ Target Domain:** description
-                m = re.match(r"-\s*\*\*\u2192\s*([^*:]+)(?:\*\*:\s*|:\*\*\s*)", line)
-                if m:
-                    target_domain = m.group(1).strip()
-                    target_file = resolve_domain_to_persona_file(
-                        target_domain, mappings
-                    )
-                    if target_file:
-                        links[pf].add(target_file)
-                        raw_targets[pf].append(target_file)
-                    else:
-                        errors.append(
-                            f"{pf}: Could not resolve interface target domain '{target_domain}' to any persona file."
-                        )
-
-    # Duplicate interface check
-    from collections import Counter
-
-    for pf, targets_list in raw_targets.items():
-        counts = Counter(targets_list)
-        for target, n in counts.items():
-            if n > 1:
-                target_domain = mappings.get(target, target)
-                errors.append(
-                    f"Duplicate interface: '{pf}' has {n} '→' bullets pointing to '{target}' ('{target_domain}'). Merge them into one."
-                )
-
-    # Second pass: verify symmetry
-    for source, targets in links.items():
-        for target in targets:
-            if target not in links or source not in links[target]:
-                source_domain = mappings[source]
-                target_domain = mappings[target]
-                errors.append(
-                    f"Asymmetry: '{source}' ('{source_domain}') links to '{target}' ('{target_domain}'), but '{target}' has no reciprocal link to '{source}'."
-                )
-
+    base = inherits["base"]
+    if base != INHERIT_PRIMARY and base not in persona_files:
+        errors.append(f"inherits.base '{base}' does not exist in personas/")
+    for key in ("base_reason", "overrides"):
+        if not inherits.get(key):
+            errors.append(f"inherits.{key} is missing or empty")
     return errors
 
 
-def check_compliance_matching(persona_path, compliance_content):
-    with open(persona_path, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    errors = []
-    match = re.search(
-        r"## Compliance & Standards\s*(.*?)\s*(?:##|$)", content, re.DOTALL
-    )
-    if match:
-        compliance_lines = match.group(1).splitlines()
-        for line in compliance_lines:
-            line = line.strip()
-            if line.startswith("-"):
-                std_text = re.sub(r"^-\s*", "", line).strip()
-                tokens = re.split(r"[\/\-\(\)]", std_text)
-                found_match = False
-                stop_words = {
-                    "and",
-                    "for",
-                    "with",
-                    "the",
-                    "standards",
-                    "guidelines",
-                    "principles",
-                    "standard",
-                    "guideline",
-                    "testing",
-                    "development",
-                    "management",
-                    "system",
-                    "systems",
-                    "rules",
-                    "specifications",
-                    "specification",
-                }
-                for token in tokens:
-                    token = token.strip()
-                    if not token:
-                        continue
-                    if len(token) > 2 and token.lower() in compliance_content.lower():
-                        found_match = True
-                        break
-                    words = re.findall(r"\b\w{3,}\b", token)
-                    for word in words:
-                        if (
-                            word.lower() not in stop_words
-                            and word.lower() in compliance_content.lower()
-                        ):
-                            found_match = True
-                            break
-                    if found_match:
-                        break
-                if not found_match and len(std_text) > 0:
-                    errors.append(
-                        f"Compliance standard '{std_text}' may be missing or mismatched in compliance.md"
-                    )
-    return errors
+def check_placeholders(content):
+    return [f"Unfilled placeholder '{m}'" for m in PLACEHOLDER_RE.findall(content)]
 
 
-def check_frontmatter_body_consistency(persona_path):
-    with open(persona_path, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    errors = []
+def check_frontmatter_body_consistency(content):
     meta, fm_err = parse_frontmatter(content)
     if fm_err or not meta:
-        return errors
+        return []
+    errors = []
 
     fm_role = meta.get("expert_role", "")
-    body_match = re.search(r"## Expert Role\s*>\s*You are a \*\*(.+?)\*\*", content)
-    if body_match and fm_role:
-        body_title = body_match.group(1).strip()
-        if body_title.lower() not in fm_role.lower():
-            errors.append(
-                f"Frontmatter expert_role does not contain body Expert Role title '{body_title}'"
-            )
+    body = re.search(r"## Expert Role\s*>\s*You are an? \*\*(.+?)\*\*", content)
+    if body and fm_role and body.group(1).strip().lower() not in fm_role.lower():
+        errors.append(
+            f"Frontmatter expert_role does not contain body Expert Role title '{body.group(1).strip()}'"
+        )
 
     fm_domain = meta.get("domain", "")
-    title_match = re.search(r"^# (.+?) Persona", content, re.MULTILINE)
-    if title_match and fm_domain:
-        body_domain = title_match.group(1).strip()
+    title = re.search(r"^# (.+?) Persona", content, re.MULTILINE)
+    if title and fm_domain:
         fm_words = set(re.findall(r"[a-z]{3,}", fm_domain.lower()))
-        body_words = set(re.findall(r"[a-z]{3,}", body_domain.lower()))
-
-        def stem_match(w1, w2):
-            prefix = min(len(w1), len(w2), 5)
-            return w1[:prefix] == w2[:prefix]
-
-        matched = 0
-        smaller = fm_words if len(fm_words) <= len(body_words) else body_words
-        larger = body_words if len(fm_words) <= len(body_words) else fm_words
-        for sw in smaller:
-            if any(stem_match(sw, lw) for lw in larger):
-                matched += 1
-        if len(smaller) > 0 and matched < len(smaller) * 0.5:
+        body_words = set(re.findall(r"[a-z]{3,}", title.group(1).lower()))
+        smaller, larger = sorted((fm_words, body_words), key=len)
+        matched = sum(
+            1 for s in smaller if any(s[:5] == w[: min(len(s), len(w), 5)] for w in larger)
+        )
+        if smaller and matched < len(smaller) * 0.5:
             errors.append(
-                f"Frontmatter domain '{fm_domain}' does not match heading '# {body_domain} Persona'"
+                f"Frontmatter domain '{fm_domain}' does not match heading '# {title.group(1).strip()} Persona'"
             )
-
     return errors
 
 
 def check_persona_size(persona_path):
-    with open(persona_path, "r", encoding="utf-8") as f:
+    with open(persona_path, encoding="utf-8") as f:
         line_count = sum(1 for _ in f)
-
-    warnings = []
     name = os.path.basename(persona_path)
     if line_count < MIN_PERSONA_LINES:
-        warnings.append(
-            f"{name}: Too short ({line_count} lines, minimum {MIN_PERSONA_LINES})"
-        )
-    elif line_count > MAX_PERSONA_LINES:
-        warnings.append(
-            f"{name}: Too long ({line_count} lines, maximum {MAX_PERSONA_LINES})"
-        )
-    return warnings
+        return [f"{name}: Too short ({line_count} lines, minimum {MIN_PERSONA_LINES})"]
+    if line_count > MAX_PERSONA_LINES:
+        return [f"{name}: Too long ({line_count} lines, maximum {MAX_PERSONA_LINES})"]
+    return []
 
 
-def check_detection_signal_collisions():
-    if not os.path.exists(SIGNALS_PATH):
-        return []
+def check_registry(registry, persona_files):
+    on_disk = set(persona_files)
+    errors = [
+        f"detection_signals.md references missing personas/{f}"
+        for f in sorted(set(registry) - on_disk)
+    ]
+    errors += [
+        f"personas/{f} is not registered in detection_signals.md"
+        for f in sorted(on_disk - set(registry))
+    ]
+    labels = Counter(row["label"] for row in registry.values())
+    errors += [
+        f"detection_signals.md: interface label '{label}' is used by {n} personas"
+        for label, n in sorted(labels.items())
+        if n > 1
+    ]
+    errors += [
+        f"detection_signals.md: personas/{f} has an empty Interface Label"
+        for f, row in sorted(registry.items())
+        if not row["label"] or row["label"] == "—"
+    ]
 
-    with open(SIGNALS_PATH, "r", encoding="utf-8") as f:
-        content = f.read()
+    readme = read_text(README_PATH) if os.path.exists(README_PATH) else ""
+    errors += [
+        f"personas/{f} is not listed in README.md"
+        for f in sorted(on_disk)
+        if f"(personas/{f})" not in readme
+    ]
+    count = re.search(r"Domain Expert Personas \((\d+) personas\)", readme)
+    if not count or int(count.group(1)) != len(on_disk):
+        errors.append(f"README.md persona count is not '({len(on_disk)} personas)'")
 
-    warnings = []
-    signal_map = {}
-
-    for line in content.splitlines():
-        if "|" not in line:
-            continue
-        parts = [p.strip() for p in line.split("|")]
-        if len(parts) < 4 or not parts[3].startswith("`personas/"):
-            continue
-
-        persona = parts[3]
-        signals_raw = parts[1]
-        tokens = re.findall(r"`([^`]+)`", signals_raw)
-        for token in tokens:
-            for sig in re.split(r",\s*", token):
-                sig = sig.strip()
-                if not sig:
-                    continue
-                if sig in signal_map:
-                    if signal_map[sig] != persona:
-                        warnings.append(
-                            f"Signal '{sig}' is claimed by both {signal_map[sig]} and {persona}"
-                        )
-                else:
-                    signal_map[sig] = persona
-
-    return warnings
-
-
-def check_matrix_sync(mappings):
-    if not os.path.exists(MATRIX_PATH):
-        return [f"CROSS_DOMAIN_MATRIX.md not found at {MATRIX_PATH}"]
-
-    with open(MATRIX_PATH, "r", encoding="utf-8") as f:
-        matrix_content = f.read()
-
-    warnings = []
-    matrix_pairs = set()
-    for line in matrix_content.splitlines():
-        if "|" not in line or "From Persona" in line:
-            continue
-        parts = [p.strip() for p in line.split("|")]
-        if len(parts) >= 4 and parts[1] and parts[2] and not parts[1].startswith("-"):
-            from_file = resolve_domain_to_persona_file(parts[1].strip(), mappings)
-            to_file = resolve_domain_to_persona_file(parts[2].strip(), mappings)
-            if from_file and to_file:
-                matrix_pairs.add((from_file, to_file))
-
-    persona_pairs = set()
-    for pf, domain in mappings.items():
-        pf_path = os.path.join(PERSONAS_DIR, pf)
-        if not os.path.exists(pf_path):
-            continue
-
-        with open(pf_path, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        match = re.search(
-            r"## Cross-Domain Interfaces\s*(.*?)(?:\n## |\Z)", content, re.DOTALL
-        )
-        if not match:
-            continue
-
-        for line in match.group(1).splitlines():
-            m = re.match(r"-\s*\*\*→\s*([^*:]+)(?:\*\*:\s*|:\*\*\s*)", line.strip())
-            if m:
-                target = m.group(1).strip()
-                target_file = resolve_domain_to_persona_file(target, mappings)
-                if target_file:
-                    persona_pairs.add((pf, target_file))
-
-    persona_only_set = persona_pairs - matrix_pairs
-    matrix_only_set = matrix_pairs - persona_pairs
-
-    persona_only = len(persona_only_set)
-    matrix_only = len(matrix_only_set)
-
-    if persona_only > 0:
-        warnings.append(
-            f"CROSS_DOMAIN_MATRIX.md is missing {persona_only} persona interface(s) (e.g. {list(persona_only_set)[:3]})"
-        )
-    if matrix_only > 0:
-        warnings.append(
-            f"CROSS_DOMAIN_MATRIX.md has {matrix_only} obsolete or unmatched entry/entries (e.g. {list(matrix_only_set)[:3]})"
-        )
-
-    return warnings
-
-
-def check_broken_links():
-    errors = []
-    for root, dirs, files in os.walk(REPO_ROOT):
-        if ".git" in root:
-            continue
-        for file in files:
-            if file.endswith(".md"):
-                md_path = os.path.join(root, file)
-                with open(md_path, "r", encoding="utf-8") as f:
-                    content = f.read()
-
-                links = re.findall(r"\[([^\]]+)\]\(([^)]+)\)", content)
-                for text, url in links:
-                    url = url.strip()
-                    if url.startswith(("http://", "https://", "mailto:", "#")):
-                        continue
-
-                    url_clean = url.split("#")[0]
-                    if not url_clean:
-                        continue
-
-                    url_clean = urllib.parse.unquote(url_clean)
-
-                    if url_clean.startswith("file:///"):
-                        parsed = urllib.parse.urlparse(url_clean)
-                        target_path = os.path.normpath(parsed.path)
-                        if os.name == "nt" and target_path.startswith("\\"):
-                            if len(target_path) > 2 and target_path[2] == ":":
-                                target_path = target_path[1:]
-                    else:
-                        target_path = os.path.normpath(os.path.join(root, url_clean))
-
-                    if not os.path.exists(target_path):
-                        errors.append(
-                            f"{os.path.relpath(md_path, REPO_ROOT)}: Broken link to '{url}' (resolved to '{target_path}')"
-                        )
+    detection = read_text(DETECTION_PATH) if os.path.exists(DETECTION_PATH) else ""
+    question = re.search(r"technical domain of this project\? \(e\.g\., (.*?)\)\"", detection)
+    listed = {s.strip() for s in question.group(1).split(",")} if question else set()
+    errors += [
+        f"architecture/00_detection.md Step 1 question does not list '{registry[f]['label']}'"
+        for f in sorted(on_disk & set(registry))
+        if registry[f]["label"] not in listed
+    ]
     return errors
 
 
-def main():
-    print("==================================================")
-    print("🛡️  Archon AI Manifesto Validator / Linter  🛡️")
-    print("==================================================")
+def check_interfaces(contents, registry):
+    """Labels must be canonical and resolvable, unique per persona, and symmetric."""
+    errors = []
+    canonical = {row["label"] for row in registry.values()}
+    links = {}
+    for pf, content in contents.items():
+        targets = []
+        for label, _ in iter_interfaces(content):
+            target = resolve_domain_to_persona_file(label, registry)
+            if target is None:
+                errors.append(f"UNRESOLVED: {pf}: interface target '{label}' matches no persona")
+                continue
+            if label not in canonical:
+                errors.append(
+                    f"LABEL: {pf}: '{label}' is not canonical, use '{registry[target]['label']}'"
+                )
+            if target == pf:
+                errors.append(f"SELF: {pf}: interface points to itself")
+            targets.append(target)
+        for target, n in Counter(targets).items():
+            if n > 1:
+                errors.append(f"DUPLICATE: {pf}: {n} bullets point to {target}, merge them")
+        links[pf] = set(targets)
 
-    has_errors = False
+    for source, targets in sorted(links.items()):
+        for target in sorted(targets):
+            if source not in links.get(target, set()):
+                errors.append(
+                    f"ASYMMETRY: {source} → {target}, but {target} has no '→ {registry.get(source, {}).get('label', source)}' bullet"
+                )
+    return errors
 
-    # 1. Load mappings from detection_signals.md
-    mappings = load_domain_mappings()
 
-    # 2. Read compliance.md
-    if not os.path.exists(COMPLIANCE_PATH):
-        print(f"❌ CRITICAL ERROR: {COMPLIANCE_PATH} not found!")
-        sys.exit(1)
-    with open(COMPLIANCE_PATH, "r", encoding="utf-8") as f:
-        compliance_content = f.read()
+def _signal_globs(cell):
+    globs = []
+    for token in re.findall(r"`([^`]+)`", cell):
+        globs += [g.strip() for g in re.split(r",\s*", token) if g.strip()]
+    return globs
 
-    # Check personas
-    print("\n🔍 Checking domain personas...")
-    persona_files = [f for f in os.listdir(PERSONAS_DIR) if f.endswith(".md")]
-    for pf in sorted(persona_files):
-        pf_path = os.path.join(PERSONAS_DIR, pf)
-        print(f"  - Analyzing personas/{pf}...")
 
-        # Template & Frontmatter
-        template_errors = check_template_integrity(pf_path)
-        if template_errors:
-            has_errors = True
-            for err in template_errors:
-                print(f"    ❌ TEMPLATE ERROR: {err}")
+def _glob_overlap(a, b):
+    """Exact duplicates, or one specific pattern matching another. A bare `*.ext` glob
+    overlapping a named file is expected: the more specific signal wins (00_detection.md)."""
+    if a == b:
+        return True
+    if EXTENSION_GLOB_RE.fullmatch(a) or EXTENSION_GLOB_RE.fullmatch(b):
+        return False
+    wild = set("*?[")
+    if not (wild & set(a)) and fnmatch.fnmatch(a, b):
+        return True
+    return not (wild & set(b)) and fnmatch.fnmatch(b, a)
 
-        # Frontmatter-body consistency
-        consistency_errors = check_frontmatter_body_consistency(pf_path)
-        if consistency_errors:
-            for err in consistency_errors:
-                print(f"    ⚠️  CONSISTENCY WARNING: {err}")
 
-        # Persona file size
-        size_warnings = check_persona_size(pf_path)
-        if size_warnings:
-            for warn in size_warnings:
-                print(f"    ⚠️  SIZE WARNING: {warn}")
+def check_signal_collisions(registry):
+    rows = [
+        (f"personas/{f}", _signal_globs(row["signals"] + " " + row["weak"]))
+        for f, row in sorted(registry.items())
+    ]
+    errors = []
+    for i, (pa, ga) in enumerate(rows):
+        for pb, gb in rows[i + 1 :]:
+            for a in ga:
+                for b in gb:
+                    if _glob_overlap(a, b):
+                        errors.append(f"Signal '{a}' ({pa}) overlaps '{b}' ({pb})")
+    return errors
 
-        # Compliance matching
-        compliance_errors = check_compliance_matching(pf_path, compliance_content)
-        if compliance_errors:
-            for err in compliance_errors:
-                print(f"    ⚠️  COMPLIANCE WARNING: {err}")
 
-    # 3. Detection Signal Collision Check
-    print("\n🔍 Checking detection signal collisions...")
-    signal_collisions = check_detection_signal_collisions()
-    if signal_collisions:
-        for sc in signal_collisions:
-            print(f"  ⚠️  SIGNAL COLLISION: {sc}")
-    else:
-        print("  ✅ No detection signal collisions found.")
+def check_matrix_sync():
+    expected = sync_matrix.render_matrix(*sync_matrix.collect())
+    current = read_text(MATRIX_PATH) if os.path.exists(MATRIX_PATH) else ""
+    if current != expected:
+        return ["CROSS_DOMAIN_MATRIX.md is stale. Run: python scripts/sync_matrix.py"]
+    return []
 
-    # 4. CROSS_DOMAIN_MATRIX.md Sync Check
-    print("\n🔍 Checking CROSS_DOMAIN_MATRIX.md sync...")
-    matrix_warnings = check_matrix_sync(mappings)
-    if matrix_warnings:
-        for mw in matrix_warnings:
-            print(f"  ⚠️  MATRIX SYNC: {mw}")
-    else:
-        print("  ✅ CROSS_DOMAIN_MATRIX.md is in sync with persona interfaces.")
 
-    # 5. Check Bidirectional Symmetry
-    print("\n🔍 Checking bidirectional interface symmetry...")
-    symmetry_errors = check_bidirectional_interfaces(mappings)
-    if symmetry_errors:
-        has_errors = True
-        for err in symmetry_errors:
-            print(f"  ❌ INTERFACE ASYMMETRY: {err}")
-    else:
-        print("  ✅ All cross-domain interfaces are perfectly symmetrical!")
+def github_slug(heading):
+    slug = heading.strip().lower()
+    slug = re.sub(r"[^\w\- ]", "", slug)
+    return slug.replace(" ", "-")
 
-    # 4. Broken Link Verification
-    print("\n🔍 Checking for broken links across all markdown files...")
-    broken_links = check_broken_links()
-    if broken_links:
-        has_errors = True
-        for bl in broken_links:
-            print(f"  ❌ BROKEN LINK: {bl}")
-    else:
-        print("  ✅ All relative links resolved successfully.")
 
-    print("\n==================================================")
-    if has_errors:
-        print("❌ Linter failed: One or more validation errors found.")
-        sys.exit(1)
-    else:
-        print("✅ Validation complete: Manifesto is clean and fully synchronized!")
-        sys.exit(0)
+def heading_slugs(md_text):
+    slugs, seen = set(), Counter()
+    in_fence = False
+    for line in md_text.splitlines():
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        m = None if in_fence else re.match(r"^#{1,6}\s+(.*?)\s*#*\s*$", line)
+        if m:
+            base = github_slug(m.group(1))
+            slugs.add(base if not seen[base] else f"{base}-{seen[base]}")
+            seen[base] += 1
+    return slugs
+
+
+def _markdown_files():
+    try:
+        out = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "*.md"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.split()
+        return [
+            os.path.join(REPO_ROOT, p)
+            for p in out
+            if not SKIP_DIRS & set(p.split("/")) and os.path.exists(os.path.join(REPO_ROOT, p))
+        ]
+    except (OSError, subprocess.CalledProcessError):
+        files = []
+        for root, dirs, names in os.walk(REPO_ROOT):
+            dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+            files += [os.path.join(root, n) for n in names if n.endswith(".md")]
+        return files
+
+
+def _display_path(path):
+    try:
+        return os.path.relpath(path, REPO_ROOT).replace(os.sep, "/")
+    except ValueError:  # different drive on Windows
+        return path
+
+
+def check_broken_links(md_files=None):
+    errors = []
+    md_files = md_files if md_files is not None else _markdown_files()
+    slug_cache = {}
+    for md_path in sorted(md_files):
+        content = read_text(md_path)
+        text = re.sub(r"```.*?```", "", content, flags=re.DOTALL)
+        text = re.sub(r"`[^`\n]*`", "", text)
+        rel = _display_path(md_path)
+        for _, url in re.findall(r"\[([^\]]+)\]\(([^)\s]+)\)", text):
+            if url.startswith(("http://", "https://", "mailto:")):
+                continue
+            if url.startswith("file:"):
+                errors.append(f"{rel}: machine-specific link '{url}'")
+                continue
+            path_part, _, anchor = url.partition("#")
+            target = (
+                md_path
+                if not path_part
+                else os.path.normpath(
+                    os.path.join(os.path.dirname(md_path), urllib.parse.unquote(path_part))
+                )
+            )
+            if not os.path.exists(target):
+                errors.append(f"{rel}: broken link '{url}'")
+                continue
+            if anchor and target.endswith(".md"):
+                if target not in slug_cache:
+                    slug_cache[target] = heading_slugs(read_text(target))
+                if anchor.lower() not in slug_cache[target]:
+                    errors.append(f"{rel}: broken anchor '{url}'")
+    return errors
+
+
+def run():
+    """Run every check. Returns (errors, warnings) as lists of (category, message)."""
+    errors, warnings = [], []
+    registry = load_registry(SIGNALS_PATH)
+    if not registry:
+        return [("CONFIG", f"{SIGNALS_PATH} not found or has no persona rows")], []
+    compliance_ids = canonical_compliance_ids(read_text(COMPLIANCE_PATH))
+    persona_files = list_persona_files(PERSONAS_DIR)
+    contents = {pf: read_text(os.path.join(PERSONAS_DIR, pf)) for pf in persona_files}
+
+    for pf, content in contents.items():
+        for category, found in (
+            ("TEMPLATE", check_template_integrity(content)),
+            ("INHERITS", check_inherits(content, persona_files)),
+            ("PLACEHOLDER", check_placeholders(content)),
+            ("CONSISTENCY", check_frontmatter_body_consistency(content)),
+            ("COMPLIANCE", check_compliance_ids(content, compliance_ids)),
+        ):
+            errors += [(category, f"personas/{pf}: {msg}") for msg in found]
+        warnings += [("SIZE", w) for w in check_persona_size(os.path.join(PERSONAS_DIR, pf))]
+
+    errors += [("REGISTRY", e) for e in check_registry(registry, persona_files)]
+    errors += [("INTERFACE", e) for e in check_interfaces(contents, registry)]
+    errors += [("SIGNALS", e) for e in check_signal_collisions(registry)]
+    errors += [("MATRIX", e) for e in check_matrix_sync()]
+    errors += [("LINK", e) for e in check_broken_links()]
+    return errors, warnings
+
+
+def main(argv=None):
+    setup_utf8()
+    argparse.ArgumentParser(description=__doc__).parse_args(argv)
+    print("🛡️  Archon manifesto validator")
+    errors, warnings = run()
+    for category, msg in warnings:
+        print(f"  ⚠️  {category}: {msg}")
+    for category, msg in errors:
+        print(f"  ❌ {category}: {msg}")
+    counts = Counter(c for c, _ in errors)
+    if errors:
+        summary = ", ".join(f"{c}={n}" for c, n in sorted(counts.items()))
+        print(f"\n❌ {len(errors)} error(s): {summary}")
+        return 1
+    print(f"\n✅ Manifesto is clean ({len(warnings)} warning(s)).")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

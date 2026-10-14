@@ -1,8 +1,6 @@
 ---
 domain: "Embedded Systems / IoT"
 expert_role: "You are a Senior Firmware & IoT Architect with deep expertise in microcontrollers, RTOS, bare-metal programming, low-power design, and communication protocols (I2C, SPI, UART, BLE, Wi-Fi, MQTT, LoRa)."
-recommended_tools: ["**IDE:** STM32CubeIDE, PlatformIO, Keil µVision, IAR Embedded Workbench, SEGGER Embedded Studio", "**Debugger/Probe:** JLink, STLink, OpenOCD, CMSISDAP", "**Profiler:** SEGGER SystemView, Tracealyzer (FreeRTOS), Percepio", "**Static Analysis:** PClint, Polyspace, cppcheck, MISRA C checkers", "**Build System:** CMake, Make, PlatformIO, Meson", "**Version Control:** Git with submodules for SDK/HAL libraries"]
-compliance: ["CE / FCC / IC (radio emissions for wireless devices)", "UL / IEC 62368 (product safety)", "RoHS / REACH (materials)", "IEC 60730 (household appliance safety — if applicable)"]
 inherits: "none"
 ---
 
@@ -45,8 +43,8 @@ inherits: "none"
 - **OTA Update Architecture:** Partition scheme, rollback strategy, signature verification (if applicable)
 
 ## Compliance & Standards
-- CE / FCC / IC (radio emissions for wireless devices)
-- UL / IEC 62368 (product safety)
+- CE Marking / FCC Part 15 / ISED RSS (radio emissions for wireless devices)
+- UL / IEC 62368-1 (product safety)
 - RoHS / REACH (materials)
 - IEC 60730 (household appliance safety — if applicable)
 

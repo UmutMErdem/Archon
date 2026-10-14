@@ -61,6 +61,8 @@ inherits:
 - ISO/IEC 27017 / 27018 (cloud security and PII protection standards)
 - NIST SP 800-53 (federal security controls guidelines)
 - AWS Well-Architected Framework / GCP Architecture Framework (cloud architecture review guidelines)
+- NIS2 (cloud, data center, and managed service providers are in scope — EU)
+- DORA (financial entities and their ICT third-party providers — EU)
 
 ## Common Pitfalls
 - **Open security groups:** databases or SSH reachable from the internet. Detect: `0.0.0.0/0` ingress on non-HTTP ports (tfsec, Checkov, Prowler). Fix: private subnets, security-group-to-security-group rules, Session Manager instead of SSH. → critical
@@ -76,6 +78,7 @@ inherits:
 - **Cost Estimation:** Infracost, AWS Simple Monthly Calculator
 - **Architecture Validation:** AWS Well-Architected Tool, Azure Architecture Reviewer
 - **Infrastructure Code (IaC):** Terraform, Pulumi, AWS CDK
+- **Observability:** OpenTelemetry Collector, Prometheus, Grafana, provider-native tracing
 
 ## Domain-Specific Testing
 - **Disaster Recovery Failover Simulation:** Automated testing of region and zone failovers to measure RTO/RPO limits.
@@ -89,4 +92,3 @@ inherits:
 - **→ Cybersecurity:** Cloud firewall rules, KMS encryption keys management, IAM role auditing policies
 - **→ Web/Mobile Apps:** API Gateway DNS, CDN caching configurations, tenant ID headers injection
 - **→ Data Engineering:** Cloud data warehousing resources scaling, data lake security policies
-

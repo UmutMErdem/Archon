@@ -92,4 +92,4 @@ inherits: "none"
 - **→ Signal Processing:** ADC/DAC analog front-end design, anti-aliasing filter component selection
 - **→ Automation:** Panel layout coordination, wiring diagram review, terminal block assignments
 - **→ Robotics:** Custom PCB for motor drivers, sensor boards, power distribution
-
+- **→ Automotive:** ECU hardware safety metrics, transceivers, supply monitoring for ISO 26262

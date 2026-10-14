@@ -92,4 +92,3 @@ inherits: "none"
 - **→ Network/Telecom:** Industrial Ethernet configuration, VLAN isolation for OT networks
 - **→ Web/Mobile Apps:** Dashboard/reporting integration via OPC-UA or MQTT broker
 - **→ Mechanical/CAD:** Sensor placement mounts, pneumatic routing, actuator strokes
-

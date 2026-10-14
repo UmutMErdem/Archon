@@ -92,3 +92,4 @@ inherits: "none"
 - **→ Cybersecurity:** Hardening binaries (ASLR, DEP, stack smashing protectors), conducting secure code reviews, auditing system call usage
 - **→ Web/Mobile Apps:** Exposing shared libraries via FFI (Foreign Function Interface), JNI, or WebAssembly (Wasm) modules
 - **→ FPGA:** Hardware register access, DMA buffer management, interrupt coordination
+- **→ Automotive:** AUTOSAR Adaptive services on POSIX, hypervisors and partitioning

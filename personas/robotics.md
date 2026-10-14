@@ -94,4 +94,3 @@ inherits: "none"
 - **→ Mechanical/CAD:** URDF/Xacro model accuracy, joint specifications, enclosure design
 - **→ Hardware Design:** Custom PCB for motor drivers, sensor boards, power distribution
 - **→ Signal Processing:** Sensor data filtering, IMU fusion, audio-based localization
-

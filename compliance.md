@@ -16,6 +16,8 @@ This document serves as a cross-domain reference for compliance standards, certi
 | ISO 9001 | Quality Management Systems | Quality processes | Manufacturing, services, software |
 | RoHS | Restriction of Hazardous Substances | Material restrictions | All physical/electronic products sold in EU |
 | REACH | Registration, Evaluation of Chemicals | Chemical safety | Products containing chemicals (EU) |
+| EU Cyber Resilience Act | Regulation (EU) 2024/2847 | Security-by-design, vulnerability handling, SBOM, and update support for products with digital elements | Hardware and software products sold in the EU; incident and vulnerability reporting from 2026-09-11, all obligations from 2027-12-11 |
+| NIS2 | Directive (EU) 2022/2555 | Cybersecurity risk management and incident reporting | Essential and important entities in the EU (energy, transport, health, digital infrastructure, ICT service management, …) |
 
 ---
 
@@ -28,6 +30,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | UL / IEC 62368-1 | Audio/video and IT equipment safety |
 | IEC 60730 | Automatic electrical controls (household) |
 | ETSI EN 303 645 | IoT cybersecurity baseline (EU) |
+| EN 18031 | Cybersecurity requirements for radio equipment under the RED Delegated Act (EU) 2022/30, mandatory since 2025-08-01 |
 | ISED RSS | Radio equipment certification (Canada, formerly Industry Canada / IC) |
 
 ## Hardware Design (PCB)
@@ -73,6 +76,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | Model Cards (Google) | Model transparency documentation |
 | Datasheets for Datasets | Dataset documentation standard |
 | NIST AI RMF | AI risk management framework |
+| ISO/IEC 42001 | AI management system (certifiable) |
 
 ## Data Engineering
 
@@ -92,6 +96,9 @@ This document serves as a cross-domain reference for compliance standards, certi
 | NIST SP 800-53 | Federal security controls |
 | ISO/IEC 27017 | Cloud-specific security controls |
 | CSA STAR | Cloud security certification |
+| SLSA | Supply-chain Levels for Software Artifacts: build provenance and integrity |
+| SBOM (SPDX / CycloneDX) | Software bill of materials formats |
+| OpenTelemetry | Vendor-neutral telemetry (traces, metrics, logs) specification |
 
 ## Robotics
 
@@ -233,6 +240,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | SOC 2 Type II | Audit report for operational security, availability, and privacy controls |
 | OWASP ASVS | Application Security Verification Standard |
 | CIS Controls | Critical security controls checklist for securing systems |
+| DORA | Regulation (EU) 2022/2554: ICT risk management, incident reporting, and third-party risk for financial entities (applies since 2025-01-17) |
 
 ---
 
@@ -256,7 +264,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 |---|---|
 | OpenAPI Specification 3.1 | API contract definition standard (formerly Swagger) |
 | JSON:API | JSON response format convention for REST APIs |
-| RFC 7807 (Problem Details) | Standard error response format for HTTP APIs |
+| RFC 9457 (Problem Details) | Standard error response format for HTTP APIs (obsoletes RFC 7807) |
 | OAuth 2.0 / OpenID Connect | Authentication and authorization protocol standards |
 | gRPC / Protocol Buffers | High-performance RPC service definition standard |
 | RFC 9110 | HTTP semantics (obsoletes RFC 7231) |
@@ -309,6 +317,48 @@ This document serves as a cross-domain reference for compliance standards, certi
 | Google Developer Documentation Style Guide | Technical writing style and formatting standard |
 | Microsoft Writing Style Guide | Technical content voice, tone, and formatting rules |
 | ASD-STE100 | Simplified Technical English for regulated industries |
+
+---
+
+## LLM / Generative AI Applications
+
+| Standard | Scope |
+|---|---|
+| OWASP Top 10 for LLM Applications | Prompt injection, sensitive data disclosure, improper output handling, excessive agency, and other LLM risks (2025 edition) |
+| NIST AI 600-1 | Generative AI profile of the NIST AI RMF |
+| MITRE ATLAS | Adversarial threat knowledge base for AI systems |
+
+---
+
+## Automotive Software
+
+| Standard | Scope |
+|---|---|
+| ISO 26262 | Road vehicles functional safety (ASIL A–D) |
+| ISO 21448 | Safety of the intended functionality (SOTIF) |
+| ISO/SAE 21434 | Road vehicles cybersecurity engineering |
+| UN R155 | Cybersecurity management system for vehicle type approval |
+| UN R156 | Software update management system for vehicle type approval |
+| Automotive SPICE | Process assessment model for automotive software development |
+| AUTOSAR | Classic and Adaptive platform architecture standards |
+| ISO 14229 | Unified Diagnostic Services (UDS) |
+
+---
+
+## Medical Device Software
+
+| Standard | Scope |
+|---|---|
+| IEC 62304 | Medical device software life cycle (safety classes A, B, C) |
+| ISO 14971 | Risk management for medical devices |
+| IEC 62366-1 | Usability engineering for medical devices |
+| ISO 13485 | Quality management system for medical devices |
+| EU MDR | Regulation (EU) 2017/745 on medical devices |
+| FDA QMSR | 21 CFR Part 820 Quality Management System Regulation (incorporates ISO 13485, effective 2026-02-02) |
+| FDA Section 524B | Cybersecurity requirements for cyber devices, including SBOM, in premarket submissions |
+| IEC 81001-5-1 | Health software security activities in the product life cycle |
+| HL7 FHIR | Healthcare data exchange standard |
+| DICOM | Medical imaging data and communication standard |
 
 ---
 

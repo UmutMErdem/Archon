@@ -62,6 +62,9 @@ inherits:
 - GDPR / KVKK (global data privacy regulations)
 - NIST SP 800-53 (federal security controls)
 - OWASP ASVS (Application Security Verification Standard)
+- EU Cyber Resilience Act (if shipping products with digital elements in the EU)
+- NIS2 (if an essential or important entity in the EU)
+- DORA (if a financial entity or a critical ICT provider to one in the EU)
 
 ## Common Pitfalls
 - **Secrets in repository history:** credentials stay exploitable after the file is deleted. Detect: gitleaks or trufflehog over the full history. Fix: rotate first, then purge history; enable push protection. → critical
@@ -94,4 +97,4 @@ inherits:
 - **→ Data Engineering:** Data masking, anonymization, tokenization for GDPR/KVKK
 - **→ ERP/Enterprise:** Segregation of duties (SoD), audit trail logging, SOX controls
 - **→ API Design:** OAuth scope definitions, API key rotation policies, API access audit logging
-
+- **→ Medical Devices:** Medical device cybersecurity risk management, SBOM, vulnerability disclosure

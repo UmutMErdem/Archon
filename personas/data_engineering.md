@@ -97,3 +97,4 @@ inherits:
 - **→ Blockchain:** Indexer nodes, subgraphs, ETL for block data, analytics dashboards
 - **→ Cloud Architecture:** Data lake storage architecture, warehouse provisioning, cross-region replication
 - **→ ERP/Enterprise:** ETL pipelines from ERP to data warehouse, real-time streaming
+- **→ LLM Applications:** Document ingestion and chunking pipelines, vector index refresh, access-control metadata

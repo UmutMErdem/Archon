@@ -94,4 +94,3 @@ inherits: "none"
 - **→ Product Management:** Data retention policies alignment, user reporting requirements
 - **→ Security Compliance:** Data encryption at rest/transit, DB user permissions, deletion scripts
 - **→ Mobile Native:** Local SQLite/Room schema designs, offline synchronization schemas
-

@@ -92,3 +92,4 @@ inherits: "none"
 - **→ AI/ML:** Feature extraction (MFCCs, spectrograms, wavelets) as input pipelines for neural networks
 - **→ FPGA:** DSP block utilization, parallel processing pipelines, fixed-point implementation
 - **→ Robotics:** Sensor data filtering, IMU fusion algorithms, audio-based localization
+- **→ Automotive:** Sensor conditioning and filtering for ADAS and powertrain functions

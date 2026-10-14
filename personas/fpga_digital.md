@@ -94,4 +94,3 @@ inherits: "none"
 - **→ Signal Processing:** DSP pipeline implementation, filter coefficient loading, sample rate bridging; DSP block utilization, parallel FFT pipelines, fixed-point coefficient loading
 - **→ Network/Telecom:** High-speed SerDes interfaces, Ethernet MAC/PHY integration; network packet processing offload, hardware timestamping
 - **→ Systems Programming:** Device driver development for FPGA-hosted peripherals (PCIe, DMA); hardware register definitions, DMA buffer interfaces, interrupt vectors
-

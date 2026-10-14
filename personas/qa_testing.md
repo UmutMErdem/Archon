@@ -96,4 +96,6 @@ inherits:
 - **→ Technical Writing:** Documentation accuracy verification, testing code examples
 - **→ UI/UX Design:** Visual regression baselines, accessibility test gates, component selectors
 - **→ API Design:** API contract testing integration (Pact), endpoint schema validation
-
+- **→ LLM Applications:** LLM evaluation suites and adversarial test sets as CI release gates
+- **→ Automotive:** HIL test automation, MC/DC coverage evidence, safety regression suites
+- **→ Medical Devices:** IEC 62304 verification protocols and retained test evidence

@@ -61,6 +61,7 @@ inherits: "none"
 - Model Cards (Google model transparency framework)
 - Datasheets for Datasets (dataset documentation standard)
 - IEEE 7000 (ethical AI design)
+- ISO/IEC 42001 (AI management system)
 
 ## Common Pitfalls
 - **Data leakage:** offline metrics that collapse in production. Detect: scaler, encoder, or feature selection fit before the split; the same entity (user, patient, device) in several splits; time series shuffled before splitting. Fix: split first (group- or time-aware), fit every transform inside a pipeline on the training fold only. → high
@@ -96,4 +97,5 @@ inherits: "none"
 - **→ Embedded/IoT:** Edge inference (TFLite, ONNX, TensorRT), model quantization
 - **→ Signal Processing:** Feature extraction pipelines, audio/image preprocessing chains
 - **→ Robotics:** Perception model integration (SLAM, object detection), RL policy deployment
-
+- **→ LLM Applications:** Embedding and fine-tuned models, evaluation methodology, model registry for LLM features
+- **→ Medical Devices:** Validation and change control of regulated AI/ML-enabled device functions

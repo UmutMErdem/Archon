@@ -62,6 +62,7 @@ inherits:
 - RFC 9110 (HTTP semantics; obsoletes RFC 7231)
 - RFC 7519 (JSON Web Token standard)
 - WHATWG Fetch Standard (CORS — Cross-Origin Resource Sharing rules)
+- RFC 9457 (Problem Details error format; obsoletes RFC 7807)
 
 ## Common Pitfalls
 - **Broken object-level authorization (BOLA):** any authenticated user can read or change other users' data by editing an ID. Detect: handlers that load a resource by path or body ID without an ownership or tenant check. Fix: authorize every object access in a policy layer or with row-level scoping. → critical
@@ -93,6 +94,4 @@ inherits:
 - **→ Security Compliance:** API security control guidelines, API access auditing and logs
 - **→ Mobile Native:** Mobile client SDK generation, push notification payload schemas
 - **→ Technical Writing:** OpenAPI spec formatting rules, documentation generator integration
-
-
-
+- **→ LLM Applications:** Tool and function-calling schemas, side-effect endpoints with idempotency and authorization

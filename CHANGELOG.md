@@ -4,6 +4,18 @@ All notable changes to Archon are documented here. Format: [Keep a Changelog](ht
 
 ## [Unreleased]
 
+### Added
+- Personas: `llm_applications.md`, `automotive.md`, `medical_device.md` (30 personas in total).
+- Every persona has a `## Hard Rules` section (MUST/NEVER with KNOWN_ISSUES severity), Detect/Fix pitfalls, measured performance budgets with sourced references, and a System Mapping example row; enforced by the validator (DEPTH).
+- `compliance.md`: EU Cyber Resilience Act, NIS2, DORA, EN 18031, SLSA, SBOM, OpenTelemetry, ISO/IEC 42001, and tables for LLM applications, automotive, and medical device software.
+
+### Changed
+- Performance budgets no longer state invented targets; they give a measurement method and a reference value with its source.
+- RFC 7807 replaced by RFC 9457 in `compliance.md`.
+
+### Fixed
+- Placeholder detection no longer flags angle brackets inside inline code.
+
 ## [0.1.0] - 2026-10-14
 
 ### Added

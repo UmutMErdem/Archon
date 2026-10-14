@@ -55,10 +55,10 @@
 
 ## M-008 · Content gaps and new personas
 **Priority:** P1
-**Status:** OPEN
+**Status:** ~~DONE (2026-10-14)~~
 **Goal:** Cover current regulations and practices missing from every persona, and add high-regulation domains.
 **Tasks:**
-- [ ] EU Cyber Resilience Act, SBOM / SLSA / Sigstore, NIS2, DORA, OpenTelemetry, ETSI EN 303 645, RFC 9457
-- [ ] LLM / GenAI applications persona
-- [ ] Automotive software persona (ISO 26262, ISO/SAE 21434, AUTOSAR)
-- [ ] Medical device software persona (IEC 62304, ISO 14971)
+- [x] EU Cyber Resilience Act, SBOM / SLSA / Sigstore, NIS2, DORA, OpenTelemetry, ETSI EN 303 645, EN 18031, ISO/IEC 42001, RFC 9457
+- [x] LLM / GenAI applications persona (`llm_applications.md`)
+- [x] Automotive software persona (`automotive.md`: ISO 26262, ISO/SAE 21434, UN R155/R156, AUTOSAR)
+- [x] Medical device software persona (`medical_device.md`: IEC 62304, ISO 14971, EU MDR, FDA QMSR / 524B)

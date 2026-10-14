@@ -59,9 +59,9 @@ def test_creates_and_registers_persona(mock_run, repo):
     )
     readme = (repo / "README.md").read_text(encoding="utf-8")
     assert "[quantum_computing.md](personas/quantum_computing.md)" in readme
-    assert "Domain Expert Personas (28 personas)" in readme
+    assert "Domain Expert Personas (31 personas)" in readme
     detection = (repo / "architecture" / "00_detection.md").read_text(encoding="utf-8")
-    assert 'Technical Writing, Quantum)"' in detection
+    assert 'Medical Devices, Quantum)"' in detection
     assert "#### Detection Signals (auto-detect before asking)\n" in detection
     assert mock_run.call_args[0][0][0] == sys.executable
 

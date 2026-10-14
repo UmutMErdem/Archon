@@ -86,4 +86,3 @@ inherits: "none"
 - **→ Technical Writing:** User story translation to documentation, release notes
 - **→ UI/UX Design:** Wireframe-to-component mapping, user flow validation, accessibility criteria
 - **→ ERP/Enterprise:** Corporate business rule mappings, release milestone planning
-

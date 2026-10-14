@@ -142,7 +142,7 @@ def test_check_registry_detects_unregistered_and_drift(repo_copy, monkeypatch):
     errors = vm.check_registry(registry, files + ["quantum.md"])
     assert "personas/quantum.md is not registered in detection_signals.md" in errors
     assert "personas/quantum.md is not listed in README.md" in errors
-    assert "README.md persona count is not '(28 personas)'" in errors
+    assert "README.md persona count is not '(31 personas)'" in errors
 
     registry["ai_ml.md"]["label"] = "DevOps"
     errors = vm.check_registry(registry, files)

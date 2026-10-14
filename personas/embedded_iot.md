@@ -53,12 +53,16 @@ inherits: "none"
 - **Boot Sequence:** Step-by-step startup flow from reset vector to main loop
 - **Power Modes:** State diagram showing transitions between Run, Sleep, Deep Sleep, Shutdown
 - **OTA Update Architecture:** Partition scheme, rollback strategy, signature verification (if applicable)
+- **Vulnerability Handling & SBOM:** SBOM per firmware release, security contact and coordinated disclosure, declared support period, update delivery (EU Cyber Resilience Act).
 
 ## Compliance & Standards
 - CE Marking / FCC Part 15 / ISED RSS (radio emissions for wireless devices)
 - UL / IEC 62368-1 (product safety)
 - RoHS / REACH (materials)
 - IEC 60730 (household appliance safety — if applicable)
+- ETSI EN 303 645 (consumer IoT cybersecurity baseline)
+- EN 18031 (RED Delegated Act cybersecurity for radio equipment — EU, mandatory since 2025-08-01)
+- EU Cyber Resilience Act (SBOM, vulnerability handling, security updates for the support period — EU market)
 
 ## Common Pitfalls
 - **Unprotected ISR-shared state:** torn reads and lost updates on multi-byte variables. Detect: globals written in `*_IRQHandler` or HAL callbacks and read in tasks without `volatile`, atomics, or a critical section. Fix: `volatile` + critical section (`taskENTER_CRITICAL`, `__disable_irq`) or pass data through an RTOS queue. → high
@@ -99,4 +103,5 @@ inherits: "none"
 - **→ Network/Telecom:** Static IP allocation, IoT VLAN configuration, cellular modem management
 - **→ Robotics:** Motor controller firmware APIs, sensor driver integration, real-time comm
 - **→ Systems Programming:** HAL library integration, interrupt vector registration, BSP coordination
-
+- **→ Automotive:** ECU drivers, RTOS and bootloader foundations for AUTOSAR Classic stacks
+- **→ Medical Devices:** Firmware for software in a medical device, secure boot and update

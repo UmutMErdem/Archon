@@ -4,7 +4,7 @@
 
 ### Step 1 — Identify the Project Domain
 Inspect the workspace files (extensions, frameworks, config files, folder names) to determine the project domain. If the domain cannot be determined from files alone, ask the user:
-> "What is the technical domain of this project? (e.g., Embedded/IoT, Hardware Design, Automation, Web/Mobile Apps, AI/ML, Data Engineering, DevOps, Robotics, FPGA, Game Dev, AR/VR/XR, Cybersecurity, Signal Processing, Systems Programming, Mechanical/CAD, Blockchain, Network/Telecom, QA/Testing, Database Architect, Product Management, Security Compliance, Cloud Architecture, API Design, UI/UX Design, Mobile Native, ERP/Enterprise, Technical Writing)"
+> "What is the technical domain of this project? (e.g., Embedded/IoT, Hardware Design, Automation, Web/Mobile Apps, AI/ML, Data Engineering, DevOps, Robotics, FPGA, Game Dev, AR/VR/XR, Cybersecurity, Signal Processing, Systems Programming, Mechanical/CAD, Blockchain, Network/Telecom, QA/Testing, Database Architect, Product Management, Security Compliance, Cloud Architecture, API Design, UI/UX Design, Mobile Native, ERP/Enterprise, Technical Writing, LLM Applications, Automotive, Medical Devices)"
 
 #### Detection Signals (auto-detect before asking)
 Use the file/config/folder signals in **[detection_signals.md](../detection_signals.md)** to infer the domain automatically. Only fall back to the question above if no signal matches. When signals point to multiple domains (e.g., `Dockerfile` + `*.sol`), treat the strongest/most-specific signal as the primary domain and invoke Phase 0.5 for the rest. Signals in the **Weak Signals** column never select a domain on their own.

@@ -61,6 +61,7 @@ inherits:
 - Google Play Developer Policy / Material Design 3 (Android distribution and UI guidelines)
 - OWASP Mobile Top 10 (mobile application security standards)
 - GDPR / COPPA (mobile user consent and data tracking regulations)
+- EU Cyber Resilience Act (apps made available as products on the EU market)
 
 ## Common Pitfalls
 - **Secrets in the binary:** keys extracted by decompiling. Detect: API keys in source, `Info.plist`, `strings.xml`, or BuildConfig; `strings` run on the IPA or APK. Fix: backend-issued short-lived tokens plus App Attest or Play Integrity. → critical
@@ -90,3 +91,4 @@ inherits:
 - **→ Database Architect:** SQLite/Room schema definition, offline database migrations, conflict resolution strategies
 - **→ UI/UX Design:** Mobile interface design specifications, typography scales, safe area layout boundaries
 - **→ API Design:** API client consumption, mobile SDK integration, push notification payloads
+- **→ Medical Devices:** Patient and clinician apps regulated as medical device software

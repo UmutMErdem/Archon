@@ -17,6 +17,7 @@ inherits: "none"
 - **MUST** gate production deploys on automated tests and keep a one-step rollback → high
 - **MUST** give every workload readiness and liveness probes plus resource requests and limits → high
 - **MUST** alert on user-facing symptoms (SLO burn rate) with a runbook per alert → medium
+- **MUST** generate an SBOM and signed build provenance (SLSA) for every release artifact and verify signatures before deploy → high
 
 ## Domain-Specific Discovery Questions
 - What cloud provider(s) are used (AWS, GCP, Azure, on-premises, hybrid)?
@@ -60,6 +61,9 @@ inherits: "none"
 - CIS Benchmarks (cloud/OS/container hardening)
 - NIST SP 800-53 (federal security controls — if applicable)
 - PCI-DSS (if processing payment data)
+- SLSA (build provenance and artifact integrity levels)
+- SBOM (SPDX / CycloneDX) — software bill of materials for every release
+- OpenTelemetry (vendor-neutral traces, metrics, and logs)
 
 ## Common Pitfalls
 - **Secrets in code or pipelines:** leaked credentials. Detect: gitleaks over history; plaintext secrets in `.tfvars`, Helm values, or CI logs. Fix: secret manager with External Secrets, masked CI variables, rotation. → critical
@@ -78,6 +82,8 @@ inherits: "none"
 - **Monitoring:** Prometheus, Grafana, Datadog, New Relic, CloudWatch
 - **Logging:** ELK Stack (Elasticsearch, Logstash, Kibana), Loki, Fluentd
 - **Secret Management:** HashiCorp Vault, AWS Secrets Manager, SOPS, sealed-secrets
+- **Supply Chain:** Syft, Trivy, cosign (Sigstore), SLSA provenance generators, Dependency-Track
+- **Telemetry:** OpenTelemetry SDKs and Collector
 
 ## Domain-Specific Testing
 - **Infrastructure Testing:** Terratest, Checkov, tfsec, OPA/Rego policy tests
@@ -107,5 +113,3 @@ inherits: "none"
 - **→ Systems Programming:** Binary packaging (deb, rpm, MSI), systemd services, containerization
 - **→ Technical Writing:** CI/CD for documentation builds, preview deployments for doc PRs
 - **→ Game Dev:** Multi-platform build automation, distribution platform CI/CD (SteamCMD, consoles)
-
-

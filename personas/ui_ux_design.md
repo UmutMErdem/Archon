@@ -90,4 +90,4 @@ inherits:
 - **→ Product Management:** Wireframe validation, mapping user journeys to screen layouts, aligning on brand guidelines
 - **→ API Design:** Documenting API error state UI representations, loading states design guidelines
 - **→ Mobile Native:** Designing mobile safe area layouts, notch padding specifications
-
+- **→ Medical Devices:** IEC 62366-1 use-related risk analysis and summative usability evaluation

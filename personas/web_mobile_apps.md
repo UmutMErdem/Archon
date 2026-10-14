@@ -62,6 +62,7 @@ inherits: "none"
 - OWASP Top 10 (web security)
 - PCI-DSS (if handling payment data)
 - SOC 2 Type II (if SaaS with enterprise clients)
+- EU Cyber Resilience Act (installable or downloadable software sold in the EU; pure SaaS is generally out of scope)
 
 ## Common Pitfalls
 - **Cross-site scripting:** session theft and account takeover. Detect: `dangerouslySetInnerHTML`, `v-html`, or `innerHTML` with user data; no CSP. Fix: framework escaping, DOMPurify for rich text, strict CSP. → critical
@@ -114,7 +115,4 @@ inherits: "none"
 - **→ Cloud Architecture:** API Gateway DNS integration, CDN caching configurations
 - **→ ERP/Enterprise:** Corporate sales portals integration, client dashboard reporting pipelines
 - **→ Technical Writing:** Developer onboarding manuals integration, API docs portal mapping
-
-
-
-
+- **→ LLM Applications:** Streaming chat UI, sanitized rendering of model output, feedback capture

@@ -103,4 +103,5 @@ inherits: "none"
 - **→ Network/Telecom:** IDS/IPS feeds, firewall logs, NAC integration, VPN controls
 - **→ Systems Programming:** Binary hardening (ASLR, DEP, SSP), syscall auditing
 - **→ ERP/Enterprise:** Corporate ERP access privilege controls, financial auditing security
-
+- **→ LLM Applications:** Prompt-injection threat modeling, LLM red teaming, data exfiltration controls
+- **→ Automotive:** ISO/SAE 21434 TARA, vehicle interface penetration testing, HSM key management

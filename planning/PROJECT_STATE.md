@@ -10,11 +10,12 @@
 
 ## Architecture
 - AI agents read [architecture.md](../architecture.md) → `architecture/00_detection.md` … `rules.md`, then load personas.
+- 30 personas, each with Hard Rules, Detect/Fix pitfalls, and sourced budget references (D-008).
 - [detection_signals.md](../detection_signals.md) is the persona registry (signals, domain, file, interface label).
 - `scripts/archon_core.py` is shared by every script; `validate_manifesto.py` enforces all cross-file contracts.
 - `sync_matrix.py` is the only writer of [CROSS_DOMAIN_MATRIX.md](../CROSS_DOMAIN_MATRIX.md).
 - `bootstrap_target.py`, `detect_domain.py`, `graphify_helper.py` operate on target projects.
 
 ## Open items
-- None. All milestones M-001…M-006 are done: [ROADMAP.md](ROADMAP.md)
+- None. All milestones M-001…M-008 are done: [ROADMAP.md](ROADMAP.md)
 - All KI-001…KI-038 and F-01…F-17 are closed: [KNOWN_ISSUES.md](KNOWN_ISSUES.md), [OPTIMIZATIONS.md](OPTIMIZATIONS.md)

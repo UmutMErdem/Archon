@@ -87,6 +87,3 @@ inherits: "none"
 - **→ Data Engineering:** Sync schedules to OLAP data warehouses, ETL processes orchestration
 - **→ DevOps:** Corporate middleware deployments, ERP build runners infrastructure
 - **→ Security Compliance:** SOX compliance auditing configuration, corporate audit trails validation
-
-
-

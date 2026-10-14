@@ -32,6 +32,16 @@ HOW TO USE THIS TEMPLATE
 ## Expert Role
 > You are a **<Senior Title>** with expertise in <core skills, technologies, protocols, and sub-disciplines that define this domain>.
 
+## Hard Rules
+<!-- 5–8 non-negotiable rules the auditor enforces in this domain. A violation is logged in
+KNOWN_ISSUES.md with the severity after the arrow. Security and physical-safety rules are always
+critical. Format: - **MUST** | **NEVER** <rule> → critical | high | medium | low -->
+- **MUST** <rule that is required in every project of this domain> → <severity>
+- **NEVER** <practice that is forbidden in this domain> → <severity>
+- **MUST** <rule> → <severity>
+- **NEVER** <rule> → <severity>
+- **MUST** <rule> → <severity>
+
 ## Domain-Specific Discovery Questions
 <!-- 5–7 questions that disambiguate stack, constraints, and intent for THIS domain. -->
 - <Question about the primary platform / target / runtime?>
@@ -48,6 +58,7 @@ HOW TO USE THIS TEMPLATE
 - <Primary structural map the AI must extract for this domain>
 - <Secondary mapping / relationship to document>
 - <Tertiary mapping (addresses, layers, topology, hierarchy, etc.)>
+- Example: <one filled-in row of the primary map, so every project's table has the same shape>
 
 ### Detailed Specifications
 - <Per-file/per-module specs: signatures, parameters, return types, one-liners>
@@ -55,11 +66,14 @@ HOW TO USE THIS TEMPLATE
 - <Significant structs/enums/constants/resources with values and purpose>
 
 ### Performance Budget
-<!-- Quantified limits specific to this domain. Always give units. -->
-- <Metric 1 with unit and target (e.g. latency µs/ms, throughput Mbps)>
-- <Metric 2 with unit and target (e.g. memory MB, Flash/RAM %, VRAM)>
-- <Metric 3 with unit and target (e.g. fps, query latency, startup ms)>
-- <Resource ceiling (CPU %, nodes, draw calls, binary size, power µA/mA)>
+<!-- 4–6 metrics. Format: - **<Metric> (<unit>):** Measure: <tool or method>. Reference: <value> (<context or source>).
+A Reference is a sanity check for the auditor, never the project's target: the project's own target
+goes in ARCHITECTURE.md, or "not found in source" if it has none. Use "Reference: project-defined"
+when no generic value exists. -->
+- **<Metric 1> (<unit>):** Measure: <how>. Reference: <value> (<context or source>).
+- **<Metric 2> (<unit>):** Measure: <how>. Reference: <value> (<context or source>).
+- **<Metric 3> (<unit>):** Measure: <how>. Reference: <value> (<context or source>).
+- **<Metric 4> (<unit>):** Measure: <how>. Reference: project-defined (<what drives it>).
 
 ### Domain-Specific Sections
 <!-- 3–4 deep-dive sections unique to this domain, each with a bold lead-in. -->
@@ -75,12 +89,13 @@ HOW TO USE THIS TEMPLATE
 - <Standard / certification 3 — scope>
 
 ## Common Pitfalls
-<!-- Concrete, domain-specific mistakes the auditor must actively hunt for. -->
-- <Pitfall 1 — the failure mode it causes>
-- <Pitfall 2>
-- <Pitfall 3>
-- <Pitfall 4>
-- <Pitfall 5>
+<!-- 5–8 mistakes the auditor must actively hunt for.
+Format: - **<Title>:** <failure mode>. Detect: <where/how to find it in the code or design>. Fix: <remedy>. → <severity> -->
+- **<Pitfall 1>:** <failure mode>. Detect: <how>. Fix: <remedy>. → <severity>
+- **<Pitfall 2>:** <failure mode>. Detect: <how>. Fix: <remedy>. → <severity>
+- **<Pitfall 3>:** <failure mode>. Detect: <how>. Fix: <remedy>. → <severity>
+- **<Pitfall 4>:** <failure mode>. Detect: <how>. Fix: <remedy>. → <severity>
+- **<Pitfall 5>:** <failure mode>. Detect: <how>. Fix: <remedy>. → <severity>
 
 ## Recommended Toolchain
 - **<Category, e.g. IDE / Engine>:** <tools>

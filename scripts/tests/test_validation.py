@@ -191,3 +191,60 @@ def test_main_reports_errors(monkeypatch, capsys):
     assert vm.main([]) == 1
     out = capsys.readouterr().out
     assert "LINK=1" in out and "SIZE: w" in out
+
+
+DEEP = """## Hard Rules
+- **NEVER** block inside an ISR → high
+- **MUST** sign firmware → critical
+- **MUST** feed the watchdog from the main loop → high
+- **NEVER** ship an open debug port → critical
+- **MUST** check HAL return codes → medium
+
+## Key Focus Areas for ARCHITECTURE.md
+
+### System Mapping → Pin Mapping
+- Pin table
+- Example: `| PA5 | GPIOA | SPI1_SCK | OUT | NONE | clock |`
+
+### Performance Budget
+- **Flash usage (%):** Measure: linker map. Reference: ≤ 80 %.
+- **Stack headroom (% free):** Measure: high-water mark. Reference: ≥ 20 %.
+- **ISR latency (µs):** Measure: logic analyzer. Reference: project-defined.
+- **Sleep current (µA):** Measure: PPK2. Reference: datasheet.
+
+### Domain-Specific Sections
+- **Memory Map:** layout
+
+## Common Pitfalls
+- **A:** x. Detect: y. Fix: z. → high
+- **B:** x. Detect: y. Fix: z. → low
+- **C:** x. Detect: y. Fix: z. → medium
+- **D:** x. Detect: y. Fix: z. → critical
+- **E:** x. Detect: y. Fix: z. → high
+"""
+
+
+def test_check_depth_accepts_template_format():
+    assert vm.check_depth(DEEP) == []
+
+
+def test_check_depth_rejects_shallow_content():
+    shallow = DEEP.replace("- **MUST** check HAL return codes → medium\n", "- check HAL codes\n")
+    shallow = shallow.replace("- Example: `| PA5 | GPIOA | SPI1_SCK | OUT | NONE | clock |`\n", "")
+    shallow = shallow.replace(" → low\n", "\n")
+    shallow = shallow.replace(
+        "- **Sleep current (µA):** Measure: PPK2. Reference: datasheet.\n", ""
+    )
+    errors = vm.check_depth(shallow)
+    assert any(e.startswith("## Hard Rules: bullet does not match") for e in errors)
+    assert any(e.startswith("## Common Pitfalls: bullet does not match") for e in errors)
+    assert "### Performance Budget: 3 bullet(s), at least 4 required" in errors
+    assert "### System Mapping: add one '- Example: ' row" in errors
+    assert not any("Domain-Specific Sections" in e for e in errors)
+
+
+def test_extract_section_stops_at_same_level():
+    from archon_core import extract_section
+
+    body = extract_section(DEEP, "### Performance Budget")
+    assert "Flash usage" in body and "Memory Map" not in body

@@ -99,9 +99,10 @@ def parse_frontmatter(content):
 
 
 def extract_section(content, heading):
-    """Body of a `## heading` section, up to the next `## ` heading or EOF."""
+    """Body of a heading, up to the next heading of the same or a higher level, or EOF."""
+    level = len(heading) - len(heading.lstrip("#"))
     m = re.search(
-        r"^" + re.escape(heading) + r"[^\n]*\n(.*?)(?=^## |\Z)",
+        r"^" + re.escape(heading) + r"[^\n]*\n(.*?)(?=^#{1," + str(level) + r"} |\Z)",
         content,
         re.DOTALL | re.MULTILINE,
     )

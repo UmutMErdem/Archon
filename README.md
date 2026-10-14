@@ -36,7 +36,7 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 | [CROSS_DOMAIN_MATRIX.md](CROSS_DOMAIN_MATRIX.md) | Persona cross-domain interface relationships |
 | [PERSONA_TEMPLATE.md](PERSONA_TEMPLATE.md) | Blueprint for creating new domain personas |
 
-### Domain Expert Personas (27 personas)
+### Domain Expert Personas (30 personas)
 
 **Hardware & Low-Level:**
 [embedded_iot.md](personas/embedded_iot.md), [hardware_design.md](personas/hardware_design.md), [fpga_digital.md](personas/fpga_digital.md), [systems_programming.md](personas/systems_programming.md)
@@ -45,13 +45,16 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 [web_mobile_apps.md](personas/web_mobile_apps.md), [mobile_native.md](personas/mobile_native.md), [api_design.md](personas/api_design.md), [ui_ux_design.md](personas/ui_ux_design.md), [data_engineering.md](personas/data_engineering.md), [devops.md](personas/devops.md), [cloud_architecture.md](personas/cloud_architecture.md), [network_telecom.md](personas/network_telecom.md)
 
 **Specialized Tech:**
-[ai_ml.md](personas/ai_ml.md), [blockchain.md](personas/blockchain.md), [cybersecurity.md](personas/cybersecurity.md)
+[ai_ml.md](personas/ai_ml.md), [llm_applications.md](personas/llm_applications.md), [blockchain.md](personas/blockchain.md), [cybersecurity.md](personas/cybersecurity.md)
 
 **Interactive & Physical:**
 [game_dev.md](personas/game_dev.md), [ar_vr_xr.md](personas/ar_vr_xr.md), [robotics.md](personas/robotics.md), [mechanical_cad.md](personas/mechanical_cad.md)
 
 **Theory & Signal:**
 [signal_processing.md](personas/signal_processing.md), [automation.md](personas/automation.md)
+
+**Regulated Industries:**
+[automotive.md](personas/automotive.md), [medical_device.md](personas/medical_device.md)
 
 **Process, Data & Quality:**
 [qa_testing.md](personas/qa_testing.md), [db_architect.md](personas/db_architect.md), [product_management.md](personas/product_management.md), [security_compliance.md](personas/security_compliance.md), [erp_enterprise.md](personas/erp_enterprise.md), [technical_writing.md](personas/technical_writing.md)

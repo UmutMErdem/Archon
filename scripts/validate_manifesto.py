@@ -20,6 +20,7 @@ from archon_core import (
     REPO_ROOT,
     REQUIRED_HEADINGS,
     SIGNALS_PATH,
+    extract_section,
     iter_interfaces,
     list_persona_files,
     load_registry,
@@ -118,7 +119,40 @@ def check_inherits(content, persona_files):
 
 
 def check_placeholders(content):
-    return [f"Unfilled placeholder '{m}'" for m in PLACEHOLDER_RE.findall(content)]
+    # Inline code may legitimately contain angle brackets (`/proc/<pid>/fd`, `<limit>` tags).
+    prose = re.sub(r"`[^`\n]*`", "", content)
+    return [f"Unfilled placeholder '{m}'" for m in PLACEHOLDER_RE.findall(prose)]
+
+
+SEVERITY = r"→ (critical|high|medium|low)$"
+HARD_RULE_RE = re.compile(r"^\*\*(MUST|NEVER)\*\* .+ " + SEVERITY)
+PITFALL_RE = re.compile(r"^\*\*[^*]+:\*\* .+ Detect: .+ Fix: .+ " + SEVERITY)
+BUDGET_RE = re.compile(r"^\*\*[^*]+ \([^)]+\):\*\* Measure: .+ Reference: .+")
+DEPTH_RULES = [
+    ("## Hard Rules", HARD_RULE_RE, 5, "- **MUST|NEVER** <rule> → <severity>"),
+    ("## Common Pitfalls", PITFALL_RE, 5, "- **Title:** ... Detect: ... Fix: ... → <severity>"),
+    (
+        "### Performance Budget",
+        BUDGET_RE,
+        4,
+        "- **Metric (unit):** Measure: ... Reference: ...",
+    ),
+]
+
+
+def check_depth(content):
+    """Hard rules, pitfalls and budgets follow PERSONA_TEMPLATE.md; System Mapping has an example."""
+    errors = []
+    for heading, pattern, minimum, shape in DEPTH_RULES:
+        bullets = section_bullets(content, heading)
+        bad = [b for b in bullets if not pattern.match(b)]
+        errors += [f"{heading}: bullet does not match '{shape}': {b[:70]}" for b in bad]
+        if len(bullets) < minimum:
+            errors.append(f"{heading}: {len(bullets)} bullet(s), at least {minimum} required")
+    mapping = extract_section(content, "### System Mapping") or ""
+    if not re.search(r"^- Example: ", mapping, re.MULTILINE):
+        errors.append("### System Mapping: add one '- Example: ' row")
+    return errors
 
 
 def check_frontmatter_body_consistency(content):
@@ -381,6 +415,7 @@ def run():
             ("PLACEHOLDER", check_placeholders(content)),
             ("CONSISTENCY", check_frontmatter_body_consistency(content)),
             ("COMPLIANCE", check_compliance_ids(content, compliance_ids)),
+            ("DEPTH", check_depth(content)),
         ):
             errors += [(category, f"personas/{pf}: {msg}") for msg in found]
         warnings += [("SIZE", w) for w in check_persona_size(os.path.join(PERSONAS_DIR, pf))]

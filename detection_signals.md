@@ -35,3 +35,6 @@
 | `*.xcodeproj`, `*.xcworkspace`, `Podfile`, `*.swift`, `*.kt` + `AndroidManifest.xml` | Mobile Native Development | `personas/mobile_native.md` | Mobile Native | `*.gradle.kts` |
 | SAP `*.abap`, `*.rdl` (SSRS), Dynamics `*.al`, Oracle Forms `*.fmb` | ERP & Enterprise Systems | `personas/erp_enterprise.md` | ERP/Enterprise | ERP config `*.xml` |
 | `mkdocs.yml`, `docusaurus.config.js`, Sphinx `conf.py`, `*.rst` | Technical Writing & Documentation | `personas/technical_writing.md` | Technical Writing | `docs/`, API doc templates |
+| `promptfooconfig.yaml`, `langgraph.json`, `*.prompty`, `.mcp.json` | LLM / Generative AI Applications | `personas/llm_applications.md` | LLM Applications | `prompts/`, dependency manifests listing openai / anthropic / langchain / llama-index |
+| `*.arxml` (AUTOSAR), `*.dbc` (CAN database), `*.a2l` (ASAM calibration), `*.ldf` (LIN), `*.cdd` (CANdela diagnostics) | Automotive Software | `personas/automotive.md` | Automotive | MISRA configuration files |
+| `DHF/` (design history file), `*SOUP*`, `*.dcm` (DICOM), `*.hl7` | Medical Device Software | `personas/medical_device.md` | Medical Devices | FHIR resources `*.fhir.json`, risk management files |

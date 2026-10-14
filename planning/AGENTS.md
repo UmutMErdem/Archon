@@ -18,7 +18,7 @@ Senior AI-governance and developer-tooling architect. Adversarial on cross-file 
 | Component | Role |
 |---|---|
 | [architecture.md](../architecture.md) + `architecture/*.md` | Execution engine read by the AI agent (Phase 0 → 0.7, output spec, rules) |
-| `personas/*.md` (27) | Domain expert personas, fixed heading structure from [PERSONA_TEMPLATE.md](../PERSONA_TEMPLATE.md) |
+| `personas/*.md` (30) | Domain expert personas, fixed heading structure and depth format (D-008) from [PERSONA_TEMPLATE.md](../PERSONA_TEMPLATE.md) |
 | [detection_signals.md](../detection_signals.md) | Persona registry and detection heuristics |
 | [compliance.md](../compliance.md) | Canonical standard IDs |
 | `scripts/archon_core.py` | Shared parsing, registry loading, label resolution |

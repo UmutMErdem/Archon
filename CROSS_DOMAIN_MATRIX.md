@@ -13,11 +13,14 @@
 | AI/ML | Data Engineering | Feature store integration, ETL pipeline coordination, data catalog |
 | AI/ML | DevOps | MLOps pipeline, model registry, CI/CD for model training and deployment |
 | AI/ML | Embedded/IoT | Edge inference (TFLite, ONNX, TensorRT), model quantization |
+| AI/ML | LLM Applications | Embedding and fine-tuned models, evaluation methodology, model registry for LLM features |
+| AI/ML | Medical Devices | Validation and change control of regulated AI/ML-enabled device functions |
 | AI/ML | Robotics | Perception model integration (SLAM, object detection), RL policy deployment |
 | AI/ML | Signal Processing | Feature extraction pipelines, audio/image preprocessing chains |
 | AI/ML | Web/Mobile Apps | Model serving API endpoints, real-time prediction integration |
 | API Design | Database Architect | Pagination query schemas, bulk database operation endpoints mapping, SQL query optimization for resolvers |
 | API Design | DevOps | API Gateway configurations, rate-limiting policies, SSL/TLS certificate termination |
+| API Design | LLM Applications | Tool and function-calling schemas, side-effect endpoints with idempotency and authorization |
 | API Design | Mobile Native | Mobile client SDK generation, push notification payload schemas |
 | API Design | QA/Testing | API contract validations, generating mock API fixtures, API smoke test runner integration |
 | API Design | Security Compliance | API security control guidelines, API access auditing and logs |
@@ -34,6 +37,12 @@
 | Automation | Mechanical/CAD | Sensor placement mounts, pneumatic routing, actuator strokes |
 | Automation | Network/Telecom | Industrial Ethernet configuration, VLAN isolation for OT networks |
 | Automation | Web/Mobile Apps | Dashboard/reporting integration via OPC-UA or MQTT broker |
+| Automotive | Cybersecurity | TARA, penetration testing of vehicle interfaces, key management and HSM usage |
+| Automotive | Embedded/IoT | MCU drivers, RTOS configuration, bootloader and memory layout |
+| Automotive | Hardware Design | ECU hardware safety metrics (SPFM, LFM), CAN transceivers, power supply monitoring |
+| Automotive | QA/Testing | HIL test automation, coverage evidence, regression suites for safety releases |
+| Automotive | Signal Processing | Sensor signal conditioning, filtering in ADAS and powertrain functions |
+| Automotive | Systems Programming | AUTOSAR Adaptive services on POSIX, hypervisor and partitioning |
 | Blockchain | Cybersecurity | Smart contract audit procedures, multi-sig setups, timelock configurations, bug bounty programs, front-run monitoring |
 | Blockchain | Data Engineering | Indexer node setup, subgraphs, ETL pipelines for block data extraction, Dune Analytics dashboard integration |
 | Blockchain | DevOps | Node infrastructure management (Alchemy, Infura, QuickNode), CI/CD pipelines for contract deployment and verification on block explorers |
@@ -45,6 +54,7 @@
 | Cloud Architecture | Web/Mobile Apps | API Gateway DNS, CDN caching configurations, tenant ID headers injection |
 | Cybersecurity | AR/VR/XR | Tracking data leakage prevention, real-time networking security |
 | Cybersecurity | Automation | Industrial network segmentation (IEC 62443), remote access hardening |
+| Cybersecurity | Automotive | ISO/SAE 21434 TARA, vehicle interface penetration testing, HSM key management |
 | Cybersecurity | Blockchain | Smart contract audit procedures, multi-sig, front-run monitoring |
 | Cybersecurity | Cloud Architecture | IAM role hardening, network security groups, encryption at rest and in transit |
 | Cybersecurity | Data Engineering | Data access logging, network security perimeters, encryption |
@@ -53,6 +63,7 @@
 | Cybersecurity | ERP/Enterprise | Corporate ERP access privilege controls, financial auditing security |
 | Cybersecurity | Embedded/IoT | Secure boot configurations, firmware encryption, disabled debug ports (JTAG/UART), cryptographic keys storage |
 | Cybersecurity | Game Dev | Anti-cheat integration, packet encryption, save data integrity |
+| Cybersecurity | LLM Applications | Prompt-injection threat modeling, LLM red teaming, data exfiltration controls |
 | Cybersecurity | Network/Telecom | IDS/IPS feeds, firewall logs, NAC integration, VPN controls |
 | Cybersecurity | QA/Testing | Injecting security test cases into E2E suites, automated vulnerability report triaging |
 | Cybersecurity | Security Compliance | Alignment on threat modeling (STRIDE), compliance audit logging, joint reviews of CVE patches |
@@ -65,6 +76,7 @@
 | Data Engineering | Database Architect | Database replication slots configuration, warehouse indexing/partitioning strategies, transactional DB to OLAP sync sync schedules |
 | Data Engineering | DevOps | Infrastructure as Code (IaC) for database resources, CI/CD for dbt models and Airflow DAGs |
 | Data Engineering | ERP/Enterprise | ETL pipelines from ERP to data warehouse, real-time streaming |
+| Data Engineering | LLM Applications | Document ingestion and chunking pipelines, vector index refresh, access-control metadata |
 | Data Engineering | Security Compliance | Implementing data masking, anonymization, and tokenization patterns to comply with GDPR/KVKK for data warehousing |
 | Data Engineering | Web/Mobile Apps | Exposing analytics APIs, syncing transactional data to analytical stores, user activity event tracking |
 | Database Architect | API Design | Query optimization for API endpoints, connection pooling, read-replica routing |
@@ -106,11 +118,13 @@
 | ERP/Enterprise | Web/Mobile Apps | Dashboard/reporting integration, mobile sales portals, customer portals API contracts |
 | Embedded/IoT | AI/ML | Edge inference runtime integration (TFLite, ONNX), model quantization constraints |
 | Embedded/IoT | Automation | Edge gateway coordination, sensor/actuator firmware interfaces |
+| Embedded/IoT | Automotive | ECU drivers, RTOS and bootloader foundations for AUTOSAR Classic stacks |
 | Embedded/IoT | Cybersecurity | Firmware signing, secure boot, key storage, OTA update integrity |
 | Embedded/IoT | DevOps | CI/CD pipeline for firmware builds, binary artifact management |
 | Embedded/IoT | FPGA | SPI/I2C bridge to FPGA fabric, shared memory interfaces, interrupt coordination |
 | Embedded/IoT | Hardware Design | Pin assignments, power rails, schematic review, BOM validation |
 | Embedded/IoT | Mechanical/CAD | Button/actuator clearances, LED pipe locations, connector cutout dimensions |
+| Embedded/IoT | Medical Devices | Firmware for software in a medical device, secure boot and update |
 | Embedded/IoT | Network/Telecom | Static IP allocation, IoT VLAN configuration, cellular modem management |
 | Embedded/IoT | Robotics | Motor controller firmware APIs, sensor driver integration, real-time comm |
 | Embedded/IoT | Signal Processing | ADC/DAC configuration, filter coefficient loading, DMA buffer management |
@@ -127,18 +141,32 @@
 | Game Dev | Signal Processing | Spatial audio implementation, procedural audio generation, voice chat processing |
 | Game Dev | Web/Mobile Apps | Companion apps, analytics backends, WebGL hosting environments |
 | Hardware Design | Automation | Panel layout coordination, wiring diagram review, terminal block assignments |
+| Hardware Design | Automotive | ECU hardware safety metrics, transceivers, supply monitoring for ISO 26262 |
 | Hardware Design | Embedded/IoT | Pin mapping coordination, peripheral voltage levels, crystal/oscillator selection |
 | Hardware Design | FPGA | I/O bank voltage compatibility, high-speed differential pair routing, power sequencing |
 | Hardware Design | Mechanical/CAD | Board outline and mounting hole coordination, enclosure clearances, connector placement |
 | Hardware Design | Robotics | Custom PCB for motor drivers, sensor boards, power distribution |
 | Hardware Design | Signal Processing | ADC/DAC analog front-end design, anti-aliasing filter component selection |
+| LLM Applications | AI/ML | Fine-tuning and embedding model training, evaluation methodology, model registry |
+| LLM Applications | API Design | Tool and function schemas, rate limits, idempotent side-effect endpoints |
+| LLM Applications | Cybersecurity | Prompt-injection threat model, red teaming, data exfiltration controls |
+| LLM Applications | Data Engineering | Document ingestion, chunking pipelines, index refresh, access-control metadata |
+| LLM Applications | QA/Testing | Evaluation suites in CI, adversarial test sets, release gates |
+| LLM Applications | Web/Mobile Apps | Streaming UI, output rendering and sanitization, feedback capture |
 | Mechanical/CAD | Automation | Sensor placement mounts, pneumatic routing pathing, actuator strokes and clearances, cable chain layouts |
 | Mechanical/CAD | Embedded/IoT | Button/actuator travels, LED status pipe locations, display panel tolerances, connector cutouts |
 | Mechanical/CAD | Hardware Design | PCB outline files (DXF/STEP), enclosure mounting hole alignments, thermal interface materials (TIM), keep-out zones |
 | Mechanical/CAD | Robotics | Kinematic chain lengths, gear ratio setups, motor mount alignments, structural payload calculations |
+| Medical Devices | AI/ML | Locked versus adaptive algorithms, dataset documentation, performance validation for regulated AI |
+| Medical Devices | Embedded/IoT | Device firmware, sensors and actuators, secure boot and update for SiMD |
+| Medical Devices | Mobile Native | Patient and clinician apps as medical device software, platform update handling |
+| Medical Devices | QA/Testing | Verification protocols, test evidence retention, regression for each release |
+| Medical Devices | Security Compliance | Cybersecurity risk management, SBOM, vulnerability disclosure, audit evidence |
+| Medical Devices | UI/UX Design | Use-related risk analysis, critical task design, summative usability evaluation |
 | Mobile Native | API Design | API client consumption, mobile SDK integration, push notification payloads |
 | Mobile Native | Database Architect | SQLite/Room schema definition, offline database migrations, conflict resolution strategies |
 | Mobile Native | DevOps | Fastlane build runners configuration, provisioning profiles signing certificates, App Store/Play Store upload pipelines |
+| Mobile Native | Medical Devices | Patient and clinician apps regulated as medical device software |
 | Mobile Native | QA/Testing | Mobile E2E automation frameworks integration (Appium, Detox), TestFlight release pipelines |
 | Mobile Native | UI/UX Design | Mobile interface design specifications, typography scales, safe area layout boundaries |
 | Mobile Native | Web/Mobile Apps | Shared component logic, responsive-to-native handoff, deep linking |
@@ -156,9 +184,12 @@
 | Product Management | UI/UX Design | Wireframe-to-component mapping, user flow validation, accessibility criteria |
 | Product Management | Web/Mobile Apps | Translating wireframes to functional user stories, defining user interaction logic |
 | QA/Testing | API Design | API contract testing integration (Pact), endpoint schema validation |
+| QA/Testing | Automotive | HIL test automation, MC/DC coverage evidence, safety regression suites |
 | QA/Testing | Cybersecurity | Dynamic security scans (DAST) run as part of the E2E suite, pentest scenarios automation |
 | QA/Testing | Database Architect | Managing test database schemas, seeding test data, database rollback commands for test cleanups |
 | QA/Testing | DevOps | Test stage configuration in CI/CD pipeline, publishing test report artifacts, build-breaking criteria on test failures |
+| QA/Testing | LLM Applications | LLM evaluation suites and adversarial test sets as CI release gates |
+| QA/Testing | Medical Devices | IEC 62304 verification protocols and retained test evidence |
 | QA/Testing | Mobile Native | Device farm testing coordination, crash reporting integration |
 | QA/Testing | Product Management | Test cases from Gherkin acceptance criteria, UAT feedback |
 | QA/Testing | Security Compliance | Security test case injection, vulnerability report triaging |
@@ -176,14 +207,17 @@
 | Security Compliance | Database Architect | Encrypting data at rest/in transit, DB user permissions auditing, data deletion/anonymization scripts |
 | Security Compliance | DevOps | Security policy-as-code, Docker image hardening, secret injection in runner pipelines |
 | Security Compliance | ERP/Enterprise | Segregation of duties (SoD), audit trail logging, SOX controls |
+| Security Compliance | Medical Devices | Medical device cybersecurity risk management, SBOM, vulnerability disclosure |
 | Security Compliance | QA/Testing | Injecting security test cases into E2E suites, automated vulnerability report triaging |
 | Security Compliance | Web/Mobile Apps | User input sanitization specifications, CORS configuration, CSRF/XSS mitigations, GDPR cookie consent models |
 | Signal Processing | AI/ML | Feature extraction (MFCCs, spectrograms, wavelets) as input pipelines for neural networks |
+| Signal Processing | Automotive | Sensor conditioning and filtering for ADAS and powertrain functions |
 | Signal Processing | Embedded/IoT | ADC/DAC driver configurations, DMA transfer triggers, I2S/SPI/PDM audio configurations, interrupt priorities |
 | Signal Processing | FPGA | DSP block utilization, parallel processing pipelines, fixed-point implementation |
 | Signal Processing | Game Dev | Spatial audio calculations, reverb algorithms, codec formats, mixer bus architecture |
 | Signal Processing | Hardware Design | Anti-aliasing filter requirements, PCB layout around sensitive analog lines, reference voltage stability, impedance matching |
 | Signal Processing | Robotics | Sensor data filtering, IMU fusion algorithms, audio-based localization |
+| Systems Programming | Automotive | AUTOSAR Adaptive services on POSIX, hypervisors and partitioning |
 | Systems Programming | Cybersecurity | Hardening binaries (ASLR, DEP, stack smashing protectors), conducting secure code reviews, auditing system call usage |
 | Systems Programming | DevOps | Packaging system binaries (deb, rpm, MSI), setting up systemd services, containerizing system daemons |
 | Systems Programming | Embedded/IoT | Writing HAL (Hardware Abstraction Layer) libraries, registering interrupt vectors, custom board support packages |
@@ -195,6 +229,7 @@
 | Technical Writing | QA/Testing | Verifying that code examples work by running automated tests on code snippets |
 | Technical Writing | Web/Mobile Apps | User manuals, API documentation portals, accessibility gates for docs |
 | UI/UX Design | API Design | Documenting API error state UI representations, loading states design guidelines |
+| UI/UX Design | Medical Devices | IEC 62366-1 use-related risk analysis and summative usability evaluation |
 | UI/UX Design | Mobile Native | Designing mobile safe area layouts, notch padding specifications |
 | UI/UX Design | Product Management | Wireframe validation, mapping user journeys to screen layouts, aligning on brand guidelines |
 | UI/UX Design | QA/Testing | Visual regression testing baselines, DOM structure semantic validation, accessibility audit gates |
@@ -212,6 +247,7 @@
 | Web/Mobile Apps | ERP/Enterprise | Corporate sales portals integration, client dashboard reporting pipelines |
 | Web/Mobile Apps | Embedded/IoT | REST/MQTT/WebSocket API contracts for device communication |
 | Web/Mobile Apps | Game Dev | Companion apps, analytics backends, WebGL hosting |
+| Web/Mobile Apps | LLM Applications | Streaming chat UI, sanitized rendering of model output, feedback capture |
 | Web/Mobile Apps | Mobile Native | Shared component logic, responsive-to-native handoff, deep linking |
 | Web/Mobile Apps | Network/Telecom | Load balancing policies, DNS configurations, CDN caching |
 | Web/Mobile Apps | Product Management | Translating wireframes to functional user stories, defining user interaction logic; wireframe-to-implementation alignment, user flow validation |
@@ -234,6 +270,7 @@ graph LR
     apidesign["API Design"]
     arvrxr["AR/VR/XR"]
     automation["Automation"]
+    automotive["Automotive"]
     blockchain["Blockchain"]
     cloudarchitecture["Cloud Architecture"]
     cybersecurity["Cybersecurity"]
@@ -245,7 +282,9 @@ graph LR
     fpgadigital["FPGA"]
     gamedev["Game Dev"]
     hardwaredesign["Hardware Design"]
+    llmapplications["LLM Applications"]
     mechanicalcad["Mechanical/CAD"]
+    medicaldevice["Medical Devices"]
     mobilenative["Mobile Native"]
     networktelecom["Network/Telecom"]
     productmanagement["Product Management"]
@@ -258,19 +297,22 @@ graph LR
     uiuxdesign["UI/UX Design"]
     webmobileapps["Web/Mobile Apps"]
 
-    style cybersecurity,devops,webmobileapps fill:#FF6B6B,stroke:#333,stroke-width:1px
-    style dbarchitect,embeddediot fill:#FFA94D,stroke:#333,stroke-width:1px
-    style aiml,apidesign,automation,dataengineering,erpenterprise,hardwaredesign,mechanicalcad,networktelecom,productmanagement,qatesting,securitycompliance,signalprocessing fill:#69DB7C,stroke:#333,stroke-width:1px
-    style arvrxr,blockchain,cloudarchitecture,fpgadigital,gamedev,mobilenative,robotics,systemsprogramming,technicalwriting,uiuxdesign fill:#74C0FC,stroke:#333,stroke-width:1px
+    style cybersecurity,devops,embeddediot,webmobileapps fill:#FF6B6B,stroke:#333,stroke-width:1px
+    style aiml,apidesign,automotive,dataengineering,dbarchitect,medicaldevice,qatesting,securitycompliance fill:#FFA94D,stroke:#333,stroke-width:1px
+    style automation,cloudarchitecture,erpenterprise,fpgadigital,gamedev,hardwaredesign,llmapplications,mechanicalcad,mobilenative,networktelecom,productmanagement,robotics,signalprocessing,systemsprogramming,uiuxdesign fill:#69DB7C,stroke:#333,stroke-width:1px
+    style arvrxr,blockchain,technicalwriting fill:#74C0FC,stroke:#333,stroke-width:1px
 
     aiml --- dataengineering
     aiml --- devops
     aiml --- embeddediot
+    aiml --- llmapplications
+    aiml --- medicaldevice
     aiml --- robotics
     aiml --- signalprocessing
     aiml --- webmobileapps
     apidesign --- dbarchitect
     apidesign --- devops
+    apidesign --- llmapplications
     apidesign --- mobilenative
     apidesign --- qatesting
     apidesign --- securitycompliance
@@ -287,6 +329,12 @@ graph LR
     automation --- mechanicalcad
     automation --- networktelecom
     automation --- webmobileapps
+    automotive --- cybersecurity
+    automotive --- embeddediot
+    automotive --- hardwaredesign
+    automotive --- qatesting
+    automotive --- signalprocessing
+    automotive --- systemsprogramming
     blockchain --- cybersecurity
     blockchain --- dataengineering
     blockchain --- devops
@@ -302,6 +350,7 @@ graph LR
     cybersecurity --- embeddediot
     cybersecurity --- erpenterprise
     cybersecurity --- gamedev
+    cybersecurity --- llmapplications
     cybersecurity --- networktelecom
     cybersecurity --- qatesting
     cybersecurity --- securitycompliance
@@ -310,6 +359,7 @@ graph LR
     dataengineering --- dbarchitect
     dataengineering --- devops
     dataengineering --- erpenterprise
+    dataengineering --- llmapplications
     dataengineering --- securitycompliance
     dataengineering --- webmobileapps
     dbarchitect --- devops
@@ -333,6 +383,7 @@ graph LR
     embeddediot --- fpgadigital
     embeddediot --- hardwaredesign
     embeddediot --- mechanicalcad
+    embeddediot --- medicaldevice
     embeddediot --- networktelecom
     embeddediot --- robotics
     embeddediot --- signalprocessing
@@ -350,7 +401,13 @@ graph LR
     hardwaredesign --- mechanicalcad
     hardwaredesign --- robotics
     hardwaredesign --- signalprocessing
+    llmapplications --- qatesting
+    llmapplications --- webmobileapps
     mechanicalcad --- robotics
+    medicaldevice --- mobilenative
+    medicaldevice --- qatesting
+    medicaldevice --- securitycompliance
+    medicaldevice --- uiuxdesign
     mobilenative --- qatesting
     mobilenative --- uiuxdesign
     mobilenative --- webmobileapps

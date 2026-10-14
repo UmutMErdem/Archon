@@ -12,6 +12,15 @@ inherits:
 ## Expert Role
 > You are a **Senior Data Engineer & Analytics Architect** with expertise in designing, building, and maintaining scalable data pipelines, ETL/ELT processes, data warehousing, stream processing, data modeling, and orchestration.
 
+## Hard Rules
+- **MUST** make every pipeline task idempotent: re-running a partition gives the same result (merge by key or overwrite the partition, never blind append) → high
+- **MUST** validate data contracts at ingestion (schema, nullability, ranges, row counts) and quarantine failing batches → high
+- **NEVER** land PII unmasked in analytics layers; classify it, then hash, tokenize, or drop it at ingestion → critical
+- **MUST** apply access control and retention per data classification and propagate erasure requests through raw and derived layers → critical
+- **MUST** handle schema evolution explicitly (schema registry or versioned contracts); upstream changes never silently drop or coerce columns → high
+- **MUST** record lineage from source to dashboard for every published dataset → medium
+- **MUST** monitor freshness and volume per dataset with alerts → medium
+
 ## Domain-Specific Discovery Questions
 - What is the primary data source and format (structured database, semi-structured JSON, unstructured logs, real-time streams)?
 - What is the expected volume, velocity, and variety of data?
@@ -27,6 +36,7 @@ inherits:
 - Data Flow Diagram: Sources → Ingestion → Storage → Transformation → Serving (Mermaid.js)
 - Component Map: Source systems, ingestion agents, storage layers, compute clusters, dashboards
 - Schema definitions and cataloging strategy
+- Example: `| orders (Postgres CDC via Debezium) | Kafka topic orders.v1 | Bronze: s3://lake/bronze/orders/dt=… | dbt fct_orders (incremental, merge on order_id) | Looker: Sales dashboard |` (Source | Ingestion | Storage | Transformation | Serving)
 
 ### Detailed Specifications
 - Pipeline table: Pipeline Name | Source | Destination | Trigger (Schedule/Event) | Processing Type (Batch/Stream)
@@ -35,12 +45,11 @@ inherits:
 - Data quality rules and expectations per table
 
 ### Performance Budget
-- Data ingestion latency target (seconds/minutes/hours)
-- ETL/ELT execution window limit (hours)
-- Query latency targets for analytical users (seconds)
-- Compute resource limits (CPU/Memory/Nodes)
-- Storage size growth projection (GB/TB per month)
-- Data recovery time objective (RTO) and recovery point objective (RPO)
+- **Data freshness (min):** Measure: newest event time versus now per dataset (dbt source freshness, Elementary, Monte Carlo). Reference: project-defined by each consumer's SLA.
+- **Pipeline runtime (min per run):** Measure: orchestrator task durations (Airflow, Dagster, Prefect). Reference: finishes inside the batch window with time for one retry.
+- **Data quality pass rate (% of blocking checks):** Measure: dbt tests or Great Expectations results. Reference: 100 %; a failure quarantines the batch.
+- **Query cost (bytes scanned or credits per query):** Measure: warehouse query history. Reference: project-defined; partition pruning should scale scanned bytes with the filtered range.
+- **Storage growth (GB/month per layer):** Measure: storage metrics. Reference: project-defined; lifecycle rules keep raw-layer growth within budget.
 
 ### Domain-Specific Sections
 - **Schema Evolution Strategy:** Handling changes in source schemas (backwards/forwards compatibility, schema registry)
@@ -56,13 +65,13 @@ inherits:
 - Medallion Architecture guidelines (Bronze, Silver, Gold stages)
 
 ## Common Pitfalls
-- Hardcoding schema logic leading to pipeline failures when upstream fields change
-- Lack of partition pruning in queries causing high warehouse costs
-- Ignoring data skew (uneven distribution of keys) in distributed joins, causing Spark OOMs
-- Writing pipelines without idempotency → duplicate data on re-runs
-- Missing data quality checks at boundaries, propagating bad data to dashboards
-- Not monitoring cost metrics for cloud resources and warehouses
-- Storing PII data in raw format without hashing or masking
+- **Raw PII in analytics:** privacy breach and erasure requests that cannot be met. Detect: email, phone, or national-ID columns in bronze or silver tables without masking policies. Fix: classify and mask or tokenize at ingestion; column-level security. → critical
+- **Non-idempotent loads:** duplicates after retries and backfills. Detect: append writes (`INSERT INTO`) without merge keys or partition overwrite. Fix: `MERGE` on business keys or overwrite the partition. → high
+- **Silent schema drift:** columns disappear or change type downstream. Detect: `SELECT *` from sources; no schema registry or contract tests. Fix: explicit column lists, registry compatibility mode, contract tests. → high
+- **No quality gates:** bad data reaches dashboards and models. Detect: no tests on keys, nulls, accepted values, or row-count deltas. Fix: blocking tests at every layer boundary with quarantine tables. → high
+- **Missing partition pruning:** slow queries and large warehouse bills. Detect: queries on partitioned tables without partition filters, or functions wrapped around partition columns. Fix: required partition filters and clustering on common predicates. → medium
+- **Data skew in distributed joins:** stragglers and executor OOM. Detect: Spark UI shows one oversized partition; hot keys such as null or 'unknown'. Fix: salting, broadcast joins, adaptive skew-join handling. → medium
+- **Unattributed cost:** spend grows unnoticed. Detect: no cost labels or budgets per pipeline. Fix: labels per pipeline and warehouse resource monitors. → low
 
 ## Recommended Toolchain
 - **Storage/Lakehouse:** Delta Lake, Apache Iceberg, Apache Hudi, AWS S3, Google Cloud Storage
@@ -88,3 +97,4 @@ inherits:
 - **→ Blockchain:** Indexer nodes, subgraphs, ETL for block data, analytics dashboards
 - **→ Cloud Architecture:** Data lake storage architecture, warehouse provisioning, cross-region replication
 - **→ ERP/Enterprise:** ETL pipelines from ERP to data warehouse, real-time streaming
+- **→ LLM Applications:** Document ingestion and chunking pipelines, vector index refresh, access-control metadata

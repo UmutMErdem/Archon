@@ -2,6 +2,27 @@
 > Bug/issue tracker. Format: KI-NNN | severity | status.
 > KI-001…KI-038 come from the 2026-10-13 full review; all were fixed on branch `fix/review-plan`. IDs KI-024 and KI-028 were not assigned.
 ---
+## KI-039 · Persona reference values contained unverified or wrong facts
+**Status:** FIXED 2026-10-14 · **Severity:** medium
+**Symptom:** A web check of every dated or numeric reference added in M-007/M-008 found wrong or stale statements.
+**Root cause:** References were written from memory without source verification.
+**Fix:** Corrected after checking primary or vendor sources:
+| Persona | Was | Now | Source |
+|---|---|---|---|
+| cybersecurity | CISA BOD 22-01, ~2 weeks for KEV CVEs | BOD 26-04 (2026-06-10) supersedes and revokes BOD 22-01; risk-based deadlines down to 3 days | [CISA directives](https://www.cisa.gov/news-events/directives), [BOD 22-01 (Revoked)](https://www.cisa.gov/news-events/directives/bod-22-01-reducing-significant-risk-known-exploited-vulnerabilities-revoked) |
+| fpga_digital | "UltraFast: hard above 70–80 % LUT" | Congestion judged from `report_design_analysis -congestion`; no such percentage in UG949 | [AMD UG949](https://docs.amd.com/r/en-US/ug949-vivado-design-methodology/Congestion-Area-and-Level-Definition) |
+| devops | DORA elite lead time < 1 day | Compare with the current DORA clusters; elite failed-deployment recovery < 1 h | [Apache DevLake on DORA 2023](https://devlake.apache.org/docs/Metrics/FailedDeploymentRecoveryTime) |
+| ar_vr_xr | "low hundreds" draw calls | Meta Unity Runtime Optimizer target < 300 | [Meta Quest runtime optimizer](https://developers.meta.com/vr/documentation/unity/unity-quest-runtime-optimizer/) |
+| hardware_design | TPS62133 as 3.3 V buck | TPS62132 (TPS62133 is the 5 V variant) | [TI TPS62133](https://www.ti.com/product/TPS62133) |
+| automation | PROFINET RT "commonly 1–4 ms" | Update times from 250 µs; many applications at 1 ms | [PROFINET real-time classes](https://profinetuniversity.com/profinet-basics/profinet-real-time-classes/) |
+| blockchain | ERC-20 transfer ~50k gas | 50k–65k depending on implementation | [OpenZeppelin forum](https://forum.openzeppelin.com/t/deploying-erc20-and-cost-of-transfers/4883) |
+| robotics | PREEMPT_RT "tens of µs" | Tens of µs on tuned x86, ~100 µs+ on embedded boards under load | [arXiv 2307.04148](https://arxiv.org/pdf/2307.04148) |
+| llm_applications | OpenTelemetry GenAI conventions | Marked as still in development | [semantic-conventions-genai](https://github.com/open-telemetry/semantic-conventions-genai) |
+| automotive | MC/DC "as ISO 26262 recommends" | Coverage per ISO 26262-6 Table 12 by ASIL | ISO 26262-6:2018 Table 12 |
+
+Verified unchanged: EU CRA dates, EN 18031 / RED DA (2025-08-01), Machinery Regulation (2027-01-20), DORA (2025-01-17), FDA QMSR (2026-02-02), Android vitals (1.09 % / 0.47 %, cold start ≥ 5 s), EIP-170, S7-1500 150 ms default, NAMUR NE 43, EEMUA 191 / ISA-18.2 rates, ITU-T G.114, Cisco voice targets, Core Web Vitals, WCAG 2.2 target size, Apple 44 pt / Material 48 dp, Cortex-M3/M4 12 cycles, AMD junction grades, nginx / Express limits, FMVSS 111, OWASP LLM Top 10 2025, RFC 9457 / 9110, NIST AI 600-1, IEC 60204-1 stop categories, REP 103 / 105, PyTorch `weights_only`, Chainlink heartbeat, motion-to-photon 20 ms, Flesch 60.
+
+---
 ## KI-038 · Tier 2 count contradicted the Tier 2 assignment rule
 **Status:** FIXED 2026-10-14 · **Severity:** medium
 **Symptom:** Tier table allowed 1–3 Tier 2 personas, but rule 2 made every interface partner of Tier 1 a candidate (up to 21 for web).

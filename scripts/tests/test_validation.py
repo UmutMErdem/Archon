@@ -248,3 +248,10 @@ def test_extract_section_stops_at_same_level():
 
     body = extract_section(DEEP, "### Performance Budget")
     assert "Flash usage" in body and "Memory Map" not in body
+
+
+def test_placeholders_ignore_inline_code():
+    assert vm.check_placeholders("Detect: `/proc/<pid>/fd` and `<limit>` tags") == []
+    assert vm.check_placeholders("- <Pitfall 1>: `<code>`") == [
+        "Unfilled placeholder '<Pitfall 1>'"
+    ]

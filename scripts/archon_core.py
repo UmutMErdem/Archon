@@ -17,6 +17,7 @@ FILES_SPEC_PATH = os.path.join(REPO_ROOT, "architecture", "files_spec.md")
 
 REQUIRED_HEADINGS = [
     "## Expert Role",
+    "## Hard Rules",
     "## Domain-Specific Discovery Questions",
     "## Key Focus Areas for ARCHITECTURE.md",
     "### System Mapping → ",

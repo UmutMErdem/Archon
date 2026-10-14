@@ -43,3 +43,22 @@
 **Tasks:**
 - [x] Merge `fix/review-plan` into `main` (PR #1)
 - [x] Tag `v0.1.0` (bootstrap then writes it via `git describe`)
+
+## M-007 · Persona depth
+**Priority:** P1
+**Status:** ~~DONE (2026-10-14)~~
+**Goal:** Personas tell the auditor how to judge a project, not only what to document (D-008).
+**Tasks:**
+- [x] Template and `check_depth` validator rule
+- [x] Pilots: `embedded_iot.md`, `ai_ml.md`
+- [x] Remaining 25 personas; DEPTH check enforced
+
+## M-008 · Content gaps and new personas
+**Priority:** P1
+**Status:** OPEN
+**Goal:** Cover current regulations and practices missing from every persona, and add high-regulation domains.
+**Tasks:**
+- [ ] EU Cyber Resilience Act, SBOM / SLSA / Sigstore, NIS2, DORA, OpenTelemetry, ETSI EN 303 645, RFC 9457
+- [ ] LLM / GenAI applications persona
+- [ ] Automotive software persona (ISO 26262, ISO/SAE 21434, AUTOSAR)
+- [ ] Medical device software persona (IEC 62304, ISO 14971)

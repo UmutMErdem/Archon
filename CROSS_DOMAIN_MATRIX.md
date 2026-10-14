@@ -259,9 +259,9 @@ graph LR
     webmobileapps["Web/Mobile Apps"]
 
     style cybersecurity,devops,webmobileapps fill:#FF6B6B,stroke:#333,stroke-width:1px
-    style dbarchitect,embeddediot fill:#FFA94D,stroke:#333,stroke-width:1px
-    style aiml,apidesign,automation,dataengineering,erpenterprise,hardwaredesign,mechanicalcad,networktelecom,productmanagement,qatesting,securitycompliance,signalprocessing fill:#69DB7C,stroke:#333,stroke-width:1px
-    style arvrxr,blockchain,cloudarchitecture,fpgadigital,gamedev,mobilenative,robotics,systemsprogramming,technicalwriting,uiuxdesign fill:#74C0FC,stroke:#333,stroke-width:1px
+    style dataengineering,dbarchitect,embeddediot,qatesting fill:#FFA94D,stroke:#333,stroke-width:1px
+    style aiml,apidesign,automation,erpenterprise,fpgadigital,gamedev,hardwaredesign,mechanicalcad,mobilenative,networktelecom,productmanagement,robotics,securitycompliance,signalprocessing,systemsprogramming fill:#69DB7C,stroke:#333,stroke-width:1px
+    style arvrxr,blockchain,cloudarchitecture,technicalwriting,uiuxdesign fill:#74C0FC,stroke:#333,stroke-width:1px
 
     aiml --- dataengineering
     aiml --- devops

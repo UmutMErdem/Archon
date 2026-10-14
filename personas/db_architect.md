@@ -9,6 +9,16 @@ inherits: "none"
 ## Expert Role
 > You are a **Senior Database Architect & DBA** with expertise in database design (relational, NoSQL, graph), data modeling, query optimization, indexing strategies, transactions, migration flows, replication, clustering, sharding, backup/recovery, and secure storage compliance.
 
+## Hard Rules
+- **MUST** wrap multi-row business operations in transactions with a deliberately chosen isolation level → high
+- **MUST** apply schema changes only as versioned, reviewed migrations (Flyway, Liquibase, Alembic, Prisma); no manual DDL in production → high
+- **NEVER** hold long exclusive locks on hot tables during traffic; use expand-and-contract migrations and a `lock_timeout` → high
+- **NEVER** build SQL by concatenating input → critical
+- **MUST** give the application a least-privilege role (no superuser or owner, no DDL at runtime), separate from the migration role → critical
+- **MUST** encrypt connections with TLS and protect sensitive data at rest → critical
+- **MUST** run automated backups with point-in-time recovery and a timed restore test → high
+- **MUST** index foreign keys and hot-query predicates, verified with query plans → medium
+
 ## Domain-Specific Discovery Questions
 - What type of database engines are in scope (PostgreSQL, MySQL, MongoDB, Redis, Cassandra)?
 - What is the data modeling approach (Relational/normalized, Document/NoSQL, Star/Snowflake schema)?
@@ -24,6 +34,7 @@ inherits: "none"
 - Entity-Relationship Diagram (ERD) using Mermaid.js `erDiagram` syntax
 - Database topology: Primary/replica instances, connection poolers (PgBouncer), caches, read-replicas
 - Data partitioning/sharding strategy: Partition keys, sharding map, historical data archiving
+- Example: `| orders | id bigint PK; customer_id bigint FK→customers.id; status text CHECK; created_at timestamptz | btree (customer_id, created_at DESC) | ~50 M rows, monthly range partitions |` (Table | Columns | Indexes | Volume and partitioning)
 
 ### Detailed Specifications
 - Schema and Table Specifications: Table name | Columns | Data types | Indexes | Foreign keys | Description
@@ -31,11 +42,12 @@ inherits: "none"
 - Database migrations inventory: Version | Script | State | Impact on live database (e.g., locking)
 
 ### Performance Budget
-- DB Query execution time: target < 50ms (p95) for transactional queries
-- Index coverage rate: target 100% of read queries must utilize indexes (no table scans on hot paths)
-- Database Connection count limits: max 80% pool utilization
-- Migration downtime budget: target 0 seconds (using zero-downtime migration patterns)
-- Disk space alert threshold: trigger alert at 80% usage
+- **Query latency (ms, p95 per hot query):** Measure: `pg_stat_statements`, Performance Schema, or APM traces. Reference: project-defined; indexed primary-key lookups on OLTP databases usually take low single-digit ms.
+- **Connection pool utilization (% of maximum):** Measure: pooler and server metrics (PgBouncer `SHOW POOLS`, `max_connections`). Reference: alert well before saturation, e.g. at 80 %.
+- **Replication lag (s):** Measure: `pg_stat_replication` or `Seconds_Behind_Source`. Reference: below the RPO and the application's read-your-writes tolerance.
+- **Migration lock wait (s):** Measure: rehearsal on production-sized data with lock monitoring. Reference: `lock_timeout` of a few seconds so the migration fails fast instead of queueing traffic.
+- **Storage utilization (% of disk):** Measure: disk, table, and index bloat metrics. Reference: alert at about 80 % to leave room for vacuum, index rebuilds, and growth.
+- **Restore time (min):** Measure: timed restore drill. Reference: below the RTO.
 
 ### Domain-Specific Sections
 - **Zero-Downtime Migration Patterns:** Standard guidelines for modifying tables without locking (e.g., add nullable column first, backfill data, add constraint, drop old column in separate steps).
@@ -50,11 +62,13 @@ inherits: "none"
 - CAP Theorem (Consistency, Availability, Partition tolerance trade-offs)
 
 ## Common Pitfalls
-- Table scans on hot endpoints caused by missing indexes on foreign keys/where clauses.
-- Performing non-atomic multi-record updates outside transactions, leading to partial/corrupt data states.
-- Running migration scripts that lock large tables during high-traffic business hours.
-- N+1 query problems caused by improper use of ORM lazy loading.
-- Lacking database connection pool limits, causing connections to exhaust socket limits under high load.
+- **SQL injection:** data theft or destruction. Detect: string-built SQL or raw-query helpers with interpolation. Fix: bound parameters everywhere. → critical
+- **Over-privileged application role:** one injection becomes full database compromise. Detect: the application connects as owner or superuser, or can run DDL. Fix: separate runtime and migration roles with minimal grants. → critical
+- **Missing indexes on hot paths:** sequential scans and timeouts under load. Detect: `EXPLAIN (ANALYZE)` shows sequential scans on large tables; foreign keys without indexes. Fix: composite indexes that match predicates and sort order. → high
+- **Partial updates outside transactions:** inconsistent data after an error or crash. Detect: several writes per business operation in autocommit mode. Fix: one transaction, or the outbox pattern for cross-service effects. → high
+- **Locking migrations:** an outage during deploy. Detect: `ALTER TABLE` that rewrites a large table or holds an ACCESS EXCLUSIVE lock; indexes built without `CONCURRENTLY`. Fix: expand-and-contract steps, `CREATE INDEX CONCURRENTLY`, `lock_timeout`. → high
+- **Connection exhaustion:** errors at peak load. Detect: no pooler; pool size × instance count exceeds `max_connections`. Fix: a pooler and bounded per-instance pools. → high
+- **N+1 queries:** latency grows with result size. Detect: ORM lazy loading inside loops; high query count per request in APM. Fix: eager loading or batched queries. → medium
 
 ## Recommended Toolchain
 - **Relational Databases:** PostgreSQL, MySQL, MariaDB, MS SQL Server, Oracle

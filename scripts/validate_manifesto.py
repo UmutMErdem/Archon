@@ -119,7 +119,9 @@ def check_inherits(content, persona_files):
 
 
 def check_placeholders(content):
-    return [f"Unfilled placeholder '{m}'" for m in PLACEHOLDER_RE.findall(content)]
+    # Inline code may legitimately contain angle brackets (`/proc/<pid>/fd`, `<limit>` tags).
+    prose = re.sub(r"`[^`\n]*`", "", content)
+    return [f"Unfilled placeholder '{m}'" for m in PLACEHOLDER_RE.findall(prose)]
 
 
 SEVERITY = r"→ (critical|high|medium|low)$"
@@ -413,6 +415,7 @@ def run():
             ("PLACEHOLDER", check_placeholders(content)),
             ("CONSISTENCY", check_frontmatter_body_consistency(content)),
             ("COMPLIANCE", check_compliance_ids(content, compliance_ids)),
+            ("DEPTH", check_depth(content)),
         ):
             errors += [(category, f"personas/{pf}: {msg}") for msg in found]
         warnings += [("SIZE", w) for w in check_persona_size(os.path.join(PERSONAS_DIR, pf))]

@@ -1,6 +1,12 @@
 # DECISIONS.md
 > Design/architecture decision log. Newest first.
 ---
+## D-008 · Persona depth format: hard rules, Detect/Fix pitfalls, references not targets
+**Date:** 2026-10-14
+**Decision:** Every persona has `## Hard Rules` (5–8 MUST/NEVER rules ending in a KNOWN_ISSUES severity), pitfalls in the form `**Title:** failure. Detect: … Fix: … → severity`, Performance Budget items as `**Metric (unit):** Measure: … Reference: …`, and a filled `- Example:` row in System Mapping. `validate_manifesto.py` enforces the shapes (category DEPTH).
+**Rationale:** The review found personas described what to document but not how to judge it: no MUST/NEVER rules, one-line pitfalls without detection hints or severity, and 9 budgets with no numbers while others hardcoded arbitrary targets (e.g. "1000 req/s"), which contradicts the "do not invent" rule.
+**Impact:** A Reference is a sanity check with its source (standard, vendor guidance, physics), never the project's target; the target goes into the target project's ARCHITECTURE.md or is reported as "not found in source". Security and physical-safety rules are always `critical`.
+
 ## D-007 · Pinned, split requirements
 **Date:** 2026-10-14
 **Decision:** `requirements.txt` is replaced by `requirements-dev.txt` (pinned black/ruff/pytest/pytest-cov) and optional `requirements-graphify.txt` (pinned `graphifyy`). Tool config lives in `pyproject.toml`.

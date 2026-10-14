@@ -39,10 +39,10 @@ inherits: "none"
 - Audio event mapping: Audio Cue | Spatialized? | Attenuation Model | Trigger
 
 ### Performance Budget
-- **Frame rate (fps):** Measure: OVR Metrics Tool, RealityKit trace in Xcode Instruments, Unity or Unreal profilers on the device. Reference: the platform refresh rate, e.g. 72, 90, or 120 Hz on Meta Quest, 90 Hz or higher on Apple Vision Pro.
+- **Frame rate (fps):** Measure: OVR Metrics Tool, RealityKit trace in Xcode Instruments, Unity or Unreal profilers on the device. Reference: the platform refresh rate, e.g. 72, 80, 90, or 120 Hz on Meta Quest 3 (72 Hz is the default), 90 Hz on Apple Vision Pro (96 Hz for 24 fps video).
 - **Frame time (ms):** Measure: on-device GPU and CPU frame timing. Reference: below 1000 ÷ refresh rate (13.9 ms at 72 Hz, 11.1 ms at 90 Hz).
 - **Motion-to-photon latency (ms):** Measure: platform latency tools or a high-speed camera rig. Reference: < 20 ms, the widely cited comfort threshold.
-- **Draw calls per frame (count):** Measure: RenderDoc or the engine frame debugger. Reference: low hundreds at most on standalone mobile headsets (Meta Quest performance guidelines); project-defined on PC VR.
+- **Draw calls per frame (count):** Measure: RenderDoc or the engine frame debugger. Reference: Meta's Unity Runtime Optimizer targets fewer than 300 per frame on Quest; Meta's general Unity guidance cites 500–1,000 only as a rough baseline.
 - **Memory (MB of RAM and VRAM):** Measure: on-device memory profiler. Reference: below the platform's per-app limit with headroom.
 
 ### Domain-Specific Sections

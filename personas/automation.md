@@ -42,7 +42,7 @@ inherits: "none"
 ### Performance Budget
 - **Scan cycle time (ms, max and average):** Measure: PLC diagnostic buffer under full load. Reference: below the fastest process requirement and the cycle watchdog (S7-1200/1500 default maximum cycle time is 150 ms).
 - **Safety function response time (ms):** Measure: sensor + logic + actuator times from the ISO 13849 / IEC 62061 calculation, confirmed by a validation test. Reference: derived from the ISO 13855 safety-distance calculation.
-- **Fieldbus update time (ms):** Measure: network diagnostics (PROFINET update time, EtherCAT cycle). Reference: project-defined by the fastest loop; PROFINET RT is commonly configured at 1–4 ms.
+- **Fieldbus update time (ms):** Measure: network diagnostics (PROFINET update time, EtherCAT cycle). Reference: project-defined by the fastest loop; PROFINET RT supports update times from 250 µs, and many applications run at 1 ms.
 - **Alarm rate (alarms per operator per 10 min):** Measure: alarm historian. Reference: about 1 on average is manageable; more than 10 is a flood (ISA-18.2, EEMUA 191).
 - **Historian storage (GB/day):** Measure: tag count × sample rate × record size. Reference: project-defined by the retention requirement.
 

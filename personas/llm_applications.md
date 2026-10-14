@@ -80,7 +80,7 @@ inherits:
 ## Recommended Toolchain
 - **Orchestration:** LangGraph, LlamaIndex, Semantic Kernel, or plain provider SDKs with structured outputs
 - **Evaluation:** promptfoo, Ragas, DeepEval, OpenAI Evals, custom pytest suites
-- **Observability:** OpenTelemetry GenAI semantic conventions, Langfuse, Arize Phoenix
+- **Observability:** OpenTelemetry GenAI semantic conventions (still in development status), Langfuse, Arize Phoenix
 - **Guardrails:** schema validation (JSON Schema, Pydantic), NeMo Guardrails, provider moderation endpoints
 - **Retrieval:** pgvector, OpenSearch, Qdrant, Weaviate; rerankers
 - **Red teaming:** garak, PyRIT, promptfoo red-team mode

@@ -43,7 +43,7 @@ inherits: "none"
 - Token economics: Supply model (fixed/inflationary/deflationary) | Distribution | Vesting schedule
 
 ### Performance Budget
-- **Gas per user transaction (gas units):** Measure: `forge test --gas-report` or hardhat-gas-reporter per function. Reference: a plain ETH transfer costs 21,000 gas; an ERC-20 `transfer` is typically around 50,000.
+- **Gas per user transaction (gas units):** Measure: `forge test --gas-report` or hardhat-gas-reporter per function. Reference: a plain ETH transfer costs 21,000 gas; an ERC-20 `transfer` is roughly 50,000–65,000 depending on the token implementation.
 - **Deployed bytecode size (bytes):** Measure: `forge build --sizes`. Reference: 24,576-byte limit per contract (EIP-170).
 - **Oracle data age (s):** Measure: `updatedAt` versus block timestamp. Reference: the feed's published heartbeat; reject anything older.
 - **Finality (min):** Measure: chain explorer or node metrics. Reference: Ethereum mainnet finalizes after 2 epochs (about 12.8 min); L2s differ.

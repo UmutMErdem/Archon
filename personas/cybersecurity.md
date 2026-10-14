@@ -43,7 +43,7 @@ inherits: "none"
 ### Performance Budget
 - **Mean time to detect (h):** Measure: incident timelines (first malicious event → alert). Reference: project-defined; track the trend per quarter.
 - **Mean time to contain (h):** Measure: incident timelines (alert → containment). Reference: project-defined in the incident response plan.
-- **Remediation time by severity (days):** Measure: open-to-close time in the vulnerability tracker. Reference: CISA BOD 22-01 gives US agencies about 2 weeks for KEV-listed CVEs; internal SLAs often use 7 / 30 / 90 days for critical / high / medium.
+- **Remediation time by severity (days):** Measure: open-to-close time in the vulnerability tracker. Reference: CISA BOD 26-04 (June 2026, superseding BOD 22-01) sets risk-based deadlines for US federal agencies, as short as 3 days for the highest-risk exploited vulnerabilities; internal SLAs are project-defined.
 - **Scan coverage (% of assets per cycle):** Measure: asset inventory versus scanner results. Reference: 100 % of internet-facing assets every cycle.
 - **Alert false-positive rate (%):** Measure: triage outcomes in the SIEM. Reference: project-defined; a rising rate signals alert fatigue.
 

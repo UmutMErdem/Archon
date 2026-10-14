@@ -84,7 +84,7 @@ inherits:
 - **Testing:** dSPACE or Vector HIL systems, VectorCAST, Tessy
 
 ## Domain-Specific Testing
-- **Unit Testing:** MC/DC coverage for ASIL D code as ISO 26262 recommends, statement and branch coverage for lower ASILs
+- **Unit Testing:** Structural coverage per ISO 26262-6 Table 12: MC/DC for ASIL D, branch coverage for ASIL B–D, statement coverage for ASIL A–B
 - **Fault Injection:** Software and hardware fault injection to verify safety mechanisms and FTTI
 - **HIL Testing:** Closed-loop tests with plant models and network simulation
 - **Network Conformance:** Message timing, E2E and SecOC verification, bus-off recovery

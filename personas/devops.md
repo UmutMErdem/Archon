@@ -43,8 +43,8 @@ inherits: "none"
 - Environment variable matrix: Variable | Dev | Staging | Prod | Secret? | Description
 
 ### Performance Budget
-- **Lead time for changes (h, commit to production):** Measure: CI/CD timestamps. Reference: DORA research places elite performers at under one day.
-- **Time to restore service (min):** Measure: incident timelines. Reference: DORA elite performers restore in under one hour.
+- **Lead time for changes (h, commit to production):** Measure: CI/CD timestamps. Reference: compare with the performance clusters of the latest DORA report (in 2023 only 18 % of respondents had lead times under one day).
+- **Time to restore service (min):** Measure: incident timelines. Reference: DORA's elite cluster recovers from failed deployments in under one hour.
 - **Availability (% per month):** Measure: SLO from probes and request success ratio. Reference: 99.9 % allows about 43.8 min of downtime per month.
 - **Pod startup time (s, scheduled → ready):** Measure: Kubernetes events or kube-state-metrics. Reference: shorter than the autoscaler reaction window it has to cover.
 - **Infrastructure cost (USD/month per environment):** Measure: cost-allocation tags. Reference: project-defined budget with alerts.

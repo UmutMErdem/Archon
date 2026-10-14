@@ -44,7 +44,7 @@ inherits: "none"
 
 ### Performance Budget
 - **Control loop rate (Hz) and deadline misses (count):** Measure: controller timing statistics (ros2_control) during a stress run. Reference: project-defined per joint; 1 kHz is common for manipulator torque loops; misses should be zero.
-- **Scheduling latency (µs, worst case):** Measure: `cyclictest` on the target under load. Reference: PREEMPT_RT kernels typically reach tens of µs worst case on suitable hardware.
+- **Scheduling latency (µs, worst case):** Measure: `cyclictest` on the target under load. Reference: PREEMPT_RT typically reaches tens of µs worst case on tuned x86 hardware with isolated cores, and around a hundred µs or more on embedded boards under heavy load; measure over hours, not minutes.
 - **Perception-to-action latency (ms):** Measure: sensor header timestamp to actuator command timestamp. Reference: project-defined (maximum speed × distance allowed during the reaction).
 - **Stopping distance (mm at maximum speed):** Measure: stop tests as described in ISO 10218 and ISO 13855. Reference: inside the protective separation distance.
 - **Localization error (mm RMS):** Measure: comparison with ground truth (motion capture, surveyed markers). Reference: project-defined by task tolerance.

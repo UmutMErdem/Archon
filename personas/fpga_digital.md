@@ -42,7 +42,7 @@ inherits: "none"
 
 ### Performance Budget
 - **Worst negative slack (ns, setup and hold):** Measure: post-route timing summary (Vivado `report_timing_summary`, Quartus Timing Analyzer). Reference: ≥ 0 ns in every corner.
-- **Resource utilization (% of LUT / FF / BRAM / DSP):** Measure: post-implementation utilization report. Reference: routing congestion and timing closure get hard above roughly 70–80 % LUT use (AMD UltraFast guidance).
+- **Resource utilization (% of LUT / FF / BRAM / DSP):** Measure: post-implementation utilization report. Reference: project-defined; judge routability from the router congestion tables of `report_design_analysis -congestion` (AMD UG949), not from a fixed utilization percentage.
 - **Power (mW, static + dynamic):** Measure: vendor power analysis with realistic toggle rates (SAIF / VCD). Reference: within the regulator and thermal budget agreed with hardware design.
 - **Junction temperature (°C):** Measure: power report with the board thermal model; on-chip monitor (SYSMON / XADC) on hardware. Reference: below the device grade limit (AMD commercial 0–85 °C, industrial −40–100 °C).
 - **Path latency (clock cycles):** Measure: cycle-accurate simulation. Reference: project-defined by the system timing budget.

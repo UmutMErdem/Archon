@@ -32,7 +32,7 @@ inherits: "none"
 - Schematic sheet hierarchy: Sheet name | Function | Key components
 - Power rail table: Rail name | Voltage | Source (regulator/converter) | Max current | Consumers
 - Net class definitions: Net class | Width | Clearance | Via size
-- Example: `| +3V3_MCU | 3.3 V | TPS62133 buck from +12V_IN | 1.5 A budget | MCU, sensor bus, status LEDs |`
+- Example: `| +3V3_MCU | 3.3 V | TPS62132 buck (fixed 3.3 V) from +12V_IN | 1.5 A budget | MCU, sensor bus, status LEDs |`
 
 ### Detailed Specifications
 - Major component specification table: Component | Part number | Package | Voltage | Current rating | Function | Datasheet link

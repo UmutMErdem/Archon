@@ -38,8 +38,8 @@
 
 ## M-006 · Release v0.1.0
 **Priority:** P2
-**Status:** OPEN
+**Status:** ~~DONE (2026-10-14)~~
 **Goal:** First tagged manifesto version so target projects can record which Archon they used.
 **Tasks:**
-- [ ] Merge `fix/review-plan` into `main`
-- [ ] Tag `v0.1.0` (bootstrap then writes it via `git describe`)
+- [x] Merge `fix/review-plan` into `main` (PR #1)
+- [x] Tag `v0.1.0` (bootstrap then writes it via `git describe`)

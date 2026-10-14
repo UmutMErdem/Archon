@@ -4,7 +4,7 @@
 ## Version & platform
 | Param | Value |
 |---|---|
-| Version | v0.1.0 (unreleased, see M-006) |
+| Version | v0.1.0 (tagged 2026-10-14) |
 | Platform | Markdown manifesto + Python 3.10–3.14 scripts (stdlib runtime) |
 | Build status | ✅ black, ruff, pytest (~96 % coverage), `sync_matrix.py --check`, `validate_manifesto.py` |
 
@@ -16,5 +16,5 @@
 - `bootstrap_target.py`, `detect_domain.py`, `graphify_helper.py` operate on target projects.
 
 ## Open items
-- [M-006](ROADMAP.md) — tag v0.1.0 after merge
+- None. All milestones M-001…M-006 are done: [ROADMAP.md](ROADMAP.md)
 - All KI-001…KI-038 and F-01…F-17 are closed: [KNOWN_ISSUES.md](KNOWN_ISSUES.md), [OPTIMIZATIONS.md](OPTIMIZATIONS.md)

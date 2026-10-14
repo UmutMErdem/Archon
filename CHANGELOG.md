@@ -4,6 +4,8 @@ All notable changes to Archon are documented here. Format: [Keep a Changelog](ht
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-14
+
 ### Added
 - `scripts/archon_core.py` shared module, `scripts/detect_domain.py` tier proposer.
 - Interface Label and Weak Signals columns in `detection_signals.md`.

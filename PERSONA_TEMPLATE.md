@@ -27,15 +27,19 @@ HOW TO USE THIS TEMPLATE
    an ID from column 1 of a compliance.md table (several IDs may be joined with " / "), followed by
    " (scope)" or " — scope".
 7. Run `python scripts/validate_manifesto.py` until it reports no errors.
+8. Keep the file between 30 and 400 lines. A Tier 1 persona is loaded whole in every session, so
+   add a line only if it changes what the auditor checks or how it judges a finding.
 -->
 
 ## Expert Role
 > You are a **<Senior Title>** with expertise in <core skills, technologies, protocols, and sub-disciplines that define this domain>.
 
 ## Hard Rules
-<!-- 5–8 non-negotiable rules the auditor enforces in this domain. A violation is logged in
+<!-- 5–12 non-negotiable rules the auditor enforces in this domain. A violation is logged in
 KNOWN_ISSUES.md with the severity after the arrow. Security and physical-safety rules are always
-critical. Format: - **MUST** | **NEVER** <rule> → critical | high | medium | low -->
+critical. A rule that only applies to some projects starts with "(if <trigger>)", e.g.
+"**MUST** (if mains voltage) ..."; see the Applicability rule in architecture/rules.md.
+Format: - **MUST** | **NEVER** <rule> → critical | high | medium | low -->
 - **MUST** <rule that is required in every project of this domain> → <severity>
 - **NEVER** <practice that is forbidden in this domain> → <severity>
 - **MUST** <rule> → <severity>
@@ -43,7 +47,7 @@ critical. Format: - **MUST** | **NEVER** <rule> → critical | high | medium | l
 - **MUST** <rule> → <severity>
 
 ## Domain-Specific Discovery Questions
-<!-- 5–7 questions that disambiguate stack, constraints, and intent for THIS domain. -->
+<!-- 5–10 questions that disambiguate stack, constraints, and intent for THIS domain. -->
 - <Question about the primary platform / target / runtime?>
 - <Question about the core technology, framework, or language?>
 - <Question about hard constraints (performance, safety, budget, real-time)?>
@@ -66,7 +70,7 @@ critical. Format: - **MUST** | **NEVER** <rule> → critical | high | medium | l
 - <Significant structs/enums/constants/resources with values and purpose>
 
 ### Performance Budget
-<!-- 4–6 metrics. Format: - **<Metric> (<unit>):** Measure: <tool or method>. Reference: <value> (<context or source>).
+<!-- 4–8 metrics. Format: - **<Metric> (<unit>):** Measure: <tool or method>. Reference: <value> (<context or source>).
 A Reference is a sanity check for the auditor, never the project's target: the project's own target
 goes in ARCHITECTURE.md, or "not found in source" if it has none. Use "Reference: project-defined"
 when no generic value exists. -->
@@ -76,7 +80,8 @@ when no generic value exists. -->
 - **<Metric 4> (<unit>):** Measure: <how>. Reference: project-defined (<what drives it>).
 
 ### Domain-Specific Sections
-<!-- 3–4 deep-dive sections unique to this domain, each with a bold lead-in. -->
+<!-- 3 or more deep-dive sections unique to this domain, each with a bold lead-in (the size limit caps the total).
+     Tool-, vendor-, or region-specific values go into a profile (PROFILE_TEMPLATE.md), not here. -->
 - **<Section 1 Title>:** <What to document and why it is critical here>
 - **<Section 2 Title>:** <What to document>
 - **<Section 3 Title>:** <What to document>
@@ -89,7 +94,7 @@ when no generic value exists. -->
 - <Standard / certification 3 — scope>
 
 ## Common Pitfalls
-<!-- 5–8 mistakes the auditor must actively hunt for.
+<!-- 5–16 mistakes the auditor must actively hunt for.
 Format: - **<Title>:** <failure mode>. Detect: <where/how to find it in the code or design>. Fix: <remedy>. → <severity> -->
 - **<Pitfall 1>:** <failure mode>. Detect: <how>. Fix: <remedy>. → <severity>
 - **<Pitfall 2>:** <failure mode>. Detect: <how>. Fix: <remedy>. → <severity>

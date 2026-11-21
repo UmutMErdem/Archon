@@ -16,6 +16,7 @@ from archon_core import (
     INHERIT_PRIMARY,
     MATRIX_PATH,
     PERSONAS_DIR,
+    PROFILES_DIR,
     README_PATH,
     REPO_ROOT,
     REQUIRED_HEADINGS,
@@ -23,16 +24,18 @@ from archon_core import (
     extract_section,
     iter_interfaces,
     list_persona_files,
+    list_profile_files,
     load_registry,
     parse_frontmatter,
     read_text,
     resolve_domain_to_persona_file,
     section_bullets,
     setup_utf8,
+    split_list,
 )
 
 MIN_PERSONA_LINES = 30
-MAX_PERSONA_LINES = 200
+MAX_PERSONA_LINES = 400
 
 REQUIRED_FRONTMATTER_KEYS = ["domain", "expert_role", "inherits"]
 PLACEHOLDER_RE = re.compile(r"<[A-Za-z][^<>\n]{2,}>")
@@ -193,6 +196,57 @@ def check_persona_size(persona_path):
     if line_count > MAX_PERSONA_LINES:
         return [f"{name}: Too long ({line_count} lines, maximum {MAX_PERSONA_LINES})"]
     return []
+
+
+PROFILE_TYPES = ("eda", "fab", "sourcing")
+PROFILE_KEYS = ["profile", "type", "applies_to", "last_verified"]
+PROFILE_HEADINGS = ["## Scope", "## Bindings", "## Values", "## Procedure", "## Pitfalls"]
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _table_rows(section):
+    rows = [line for line in section.splitlines() if line.startswith("|")]
+    return [
+        [c.strip() for c in row.strip("|").split("|")] for row in rows if not row.startswith("|---")
+    ]
+
+
+def check_profile(content, persona_files, profile_metas):
+    """Frontmatter, type, targets, base, headings, and a sourced, dated Values table."""
+    meta, fm_err = parse_frontmatter(content)
+    if fm_err:
+        return [f"Frontmatter error: {fm_err}"]
+    errors = [f"Frontmatter missing required key: '{k}'" for k in PROFILE_KEYS if not meta.get(k)]
+    if meta.get("type") and meta["type"] not in PROFILE_TYPES:
+        errors.append(f"type '{meta['type']}' is not one of {', '.join(PROFILE_TYPES)}")
+    for target in split_list(meta.get("applies_to", "")):
+        if target not in persona_files:
+            errors.append(f"applies_to '{target}' does not exist in personas/")
+    if meta.get("last_verified") and not DATE_RE.match(str(meta["last_verified"])):
+        errors.append("last_verified must be YYYY-MM-DD")
+    base = meta.get("extends")
+    if base:
+        if base not in profile_metas:
+            errors.append(f"extends '{base}' does not exist in profiles/")
+        elif profile_metas[base].get("type") != meta.get("type"):
+            errors.append(f"extends '{base}' has a different type")
+    for heading in PROFILE_HEADINGS:
+        if not re.search(r"^" + re.escape(heading) + r"\s*$", content, re.MULTILINE):
+            errors.append(f"Missing required heading: '{heading}'")
+    rows = _table_rows(extract_section(content, "## Values") or "")
+    if not rows:
+        return errors + ["## Values: add a table with Source and Checked columns"]
+    header = [c.lower() for c in rows[0]]
+    if "source" not in header or "checked" not in header:
+        return errors + ["## Values: table needs Source and Checked columns"]
+    src, chk = header.index("source"), header.index("checked")
+    for row in rows[1:]:
+        name = row[0] if row else "?"
+        if len(row) <= max(src, chk) or not row[src]:
+            errors.append(f"## Values: row '{name}' has no Source")
+        elif not DATE_RE.match(row[chk]):
+            errors.append(f"## Values: row '{name}' needs a YYYY-MM-DD Checked date")
+    return errors
 
 
 def check_registry(registry, persona_files):
@@ -419,6 +473,13 @@ def run():
         ):
             errors += [(category, f"personas/{pf}: {msg}") for msg in found]
         warnings += [("SIZE", w) for w in check_persona_size(os.path.join(PERSONAS_DIR, pf))]
+
+    profile_files = list_profile_files(PROFILES_DIR)
+    profile_texts = {f: read_text(os.path.join(PROFILES_DIR, f)) for f in profile_files}
+    profile_metas = {f: parse_frontmatter(t)[0] or {} for f, t in profile_texts.items()}
+    for pf, content in profile_texts.items():
+        found = check_profile(content, persona_files, profile_metas) + check_placeholders(content)
+        errors += [("PROFILE", f"profiles/{pf}: {msg}") for msg in found]
 
     errors += [("REGISTRY", e) for e in check_registry(registry, persona_files)]
     errors += [("INTERFACE", e) for e in check_interfaces(contents, registry)]

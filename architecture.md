@@ -27,6 +27,8 @@ This document is the index for the Archon execution engine. Read each module in 
 | [compliance.md](compliance.md) | Cross-domain regulatory standards reference |
 | [CROSS_DOMAIN_MATRIX.md](CROSS_DOMAIN_MATRIX.md) | Persona cross-domain interface relationships |
 | [PERSONA_TEMPLATE.md](PERSONA_TEMPLATE.md) | Blueprint for creating new domain personas |
+| `profiles/*.md` | Tool, vendor, and region bindings for personas (EDA tool, fabricator, sourcing region); loaded in Phase 0 Step 2b |
+| [PROFILE_TEMPLATE.md](PROFILE_TEMPLATE.md) | Blueprint for creating new profiles |
 
 ---
 

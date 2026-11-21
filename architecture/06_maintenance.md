@@ -5,6 +5,8 @@ When analyzing a workspace that already has generated markdown files, do not ove
 2. **Targeted Edits:** Update only the specific lines or sections in the markdown files corresponding to the changed code (e.g., update pin mappings, API route tables, or file tree).
 3. **Synchronize Issues & Roadmap:** If bugs or optimizations were resolved in the code, mark the respective `KI-NNN` or `F-NN` status as FIXED in `KNOWN_ISSUES.md` and `OPTIMIZATIONS.md`. Update `ROADMAP.md` and `PROJECT_STATE.md` to reflect the current unresolved items.
 4. **Append to Changelog:** Document the change under `CHANGELOG.md` following the "Keep a Changelog" format under a new or existing version entry.
+5. **Supersede, Never Delete:** A decision or constraint that no longer holds stays in DECISIONS.md or AGENTS.md, struck through and pointing to its replacement: `~~old text~~ **SUPERSEDED (YYYY-MM-DD) by D-NNN:** new state`. Record the change in three places in the same edit: the affected document, the new `D-NNN` (or the `KI-NNN` status), and CHANGELOG.md. Descriptions of the current code in ARCHITECTURE.md are updated in place, without strike-through.
+6. **Session Handoff:** If a session ends with work unfinished, or the context limit is near, fill the Session Handoff section of `PROJECT_STATE.md` (see [files_spec.md](files_spec.md)). The next session reads it right after `AGENTS.md` and `PROJECT_STATE.md`, before changing any file.
 
 ---
 

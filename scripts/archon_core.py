@@ -7,6 +7,7 @@ import sys
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 PERSONAS_DIR = os.path.join(REPO_ROOT, "personas")
+PROFILES_DIR = os.path.join(REPO_ROOT, "profiles")
 SIGNALS_PATH = os.path.join(REPO_ROOT, "detection_signals.md")
 COMPLIANCE_PATH = os.path.join(REPO_ROOT, "compliance.md")
 MATRIX_PATH = os.path.join(REPO_ROOT, "CROSS_DOMAIN_MATRIX.md")
@@ -60,6 +61,19 @@ def write_text(path, text):
 
 def list_persona_files(personas_dir=PERSONAS_DIR):
     return sorted(f for f in os.listdir(personas_dir) if f.endswith(".md"))
+
+
+def list_profile_files(profiles_dir=PROFILES_DIR):
+    if not os.path.isdir(profiles_dir):
+        return []
+    return sorted(f for f in os.listdir(profiles_dir) if f.endswith(".md"))
+
+
+def split_list(value):
+    """Comma-separated frontmatter value (`"a.md, b.md"`) or a YAML inline list."""
+    if isinstance(value, list):
+        return [v.strip() for v in value if v.strip()]
+    return [v.strip() for v in str(value).split(",") if v.strip()]
 
 
 def _parse_scalar(value):

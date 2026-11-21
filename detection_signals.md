@@ -9,7 +9,7 @@
 | Signal Indicators (extensions / config files / folders) | Domain | Persona File | Interface Label | Weak Signals |
 |---|---|---|---|---|
 | `platformio.ini`, `*.ino`, `sdkconfig`, `Kconfig`, HAL/CMSIS headers | Embedded Systems / IoT | `personas/embedded_iot.md` | Embedded/IoT | `*.hex` / `*.bin` |
-| `*.kicad_pcb`, `*.sch`, `*.brd`, `*.SchDoc`, Gerber `*.gbr` | Hardware Design (PCB / Schematics) | `personas/hardware_design.md` | Hardware Design | BOM `*.csv` |
+| `*.kicad_pcb`, `*.kicad_sch`, `*.kicad_pro`, `*.sch`, `*.brd`, `*.SchDoc`, `*.PcbDoc`, Gerber `*.gbr` | Hardware Design (PCB / Schematics) | `personas/hardware_design.md` | Hardware Design | BOM `*.csv` |
 | `*.st` (Structured Text), `*.scl`, `*.L5X`, `*.acd`, TIA Portal / Codesys projects | Industrial Automation (PLC / SCADA) | `personas/automation.md` | Automation | — |
 | `package.json`, `*.tsx` / `*.jsx`, `pubspec.yaml`, `build.gradle` | Web / Mobile / Desktop Applications | `personas/web_mobile_apps.md` | Web/Mobile Apps | `index.html` |
 | `*.ipynb`, `*.pth` / `*.onnx` / `*.h5` / `*.safetensors` | Data Science / AI / ML | `personas/ai_ml.md` | AI/ML | `requirements.txt` / `pyproject.toml` listing torch / tensorflow / jax |

@@ -255,3 +255,68 @@ def test_placeholders_ignore_inline_code():
     assert vm.check_placeholders("- <Pitfall 1>: `<code>`") == [
         "Unfilled placeholder '<Pitfall 1>'"
     ]
+
+
+GOOD_PROFILE = """---
+profile: "Example fab"
+type: "fab"
+applies_to: "hardware_design.md"
+last_verified: "2026-11-21"
+---
+## Scope
+x
+## Bindings
+x
+## Values
+| Parameter | Value | Source | Checked |
+|---|---|---|---|
+| Min drill | 0.2 mm | https://example.com | 2026-11-21 |
+## Procedure
+x
+## Pitfalls
+x
+"""
+
+
+def test_check_profile_accepts_good_profile():
+    assert vm.check_profile(GOOD_PROFILE, ["hardware_design.md"], {}) == []
+
+
+def test_check_profile_flags_each_contract_break():
+    bad = (
+        GOOD_PROFILE.replace('type: "fab"', 'type: "cad"')
+        .replace("hardware_design.md", "nope.md")
+        .replace('last_verified: "2026-11-21"', 'last_verified: "soon"\nextends: "zz.md"')
+        .replace(
+            "| https://example.com | 2026-11-21 |", "|  | 2026-11-21 |\n| Via | 0.3 | x | later |"
+        )
+        .replace("## Pitfalls\nx\n", "")
+    )
+    errors = vm.check_profile(bad, ["hardware_design.md"], {})
+    assert "type 'cad' is not one of eda, fab, sourcing" in errors
+    assert "applies_to 'nope.md' does not exist in personas/" in errors
+    assert "last_verified must be YYYY-MM-DD" in errors
+    assert "extends 'zz.md' does not exist in profiles/" in errors
+    assert "Missing required heading: '## Pitfalls'" in errors
+    assert "## Values: row 'Min drill' has no Source" in errors
+    assert "## Values: row 'Via' needs a YYYY-MM-DD Checked date" in errors
+
+
+def test_check_profile_base_type_and_table_shape():
+    based = GOOD_PROFILE.replace(
+        'last_verified: "2026-11-21"', 'last_verified: "2026-11-21"\nextends: "b.md"'
+    )
+    assert vm.check_profile(based, ["hardware_design.md"], {"b.md": {"type": "eda"}}) == [
+        "extends 'b.md' has a different type"
+    ]
+    no_cols = GOOD_PROFILE.replace("| Source | Checked |", "| From | When |")
+    assert vm.check_profile(no_cols, ["hardware_design.md"], {}) == [
+        "## Values: table needs Source and Checked columns"
+    ]
+    no_table = (
+        GOOD_PROFILE.split("## Values")[0] + "## Values\nnone\n## Procedure\nx\n## Pitfalls\nx\n"
+    )
+    assert vm.check_profile(no_table, ["hardware_design.md"], {}) == [
+        "## Values: add a table with Source and Checked columns"
+    ]
+    assert vm.check_profile("no frontmatter", [], {})[0].startswith("Frontmatter error")

@@ -38,10 +38,24 @@ This document serves as a cross-domain reference for compliance standards, certi
 | Standard | Scope |
 |---|---|
 | IPC-2221 | Generic PCB design standard |
+| IPC-2152 | Current-carrying capacity of printed board conductors |
 | IPC-7351 | Component land pattern standard |
+| IPC-4101 | Base materials for rigid and multilayer boards (slash sheets) |
+| IPC-4761 | Via protection types (Type VII filled and capped for via-in-pad) |
+| IPC-6012 | Qualification and performance of rigid printed boards (Class 1/2/3) |
+| IPC-A-600 | Acceptability of bare printed boards |
 | IPC-A-610 | Acceptability of electronic assemblies |
+| IPC-2581 | Open fabrication and assembly data exchange format |
+| IPC-D-356 | Bare-board electrical test netlist format |
+| IEC 60664-1 | Insulation coordination for low-voltage equipment (clearance and creepage) |
+| IEC 61010-1 | Safety of measurement, control, and laboratory equipment |
+| CISPR 32 | EMC emissions of multimedia equipment (EN 55032 in the EU) |
+| CISPR 11 | EMC emissions of industrial, scientific, and medical equipment (EN 55011 in the EU) |
+| IEC 61000-4-2 | Electrostatic discharge immunity test |
 | UL 94 | Flammability of PCB materials |
+| IEC 61249-2-21 | Halogen-free base materials |
 | JEDEC | Component packaging and handling |
+| J-STD-020 / J-STD-033 | Moisture sensitivity classification and handling of SMD packages (IPC/JEDEC) |
 
 ## Industrial Automation
 
@@ -51,6 +65,7 @@ This document serves as a cross-domain reference for compliance standards, certi
 | IEC 61508 | Functional safety (SIL levels) |
 | IEC 62061 | Safety of machinery — functional safety |
 | ISO 13849 | Safety of machinery — Performance Level |
+| IEC 60204-1 | Electrical equipment of machines (stop categories 0/1/2; emergency stop is category 0 or 1) |
 | ISA-18.2 / IEC 62682 | Alarm management |
 | IEC 62443 | Industrial network cybersecurity |
 | ATEX / IECEx | Equipment in explosive atmospheres |

@@ -14,9 +14,17 @@ Read the corresponding persona file from the `personas/` directory. See the full
 
 If no persona file matches, adopt the closest senior architect role and apply the general structure in [files_spec.md](files_spec.md) and [PERSONA_TEMPLATE.md](../PERSONA_TEMPLATE.md). To create and register a brand-new domain persona, run `python <ARCHON_ROOT>/scripts/create_persona.py` (it follows the registration steps documented at the top of the template).
 
+### Step 2b — Load Profiles
+A profile in `<ARCHON_ROOT>/profiles/` binds a persona's tool-agnostic rules to one EDA tool or toolchain (`type: eda`), fabricator or assembler (`fab`), or sourcing region (`sourcing`). For every loaded Tier 1 and Tier 2 persona:
+1. Select the profiles whose `applies_to` names that persona and whose `signals` match workspace files (e.g. `*.kicad_pro` → `eda_kicad.md`). Ask the user for the fabricator and sourcing region if no file shows them, and offer the matching profiles.
+2. Load a profile's `extends` base first; the extending profile overrides it.
+3. If `last_verified` is more than 180 days old, re-check the Values table at its sources before using it, and update the profile or record the differences in the target's DECISIONS.md.
+4. If no profile exists for a tool, vendor, or region the project uses, apply the persona alone, ask the user for the vendor's current capability or documentation, and offer to create a profile from [PROFILE_TEMPLATE.md](../PROFILE_TEMPLATE.md).
+5. List the active profiles with their `last_verified` dates in the target's AGENTS.md.
+
 ### Step 3 — Discovery Questions
 Pick exactly one branch:
-- **Session resumption** — the workspace contains `PROJECT_STATE.md` and `AGENTS.md`, and `PROJECT_STATE.md` does **not** contain `Status: SCAFFOLDED`: read both files first to load the active persona, open issues, and current development state, then analyze only what changed (Phase 0.6).
+- **Session resumption** — the workspace contains `PROJECT_STATE.md` and `AGENTS.md`, and `PROJECT_STATE.md` does **not** contain `Status: SCAFFOLDED`: read both files first to load the active persona, open issues, current development state, and the Session Handoff section if present, then analyze only what changed (Phase 0.6).
 - **Existing codebase** — the workspace contains source files but no documentation files, or `PROJECT_STATE.md` contains `Status: SCAFFOLDED` (created by `scripts/bootstrap_target.py`): analyze the codebase first, then ask only the general and persona-specific questions below that the code cannot answer (typically constraints, MVP scope, and external integrations). Generate all documentation files and remove the `Status: SCAFFOLDED` line from `PROJECT_STATE.md`.
 - **Empty workspace or unclear requirements:** ask all of the following general questions PLUS the domain-specific questions from the loaded persona file:
   1. **Core Purpose:** What problem does this project solve? Who is the target user?

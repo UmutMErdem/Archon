@@ -297,9 +297,9 @@ graph LR
     uiuxdesign["UI/UX Design"]
     webmobileapps["Web/Mobile Apps"]
 
-    style cybersecurity,devops,embeddediot,webmobileapps fill:#FF6B6B,stroke:#333,stroke-width:1px
+    style cybersecurity,devops,embeddediot,hardwaredesign,webmobileapps fill:#FF6B6B,stroke:#333,stroke-width:1px
     style aiml,apidesign,automotive,dataengineering,dbarchitect,medicaldevice,qatesting,securitycompliance fill:#FFA94D,stroke:#333,stroke-width:1px
-    style automation,cloudarchitecture,erpenterprise,fpgadigital,gamedev,hardwaredesign,llmapplications,mechanicalcad,mobilenative,networktelecom,productmanagement,robotics,signalprocessing,systemsprogramming,uiuxdesign fill:#69DB7C,stroke:#333,stroke-width:1px
+    style automation,cloudarchitecture,erpenterprise,fpgadigital,gamedev,llmapplications,mechanicalcad,mobilenative,networktelecom,productmanagement,robotics,signalprocessing,systemsprogramming,uiuxdesign fill:#69DB7C,stroke:#333,stroke-width:1px
     style arvrxr,blockchain,technicalwriting fill:#74C0FC,stroke:#333,stroke-width:1px
 
     aiml --- dataengineering

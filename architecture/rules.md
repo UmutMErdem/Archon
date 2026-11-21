@@ -3,6 +3,15 @@
 - Read every source file and design document in scope (see [06_maintenance.md](06_maintenance.md) Phase 0.7) before writing any output.
 - Tables over prose; be specific (file:line references, exact values).
 - No placeholders — if something is unknown, say "not found in source". Exception: modules deferred under Phase 0.7 are summarized and tagged `[DEFERRED — shallow scan only]`; this tag is not a placeholder.
+- **Evidence Tags:** Tag every technical claim in KNOWN_ISSUES.md, DECISIONS.md, TESTING.md, and status reports with its evidence level:
+  - `[verified]` — command output, test or simulation result, measurement, or a document cited with page or file:line.
+  - `[hypothesis]` — strongly supported by data but not yet confirmed.
+  - `[estimate]` — rule of thumb or first guess; recompute once real data exists.
+
+  Never report a test, simulation, or check as done unless you ran it and saw its output.
+- **Absolute Dates:** Write dates as `YYYY-MM-DD` (add `HH:MM` and the time zone when the order of events matters). Never write "yesterday", "last week", or "recently" in any generated file.
+- **Applicability:** A persona rule or standard that starts with `(if <trigger>)` applies only when the trigger is present in the project. Every rule or standard you mark not applicable needs a one-line reason in ARCHITECTURE.md (e.g. "IEC 60664-1: N/A, no circuit above 60 V DC"). A bare "N/A" is not allowed. If you are unsure whether a trigger is present, treat the rule as applicable. Re-evaluate the verdicts when a component, interface, or requirement changes.
+- **Rule Traceability:** Each KNOWN_ISSUES.md entry that violates a persona Hard Rule or matches a Common Pitfall names it (e.g. "Violates hardware_design Hard Rule: protect every external connector"). Each deviation from a persona rule is recorded in DECISIONS.md with its reason and risk.
 - Flag any security or physical safety issue as CRITICAL in KNOWN_ISSUES.md immediately.
 - Do not invent features or components not present in the files.
 - **Clickable Links:** Create clickable markdown links for every referenced file, class, function, or symbol.

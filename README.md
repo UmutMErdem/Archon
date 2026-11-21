@@ -35,6 +35,7 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 | [compliance.md](compliance.md) | Cross-domain regulatory standards reference |
 | [CROSS_DOMAIN_MATRIX.md](CROSS_DOMAIN_MATRIX.md) | Persona cross-domain interface relationships |
 | [PERSONA_TEMPLATE.md](PERSONA_TEMPLATE.md) | Blueprint for creating new domain personas |
+| [PROFILE_TEMPLATE.md](PROFILE_TEMPLATE.md) | Blueprint for creating new tool, vendor, or region profiles |
 
 ### Domain Expert Personas (30 personas)
 
@@ -59,14 +60,20 @@ Instead of embedding rules and personas directly inside target codebases, Archon
 **Process, Data & Quality:**
 [qa_testing.md](personas/qa_testing.md), [db_architect.md](personas/db_architect.md), [product_management.md](personas/product_management.md), [security_compliance.md](personas/security_compliance.md), [erp_enterprise.md](personas/erp_enterprise.md), [technical_writing.md](personas/technical_writing.md)
 
+### Profiles (tool, vendor, and region bindings)
+
+A persona states what to check; a profile binds it to one EDA tool, fabricator, or sourcing region, with dated, sourced values (loaded in Phase 0 Step 2b).
+
+**EDA:** [eda_kicad.md](profiles/eda_kicad.md) · **Fabricator:** [fab_jlcpcb.md](profiles/fab_jlcpcb.md) · **Sourcing:** [sourcing_base.md](profiles/sourcing_base.md), [sourcing_tr.md](profiles/sourcing_tr.md)
+
 ### Helper Utilities & Validation
 | File / Folder | Description |
 |---|---|
-| [scripts/validate_manifesto.py](scripts/validate_manifesto.py) | Linter: template integrity, inheritance, placeholders, compliance IDs, registry (signals / README / Phase 0 question), canonical and symmetric interfaces, signal overlaps, matrix freshness, and links with anchors. Any error exits 1 |
+| [scripts/validate_manifesto.py](scripts/validate_manifesto.py) | Linter: template integrity, inheritance, placeholders, compliance IDs, registry (signals / README / Phase 0 question), canonical and symmetric interfaces, signal overlaps, matrix freshness, links with anchors, and profile contracts (type, targets, base, headings, sourced and dated values). Any error exits 1 |
 | [scripts/sync_matrix.py](scripts/sync_matrix.py) | Generator: the only writer of `CROSS_DOMAIN_MATRIX.md` (table + relationship diagram). `--check` exits 1 if the file is stale |
 | [scripts/calculate_complexity.py](scripts/calculate_complexity.py) | Report: per-persona completeness score (sections + interfaces + compliance bullets). `--min-score N` turns it into a gate |
 | [scripts/detect_domain.py](scripts/detect_domain.py) | Detector: scores a target workspace against `detection_signals.md` and proposes Tier 1 / Tier 2 personas |
-| [scripts/bootstrap_target.py](scripts/bootstrap_target.py) | Scaffolder: creates the 12 documentation skeletons from `architecture/files_spec.md` in a target project. Never overwrites existing files unless `--force` |
+| [scripts/bootstrap_target.py](scripts/bootstrap_target.py) | Scaffolder: creates the 12 documentation skeletons from `architecture/files_spec.md` in a target project and lists chosen profiles (`--profile`, with their base) in AGENTS.md. Never overwrites existing files unless `--force` |
 | [scripts/create_persona.py](scripts/create_persona.py) | Generator: creates a persona draft from `PERSONA_TEMPLATE.md` and registers it in `detection_signals.md`, `README.md`, and `architecture/00_detection.md` |
 | [scripts/graphify_helper.py](scripts/graphify_helper.py) | Graphify: builds, updates, and queries a codebase knowledge graph. Installs `graphifyy` only with `--install` / `--install-only` |
 | [scripts/archon_core.py](scripts/archon_core.py) | Shared parsing, canonical persona labels, and paths used by every script |

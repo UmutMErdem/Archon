@@ -2,6 +2,27 @@
 > Bug/issue tracker. Format: KI-NNN | severity | status.
 > KI-001…KI-038 come from the 2026-10-13 full review; all were fixed on branch `fix/review-plan`. IDs KI-024 and KI-028 were not assigned.
 ---
+## KI-040 · PCB guide values in hardware_design were stated more precisely than sources support
+**Status:** FIXED 2026-11-21 · **Severity:** medium
+**Symptom:** A web check of the numeric references added in M-009 found values that were too absolute, outdated, or presented as standard text when they come from one handbook.
+**Root cause:** Values were copied from the user's PCB guide (built from fabricator e-books) without an independent check. [verified] by the searches below; the IPC/IEC texts themselves are paywalled, so the sources are vendor application notes and secondary summaries.
+**Fix:**
+| Topic | Was | Now | Source |
+|---|---|---|---|
+| PCIe impedance | "85 or 100 Ω by generation" | Gen1/2 100 Ω, Gen3+ 85 Ω | [TI SLAAE45](https://www.ti.com/document-viewer/lit/html/SLAAE45/GUID-20D0DD8D-AB27-4081-983E-5BC21CAE3A14) |
+| MIPI D-PHY | 100 Ω | 90–100 Ω, per device layout guide | [Intel MIPI layout](https://www.intel.com/content/www/us/en/docs/programmable/817561/24-1-2-2-0/mipi-interface-layout-design-guidelines.html), [AMD UG863](https://docs.amd.com/r/en-US/ug863-versal-pcb-design/MIPI-D-PHY) |
+| ENIG gold | Au 0.05–0.10 µm | Au per IPC-4552 revision, 0.04 µm minimum since the 2012 amendment | [SMTA paper on IPC-4552A](https://smtnet.com/library/files/upload/Achieving-A-Successful-ENIG-Finished-PCB-Under-Revision-A-Of-IPC-4552-SMTAI-2017-Paper.pdf) |
+| PTH fill | ≥ 75 % for Class 2 and 3 | Class 3 always 75 %; Class 2 accepts 50 % in listed cases | [IPC E16&S29-02](https://www.ipc.org/system/files/technical_resource/E16%26S29-02.pdf) |
+| Flex bend radius | 6× / 10× / 20–40× / 100× as fixed | Commonly cited values; multilayer 12–24×; confirm with IPC-2223 | [JLCPCB bend radius](https://jlcpcb.com/blog/flex-pcb-bend-radius-calculation-minimum-radius-design-guidelines) |
+| Courtyard | 0.15 mm below 0603, 0.5 mm connectors | Only IPC-7351B nominal 0.25 mm and BGA 1.0 mm kept | [PCB Libraries forum, Table 3-17](https://www.pcblibraries.com/forum/topic1752.html) |
+| Via stubs | USB3 0.3 / PCIe3 0.25 / 10GbE 0.2 mm | Vendor layout guide; typical 10–15 mil at 5–8 Gbps | [TI SLLA414](https://ti.com/lit/slla414), [Protoexpress back-drilling](https://www.protoexpress.com/blog/back-drilling-pcb-design-and-manufacturing/) |
+| Tg margin | 20–25 °C | 20–30 °C rule of thumb, plus laminate UL MOT | [Eurocircuits Tg](https://www.eurocircuits.com/?p=9358) |
+| I²C capacitance | 400 pF | 400 pF, 550 pF in Fast-mode Plus | [I²C spec v2.1](https://www.csd.uoc.gr/~hy428/reading/i2c_spec.pdf) |
+| RS-485 failsafe | "required" | One bias network per bus, both ends on long cables | [Renesas AN1986](https://renesas.com/en/document/apn/an1986-external-fail-safe-biasing-rs-485-networks) |
+
+Verified unchanged: USB 2.0 90 Ω ±15 % / 45 Ω SE, HDMI and SATA 100 Ω, ES1 60 V DC / 30 V RMS / 42.4 V peak, IEC 60204-1 e-stop category 0 or 1 by risk assessment, IPC-4101 lead-free slash sheets, IPC-4761 Type VII, IEC 61249-2-21 (Br, Cl < 900 ppm, sum < 1500 ppm), IPC-6012 bow/twist 0.75 % / 1.5 %, IPC-T-50 microvia (AR ≤ 1:1, depth ≤ 0.25 mm), RS-485/CAN termination at both ends, KiCad custom rules (last match wins, Board Setup is a floor). Not verifiable from open sources: IEC 60664-1 Table A.2 altitude factors (not quoted in the persona).
+
+---
 ## KI-039 · Persona reference values contained unverified or wrong facts
 **Status:** FIXED 2026-10-14 · **Severity:** medium
 **Symptom:** A web check of every dated or numeric reference added in M-007/M-008 found wrong or stale statements.

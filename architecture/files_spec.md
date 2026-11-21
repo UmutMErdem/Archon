@@ -4,6 +4,7 @@ The AI must generate ALL of the following markdown files. Domain-specific conten
 
 ### AGENTS.md
 - Expert persona definition for this project (refreshed every session)
+- Active profiles (`profiles/*.md`) with type and `last_verified` date
 - Must-follow constraints: domain-specific boundaries, safety rules, timing, API/protocol contracts
 - Architecture quick-reference: key components/services/hardware and relationships (table)
 - Validation checklist: exact commands or procedures to verify correctness
@@ -31,6 +32,7 @@ The AI must generate ALL of the following markdown files. Domain-specific conten
 - Architecture summary (3-5 bullets or component table)
 - Links to all open `KI-NNN` and `F-NN` items
 - Link to CHANGELOG.md
+- **Session Handoff** (only while work is unfinished; clear it when the work is done): goal; completed items with evidence tags; remaining items with their IDs (`KI-NNN`, `M-NNN`, persona rule); approaches tried that failed and **why**, so the next session does not repeat them; the command or commit that rolls back the last change. When several AI tools share the project, prefix each item with the tool that did it (e.g. `[claude]`, `[cursor]`).
 
 ### ROADMAP.md
 - Open issues grouped into milestones by priority (P0/P1/P2)

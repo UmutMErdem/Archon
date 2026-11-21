@@ -15,8 +15,10 @@ import sys
 from archon_core import (
     FILES_SPEC_PATH,
     PERSONAS_DIR,
+    PROFILES_DIR,
     REPO_ROOT,
     list_persona_files,
+    list_profile_files,
     parse_frontmatter,
     read_text,
     setup_utf8,
@@ -89,7 +91,14 @@ def persona_line(meta, version):
     )
 
 
-def render_files(primary, supporting, spec, arch_sections, graphify, version, today):
+def profile_line(meta, version):
+    return (
+        f"- **{meta.get('profile')}** ({meta.get('type')}): Archon `profiles/{meta['file']}` @ "
+        f"`{version}`, last verified {meta.get('last_verified')}"
+    )
+
+
+def render_files(primary, supporting, spec, arch_sections, graphify, version, today, profiles=()):
     files = {}
     for name, bullets in spec.items():
         files[name] = f"# {name}\n\n{spec_block(bullets)}\n"
@@ -99,6 +108,9 @@ def render_files(primary, supporting, spec, arch_sections, graphify, version, to
     if supporting:
         agents += "\n### Tier 2 (Supporting)\n"
         agents += "\n\n".join(persona_line(s, version) for s in supporting) + "\n"
+    if profiles:
+        agents += "\n## Active Profiles\n\n"
+        agents += "\n".join(profile_line(p, version) for p in profiles) + "\n"
     for heading in (
         "Must-follow constraints",
         "Architecture quick-reference",
@@ -182,6 +194,29 @@ def load_persona(filename):
     return meta
 
 
+def load_profile(filename):
+    meta, err = parse_frontmatter(read_text(os.path.join(PROFILES_DIR, filename)))
+    if err:
+        raise SystemExit(f"profiles/{filename}: {err}")
+    meta["file"] = filename
+    return meta
+
+
+def with_bases(names):
+    """Profiles in load order: each `extends` base before the profile that extends it."""
+    ordered = []
+    for name in names:
+        chain, meta = [], load_profile(name)
+        while True:
+            chain.insert(0, meta)
+            base = meta.get("extends")
+            if not base or any(m["file"] == base for m in chain):
+                break
+            meta = load_profile(base)
+        ordered += [m for m in chain if all(o["file"] != m["file"] for o in ordered)]
+    return ordered
+
+
 def interactive_args(files):
     target = prompt("Target project workspace path: ")
     print("\nAvailable personas:")
@@ -211,7 +246,7 @@ def interactive_args(files):
     return argv
 
 
-def build_parser(files):
+def build_parser(files, profile_files=()):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--target", help="Target project directory (prompted if omitted)")
     parser.add_argument("--primary", choices=files, help="Tier 1 persona file")
@@ -221,6 +256,13 @@ def build_parser(files):
         default=[],
         choices=files,
         help="Tier 2 persona file (repeatable)",
+    )
+    parser.add_argument(
+        "--profile",
+        action="append",
+        default=[],
+        choices=list(profile_files),
+        help="Profile file from profiles/ (repeatable; its extends base is added)",
     )
     parser.add_argument("--graphify", action="store_true", help="Set up Graphify")
     parser.add_argument(
@@ -233,7 +275,7 @@ def build_parser(files):
 def main(argv=None):
     setup_utf8()
     files = list_persona_files()
-    parser = build_parser(files)
+    parser = build_parser(files, list_profile_files())
     if argv is None:
         argv = sys.argv[1:]
     if "--target" not in argv and not any(a.startswith("--target=") for a in argv):
@@ -256,6 +298,7 @@ def main(argv=None):
         args.graphify,
         archon_version(),
         datetime.date.today().isoformat(),
+        with_bases(args.profile),
     )
 
     report = {"written": [], "skipped": [], "failed": []}

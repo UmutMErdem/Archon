@@ -12,6 +12,7 @@ Senior AI-governance and developer-tooling architect. Adversarial on cross-file 
 - Every `## Compliance & Standards` bullet starts with an ID from column 1 of a `compliance.md` table (` / ` joins several IDs). Non-normative guides go in the `Practices & Guidelines` table.
 - Every validator finding except persona size is an error. Do not add warning-only checks.
 - Scripts that write into a target project never overwrite existing files without `--force`, and never install packages without an explicit flag.
+- Personas stay vendor-neutral; a single tool's, fabricator's, or region's values go into a profile, each Values row with a Source and a Checked date.
 - No machine-specific paths (`d:/…`, `file:///`) in any tracked file.
 
 ## Architecture quick-reference
@@ -19,6 +20,7 @@ Senior AI-governance and developer-tooling architect. Adversarial on cross-file 
 |---|---|
 | [architecture.md](../architecture.md) + `architecture/*.md` | Execution engine read by the AI agent (Phase 0 → 0.7, output spec, rules) |
 | `personas/*.md` (30) | Domain expert personas, fixed heading structure and depth format (D-008) from [PERSONA_TEMPLATE.md](../PERSONA_TEMPLATE.md) |
+| `profiles/*.md` | Tool, vendor, and region bindings with sourced, dated Values (D-011), from [PROFILE_TEMPLATE.md](../PROFILE_TEMPLATE.md) |
 | [detection_signals.md](../detection_signals.md) | Persona registry and detection heuristics |
 | [compliance.md](../compliance.md) | Canonical standard IDs |
 | `scripts/archon_core.py` | Shared parsing, registry loading, label resolution |

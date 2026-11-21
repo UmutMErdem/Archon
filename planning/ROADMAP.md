@@ -62,3 +62,24 @@
 - [x] LLM / GenAI applications persona (`llm_applications.md`)
 - [x] Automotive software persona (`automotive.md`: ISO 26262, ISO/SAE 21434, UN R155/R156, AUTOSAR)
 - [x] Medical device software persona (`medical_device.md`: IEC 62304, ISO 14971, EU MDR, FDA QMSR / 524B)
+
+## M-009 · PCB design guide integration
+**Priority:** P1
+**Status:** ~~DONE (2026-11-21)~~
+**Goal:** Bring the reusable rules of the user's PCB design guide (v3.1) into Archon: generic audit rules into the engine (D-010), PCB depth into `hardware_design.md` (D-009).
+**Tasks:**
+- [x] Persona size limit 400 lines; template ranges widened
+- [x] Engine: evidence tags, absolute dates, applicability, rule traceability, source precedence, explicit approval, supersede-not-delete, session handoff
+- [x] `hardware_design.md`: 12 Hard Rules, 16 pitfalls, 8 budgets, source-document gate, stack-up, material, PDN, interface reference, EMC, via/HDI/flex, DFM/DFA/DFT, cost and sourcing, design gates, simulation and bring-up tests
+- [x] `compliance.md`: IPC-2152, IPC-4101, IPC-4761, IPC-6012, IPC-A-600, IPC-2581, IPC-D-356, IEC 60664-1, IEC 61010-1, CISPR 32, CISPR 11, IEC 61000-4-2, IEC 61249-2-21, J-STD-020 / J-STD-033, IEC 60204-1
+- [x] `detection_signals.md`: `*.kicad_sch`, `*.kicad_pro`, `*.PcbDoc`
+
+## M-010 · Profiles and web verification of PCB values
+**Priority:** P1
+**Status:** ~~DONE (2026-11-21)~~
+**Goal:** Keep the tool-, vendor-, and region-specific parts of the PCB guide as reusable profiles (D-011) and verify the numbers added in M-009 (KI-040).
+**Tasks:**
+- [x] Web check of persona values; 10 corrections (KI-040)
+- [x] `PROFILE_TEMPLATE.md`, `profiles/eda_kicad.md`, `fab_jlcpcb.md`, `sourcing_base.md`, `sourcing_tr.md`
+- [x] Phase 0 Step 2b, Source Precedence, AGENTS.md spec, validator PROFILE check, `bootstrap_target.py --profile`, tests
+- [x] `hardware_design.md`: schematic conventions, schematic equivalence, DRC rule tests, independent calculation check, layer connectivity report, release manifest

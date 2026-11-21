@@ -101,3 +101,12 @@ def test_archon_version_fallback(monkeypatch):
 
     monkeypatch.setattr(bt.subprocess, "run", boom)
     assert bt.archon_version() == "unknown"
+
+
+def test_profiles_listed_with_their_base(tmp_path):
+    assert run(tmp_path, "--profile", "sourcing_tr.md", "--profile", "eda_kicad.md") == 0
+    agents = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
+    section = agents.split("## Active Profiles", 1)[1]
+    assert section.index("sourcing_base.md") < section.index("sourcing_tr.md")
+    assert "eda_kicad.md" in section and "last verified 20" in section
+    assert section.count("sourcing_base.md") == 1

@@ -5,15 +5,23 @@ All notable changes to Archon are documented here. Format: [Keep a Changelog](ht
 ## [Unreleased]
 
 ### Added
+- `profiles/` with `PROFILE_TEMPLATE.md`: tool, vendor, and region bindings (D-011). Shipped: `eda_kicad.md`, `fab_jlcpcb.md`, `sourcing_base.md` (procedure and procurement workbook), `sourcing_tr.md`. Phase 0 Step 2b loads them; validator category PROFILE; `bootstrap_target.py --profile`.
+- `hardware_design.md`: schematic conventions, schematic equivalence, design rule tests, independent calculation check, layer connectivity report, release manifest.
+- Engine rules from the PCB design guide (D-010): evidence tags `[verified]` / `[hypothesis]` / `[estimate]`, absolute dates, justified not-applicable verdicts, rule traceability (`rules.md`); source precedence and explicit-only approval (`05_orchestration.md`); supersede-not-delete and session handoff (`06_maintenance.md`, `files_spec.md`).
+- `hardware_design.md`: source-document gate, stack-up, material, PDN and grounding, interface electrical reference, EMC layout, via/HDI/flex, DFM/DFA/DFT references, cost and sourcing optimization, design gates, simulation, bare-board, assembly, and bring-up tests.
+- `compliance.md`: IPC-2152, IPC-4101, IPC-4761, IPC-6012, IPC-A-600, IPC-2581, IPC-D-356, IEC 60664-1, IEC 61010-1, CISPR 32, CISPR 11, IEC 61000-4-2, IEC 61249-2-21, J-STD-020 / J-STD-033, IEC 60204-1.
+- `detection_signals.md`: KiCad 6+ `*.kicad_sch` / `*.kicad_pro` and Altium `*.PcbDoc` signals.
 - Personas: `llm_applications.md`, `automotive.md`, `medical_device.md` (30 personas in total).
 - Every persona has a `## Hard Rules` section (MUST/NEVER with KNOWN_ISSUES severity), Detect/Fix pitfalls, measured performance budgets with sourced references, and a System Mapping example row; enforced by the validator (DEPTH).
 - `compliance.md`: EU Cyber Resilience Act, NIS2, DORA, EN 18031, SLSA, SBOM, OpenTelemetry, ISO/IEC 42001, and tables for LLM applications, automotive, and medical device software.
 
 ### Changed
+- Persona size limit raised from 200 to 400 lines; template section ranges widened; Hard Rules may be conditional with `(if <trigger>)` (D-009).
 - Performance budgets no longer state invented targets; they give a measurement method and a reference value with its source.
 - RFC 7807 replaced by RFC 9457 in `compliance.md`.
 
 ### Fixed
+- `hardware_design.md` values corrected after a web check: PCIe and MIPI D-PHY impedance, ENIG gold, PTH fill, flex bend radius, courtyard, via stubs, Tg margin, I²C capacitance, RS-485 failsafe (KI-040).
 - Placeholder detection no longer flags angle brackets inside inline code.
 
 ## [0.1.0] - 2026-10-14
